@@ -1,4 +1,4 @@
-package project.SemanticAnalyser;
+package project.semanticAnalyser;
 
 public class SemanticAnalyser {
 }

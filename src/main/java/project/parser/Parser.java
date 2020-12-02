@@ -1,4 +1,4 @@
-package project.Parser;
+package project.parser;
 
 public class Parser {
 }

@@ -1,4 +1,4 @@
-package project.Lexer;
+package project.lexer;
 
 public class Lexer {
 

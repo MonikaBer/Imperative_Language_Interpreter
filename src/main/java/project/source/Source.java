@@ -1,4 +1,4 @@
-package project.Source;
+package project.source;
 
 public class Source {
 }
