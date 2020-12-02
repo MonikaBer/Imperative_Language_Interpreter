@@ -1,0 +1,11 @@
+# ---> IntelliJ IDEA
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+*.iml
+
+/.metadata/
+/target/
