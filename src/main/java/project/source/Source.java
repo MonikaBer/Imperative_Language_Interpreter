@@ -8,6 +8,7 @@ public abstract class Source implements ISource {
 
     public Source() {
         EOT = false;
+        position = -1;
     }
 
     @Override

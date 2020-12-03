@@ -10,9 +10,16 @@ public class StringSource extends Source {
 
     @Override
     public void advance() {
-        // save new character to character field
-        // check if not EOT
-        // if yes then set isEOT = true
-        this.position++;
+        if (EOT)
+            return;
+
+        position++;
+
+        if (position < source.length()) {
+            character = source.charAt(position);
+            return;
+        }
+
+        EOT = true;
     }
 }
