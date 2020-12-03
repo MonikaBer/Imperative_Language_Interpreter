@@ -6,13 +6,14 @@ public class FileSource extends Source {
 
     private final int BUFF_LEN = 1048576;
 
+    private FileReader fr;
     private final BufferedReader source;
     private char[] buff;
     private int offs;
     private int len;
 
     public FileSource(String filename) throws FileNotFoundException {
-        FileReader fr = new FileReader(filename);
+        fr = new FileReader(filename);
         this.source = new BufferedReader(fr);
         buff = new char[BUFF_LEN];
         offs = -1;
@@ -41,5 +42,6 @@ public class FileSource extends Source {
         }
 
         EOT = true;
+        fr.close();
     }
 }
