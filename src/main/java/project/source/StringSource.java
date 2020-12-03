@@ -6,6 +6,7 @@ public class StringSource extends Source {
 
     public StringSource(String source) {
         this.source = source;
+        advance();
     }
 
     @Override

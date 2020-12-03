@@ -12,12 +12,13 @@ public class FileSource extends Source {
     private int offs;
     private int len;
 
-    public FileSource(String filename) throws FileNotFoundException {
+    public FileSource(String filename) throws IOException {
         fr = new FileReader(filename);
         this.source = new BufferedReader(fr);
         buff = new char[BUFF_LEN];
         offs = -1;
         len = -1;
+        advance();
     }
 
     @Override

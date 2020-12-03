@@ -3,6 +3,7 @@ package project.lexer;
 import project.source.Source;
 import project.token.Token;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public class Lexer {
@@ -40,7 +41,7 @@ public class Lexer {
         keywordsMap.put("struct", Token.TokenType.STRUCT);
     }
 
-    public void nextToken() {
+    public void nextToken() throws IOException {
         if (!skipWhitespacesAndComments())
             return;
 
@@ -70,7 +71,7 @@ public class Lexer {
     }
 
     // returns false if DIV token found
-    private boolean skipWhitespacesAndComments() {
+    private boolean skipWhitespacesAndComments() throws IOException {
         boolean isWhitespaceOrComment = true;
         while (isWhitespaceOrComment) {
             if (Character.isWhitespace(source.getChar())) {
@@ -133,7 +134,7 @@ public class Lexer {
         return true;
     }
 
-    private boolean tryToBuildIdOrKeyword() {
+    private boolean tryToBuildIdOrKeyword() throws IOException {
         if (!Character.isLetter(source.getChar()) && source.getChar() != '_')
             return false;
 
@@ -156,7 +157,7 @@ public class Lexer {
         return true;
     }
 
-    private boolean tryToBuildInteger() {
+    private boolean tryToBuildInteger() throws IOException {
         if (source.getChar() == '0') {
             token = new Token(Token.TokenType.INT_NUMBER, String.valueOf(source.getChar()), position);
             source.advance();
@@ -180,7 +181,7 @@ public class Lexer {
         return false;
     }
 
-    private boolean tryToBuildDouble() {
+    private boolean tryToBuildDouble() throws IOException {
         if (!Character.isDigit(source.getChar()))
             return false;
 
@@ -244,7 +245,7 @@ public class Lexer {
         return true;
     }
 
-    private boolean tryToBuildToBuildStringConst() {
+    private boolean tryToBuildToBuildStringConst() throws IOException {
         boolean isSingleQuote;
 
         if (source.getChar() == '"') {
@@ -276,7 +277,7 @@ public class Lexer {
         return false;
     }
 
-    private boolean tryToBuildSingleOrDoubleChar() {
+    private boolean tryToBuildSingleOrDoubleChar() throws IOException {
         switch (source.getChar()) {
             case '(':
                 source.advance();
