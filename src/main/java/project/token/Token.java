@@ -1,6 +1,6 @@
 package project.token;
 
-public class Token {
+public abstract class Token implements IToken {
 
     public enum TokenType { ID, TEXT, INT_NUMBER, DOUBLE_NUMBER, TRUE, FALSE,
                             IF, ELSE, SWITCH, CASE, DEFAULT, WHILE,
@@ -13,24 +13,20 @@ public class Token {
                             EOT, UNDEFINED
                             };
 
-    private final TokenType type;
-    private final String value;
-    private final int position;
+    protected TokenType type;
+    protected int position;
 
-    public Token(TokenType type, String value, int position) {
+    public Token(TokenType type, int position) {
         this.type = type;
-        this.value = value;
         this.position = position;
     }
 
+    @Override
     public TokenType getType() {
         return type;
     }
 
-    public String getValue() {
-        return value;
-    }
-
+    @Override
     public int getPosition() {
         return position;
     }

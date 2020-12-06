@@ -13,6 +13,8 @@ public abstract class Source implements ISource {
 
     @Override
     public boolean isEOT() {
+        if (character == 0x03)
+            EOT = true;
         return EOT;
     }
 

@@ -1,7 +1,8 @@
 package project.lexer;
 
 import project.source.Source;
-import project.token.Token;
+import project.token.*;
+import project.types.Result;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class Lexer {
 
     public Lexer(Source source) {
         this.source = source;
-        token = new Token(Token.TokenType.UNDEFINED, null,-1);
+        token = new PrimitiveToken(Token.TokenType.UNDEFINED,-1);
         position = -1;
         keywordsMap = new HashMap<>();
 
@@ -41,29 +42,39 @@ public class Lexer {
         keywordsMap.put("struct", Token.TokenType.STRUCT);
     }
 
-    public void nextToken() throws IOException {
-        if (!skipWhitespacesAndComments())
-            return;
+    public Result nextToken() {
+        try {
+            if (!skipWhitespacesAndComments())
+                return Result.OK;
+        } catch (IOException ex) {
+            System.out.println("[lexer] Problem during opening/reading from/closing file source");
+            return Result.IO_ERROR;
+        }
+
 
         position = source.getPosition();
 
         if (source.isEOT()) {
-            token = new Token(Token.TokenType.EOT, null, position);
-            return;
+            token = new PrimitiveToken(Token.TokenType.EOT, position);
+            return Result.OK;
         }
 
-        if (tryToBuildIdOrKeyword())
-            return;
-        if (tryToBuildInteger())
-            return;
-        if (tryToBuildDouble())
-            return;
-        if (tryToBuildToBuildStringConst())
-            return;
-        if (tryToBuildSingleOrDoubleChar())
-            return;
+        try {
+            if (tryToBuildIdOrKeyword())
+                return Result.OK;;
+            if (tryToBuildIntegerOrDouble())
+                return Result.OK;;
+            if (tryToBuildToBuildStringConst())
+                return Result.OK;;
+            if (tryToBuildSingleOrDoubleChar())
+                return Result.OK;;
+        } catch (IOException ex) {
+            System.out.println("[lexer] Problem during opening/reading from/closing file source");
+            return Result.IO_ERROR;
+        }
 
-        token = new Token(Token.TokenType.UNDEFINED, null, position);
+        token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+        return Result.OK;
     }
 
     public Token getToken() {
@@ -118,12 +129,12 @@ public class Lexer {
                     } else {
                         if (source.isEOT())
                             return true;
-                        token = new Token(Token.TokenType.UNDEFINED, null, position);
+                        token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
                         return false;
                     }
                 }
                 else {  // div token found
-                    token = new Token(Token.TokenType.DIV, null, position);
+                    token = new PrimitiveToken(Token.TokenType.DIV, position);
                     return false;
                 }
             }
@@ -149,100 +160,77 @@ public class Lexer {
         }
 
         if (keywordsMap.containsKey(builder.toString())) {
-            token = new Token(keywordsMap.get(builder.toString()), null, position);
+            token = new PrimitiveToken(keywordsMap.get(builder.toString()), position);
             return true;
         }
 
-        token = new Token(Token.TokenType.ID, builder.toString(), position);
+        token = new StringToken(Token.TokenType.ID, position, builder.toString());
         return true;
     }
 
-    private boolean tryToBuildInteger() throws IOException {
-        if (source.getChar() == '0') {
-            token = new Token(Token.TokenType.INT_NUMBER, String.valueOf(source.getChar()), position);
-            source.advance();
-            return true;
-        }
-
-        if (Character.isDigit(source.getChar())) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(source.getChar());
-            source.advance();
-
-            while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
-                builder.append(source.getChar());
-                source.advance();
-            }
-
-            token = new Token(Token.TokenType.INT_NUMBER, builder.toString(), position);
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean tryToBuildDouble() throws IOException {
+    private boolean tryToBuildIntegerOrDouble() throws IOException {
         if (!Character.isDigit(source.getChar()))
             return false;
 
         StringBuilder builder = new StringBuilder();
 
-        // 0.(...)
+        // 0...
         if (source.getChar() == '0') {
             builder.append(source.getChar());
             source.advance();
 
-            if (source.getChar() == '.') {
-                builder.append(source.getChar());
-                source.advance();
-
-                if (Character.isDigit(source.getChar())) {
-                    builder.append(source.getChar());
-                    source.advance();
-                } else {
-                    return false;
-                }
-
-                while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
-                    builder.append(source.getChar());
-                    source.advance();
-                }
-
-                token = new Token(Token.TokenType.DOUBLE_NUMBER, builder.toString(), position);
+            // integer -> 0
+            if (source.getChar() != '.') {
+                int intNumber = Integer.parseInt(builder.toString());
+                token = new IntToken(Token.TokenType.INT_NUMBER, position, intNumber);
                 return true;
             }
 
-            return false;
+            // double -> 0. ...
+            tryToBuildFraction(builder);
+            return true;
         }
 
-        // integer.(...)
+        // [1-9]...
         while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
             builder.append(source.getChar());
             source.advance();
         }
 
-        if (source.getChar() == '.'  && builder.length() < MAX_NUMBER_LENGTH) {
-            builder.append(source.getChar());
-            source.advance();
-        } else {
-            return false;
+        // integer
+        if (source.getChar() != '.') {
+            int intNumber = Integer.parseInt(builder.toString());
+            token = new IntToken(Token.TokenType.INT_NUMBER, position, intNumber);
+            return true;
         }
 
-        if (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
-            builder.append(source.getChar());
-            source.advance();
-        } else {
-            return false;
-        }
-
-        while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
-            builder.append(source.getChar());
-            source.advance();
-        }
-
-        token = new Token(Token.TokenType.DOUBLE_NUMBER, builder.toString(), position);
-
+        // double -> integer. ...
+        tryToBuildFraction(builder);
         return true;
+    }
+
+    private void tryToBuildFraction(StringBuilder builder) throws IOException {
+        builder.append(source.getChar());
+        source.advance();
+
+        if (Character.isDigit(source.getChar())) {
+            builder.append(source.getChar());
+            source.advance();
+        } else {
+            token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+        }
+
+        while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
+            builder.append(source.getChar());
+            source.advance();
+        }
+
+        try {
+            double doubleNumber = Double.parseDouble(builder.toString());
+            token = new DoubleToken(Token.TokenType.DOUBLE_NUMBER, position, doubleNumber);
+        } catch (Exception ex) {
+            token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+        }
     }
 
     private boolean tryToBuildToBuildStringConst() throws IOException {
@@ -266,130 +254,131 @@ public class Lexer {
 
         if (source.getChar() == '"' && !isSingleQuote) {
             source.advance();
-            token = new Token(Token.TokenType.TEXT, builder.toString(), position);
+            token = new StringToken(Token.TokenType.TEXT, position, builder.toString());
             return true;
         } else if (source.getChar() == '\'' && isSingleQuote) {
             source.advance();
-            token = new Token(Token.TokenType.TEXT, builder.toString(), position);
+            token = new StringToken(Token.TokenType.TEXT, position, builder.toString());
             return true;
         }
 
-        return false;
+        token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+        return true;
     }
 
     private boolean tryToBuildSingleOrDoubleChar() throws IOException {
         switch (source.getChar()) {
             case '(':
                 source.advance();
-                token = new Token(Token.TokenType.L_PARENTH, null, position);
+                token = new PrimitiveToken(Token.TokenType.L_PARENTH, position);
                 return true;
             case ')':
                 source.advance();
-                token = new Token(Token.TokenType.R_PARENTH, null, position);
+                token = new PrimitiveToken(Token.TokenType.R_PARENTH, position);
                 return true;
             case '{':
                 source.advance();
-                token = new Token(Token.TokenType.L_BRACE, null, position);
+                token = new PrimitiveToken(Token.TokenType.L_BRACE, position);
                 return true;
             case '}':
                 source.advance();
-                token = new Token(Token.TokenType.R_BRACE, null, position);
+                token = new PrimitiveToken(Token.TokenType.R_BRACE, position);
                 return true;
             case '=':
                 source.advance();
                 if (source.getChar() == '=') {
                     source.advance();
-                    token = new Token(Token.TokenType.EQ, null, position);
+                    token = new PrimitiveToken(Token.TokenType.EQ, position);
                 } else {
-                    token = new Token(Token.TokenType.ASSIGN, null, position);
+                    token = new PrimitiveToken(Token.TokenType.ASSIGN, position);
                 }
                 return true;
             case '+':
                 source.advance();
                 if (source.getChar() == '+') {
                     source.advance();
-                    token = new Token(Token.TokenType.POSTINC, null, position);
+                    token = new PrimitiveToken(Token.TokenType.POSTINC, position);
                 } else {
-                    token = new Token(Token.TokenType.PLUS, null, position);
+                    token = new PrimitiveToken(Token.TokenType.PLUS, position);
                 }
                 return true;
             case '-':
                 source.advance();
                 if (source.getChar() == '-') {
                     source.advance();
-                    token = new Token(Token.TokenType.POSTDEC, null, position);
+                    token = new PrimitiveToken(Token.TokenType.POSTDEC, position);
                 } else {
-                    token = new Token(Token.TokenType.MINUS, null, position);
+                    token = new PrimitiveToken(Token.TokenType.MINUS, position);
                 }
                 return true;
             case '*':
                 source.advance();
-                token = new Token(Token.TokenType.MUL, null, position);
+                token = new PrimitiveToken(Token.TokenType.MUL, position);
                 return true;
             case '%':
                 source.advance();
-                token = new Token(Token.TokenType.MOD, null, position);
+                token = new PrimitiveToken(Token.TokenType.MOD, position);
                 return true;
             case '>':
                 source.advance();
                 if (source.getChar() == '=') {
                     source.advance();
-                    token = new Token(Token.TokenType.GEQT, null, position);
+                    token = new PrimitiveToken(Token.TokenType.GEQT, position);
                 } else {
-                    token = new Token(Token.TokenType.GT, null, position);
+                    token = new PrimitiveToken(Token.TokenType.GT, position);
                 }
                 return true;
             case '<':
                 source.advance();
                 if (source.getChar() == '=') {
                     source.advance();
-                    token = new Token(Token.TokenType.LEQT, null, position);
+                    token = new PrimitiveToken(Token.TokenType.LEQT, position);
                 } else {
-                    token = new Token(Token.TokenType.LT, null, position);
+                    token = new PrimitiveToken(Token.TokenType.LT, position);
                 }
                 return true;
             case '!':
                 source.advance();
                 if (source.getChar() == '=') {
                     source.advance();
-                    token = new Token(Token.TokenType.NEQ, null, position);
+                    token = new PrimitiveToken(Token.TokenType.NEQ, position);
                 } else {
-                    token = new Token(Token.TokenType.NEGATION, null, position);
+                    token = new PrimitiveToken(Token.TokenType.NEGATION, position);
                 }
                 return true;
             case '|':
                 source.advance();
                 if (source.getChar() == '|') {
                     source.advance();
-                    token = new Token(Token.TokenType.ALTERNATIVE, null, position);
+                    token = new PrimitiveToken(Token.TokenType.ALTERNATIVE, position);
                 } else {
-                    token = new Token(Token.TokenType.UNDEFINED, null, position);
+                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
                 }
                 return true;
             case '&':
                 source.advance();
                 if (source.getChar() == '&') {
                     source.advance();
-                    token = new Token(Token.TokenType.CONJUNCTION, null, position);
+                    token = new PrimitiveToken(Token.TokenType.CONJUNCTION, position);
                 } else {
-                    token = new Token(Token.TokenType.UNDEFINED, null, position);
+                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
                 }
                 return true;
             case ';':
                 source.advance();
-                token = new Token(Token.TokenType.SEMICOLON, null, position);
+                token = new PrimitiveToken(Token.TokenType.SEMICOLON, position);
                 return true;
             case '.':
                 source.advance();
-                token = new Token(Token.TokenType.DOT, null, position);
+                token = new PrimitiveToken(Token.TokenType.DOT, position);
                 return true;
             case ',':
                 source.advance();
-                token = new Token(Token.TokenType.COMMA, null, position);
+                token = new PrimitiveToken(Token.TokenType.COMMA, position);
                 return true;
             case ':':
                 source.advance();
-                token = new Token(Token.TokenType.COLON, null, position);
+                token = new PrimitiveToken(Token.TokenType.COLON, position);
                 return true;
             default:;
         }

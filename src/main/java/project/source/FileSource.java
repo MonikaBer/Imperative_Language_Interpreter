@@ -43,6 +43,7 @@ public class FileSource extends Source {
         }
 
         EOT = true;
+        character = 0x03;
         fr.close();
     }
 }

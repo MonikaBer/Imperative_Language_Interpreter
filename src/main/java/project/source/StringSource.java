@@ -22,5 +22,6 @@ public class StringSource extends Source {
         }
 
         EOT = true;
+        character = 0x03;
     }
 }
