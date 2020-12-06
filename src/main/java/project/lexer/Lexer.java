@@ -108,10 +108,11 @@ public class Lexer {
 
                 if (source.getChar() == '/') {  // single line comment
                     source.advance();
-                    while (source.getChar() != '\n')
+                    while (source.getChar() != '\n') {
                         if (source.isEOT())
                             return true;
                         source.advance();
+                    }
                     source.advance();
                     continue;
                 }
