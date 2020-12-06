@@ -9,3 +9,7 @@ Java 11, Maven
 mvn package
 java -jar target/project-1.0.0.jar
 ```
+## Tests execution
+```bash
+mvn test
+```
