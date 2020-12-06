@@ -5,6 +5,8 @@ public abstract class Source implements ISource {
     protected boolean EOT;
     protected char character;
     protected int position;
+    protected int lineNr;
+    protected int positionAtLine;
 
     public Source() {
         EOT = false;

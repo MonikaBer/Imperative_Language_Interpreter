@@ -16,6 +16,8 @@ public class Lexer {
     private Source source;
     private Token token;
     private int position;
+    private int lineNr;
+    private int positionAtLine;
     private HashMap<String, Token.TokenType> keywordsMap;
 
 
@@ -23,6 +25,8 @@ public class Lexer {
         this.source = source;
         token = new PrimitiveToken(Token.TokenType.UNDEFINED,-1);
         position = -1;
+        lineNr = 0;
+        positionAtLine = 0;
         keywordsMap = new HashMap<>();
 
         keywordsMap.put("true", Token.TokenType.TRUE);
@@ -50,7 +54,6 @@ public class Lexer {
             System.out.println("[lexer] Problem during opening/reading from/closing file source");
             return Result.IO_ERROR;
         }
-
 
         position = source.getPosition();
 
@@ -116,23 +119,29 @@ public class Lexer {
                     source.advance();
                     continue;
                 }
-                else if (source.getChar() == '*') {  // multi lines comment
+                else if (source.getChar() == '*') {  // multilinear comment
                     source.advance();
-                    while (source.getChar() != '*') {
-                        source.advance();
+
+                    boolean ifInsideMultilinearComment = true;
+                    while (ifInsideMultilinearComment) {
                         if (source.isEOT())
                             return true;
-                    }
-                    source.advance();
-                    if (source.getChar() == '/') {
+
+                        if (source.getChar() != '*') {
+                            source.advance();
+                            continue;
+                        }
+
+                        // character is '*'
                         source.advance();
-                        continue;
-                    } else {
-                        if (source.isEOT())
-                            return true;
-                        token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
-                        return false;
+                        if (source.getChar() != '/')
+                            continue;
+
+                        // another character is '/'
+                        source.advance();
+                        ifInsideMultilinearComment = false;
                     }
+                    continue;
                 }
                 else {  // div token found
                     token = new PrimitiveToken(Token.TokenType.DIV, position);
@@ -153,8 +162,11 @@ public class Lexer {
         StringBuilder builder = new StringBuilder();
         builder.append(source.getChar());
         source.advance();
-        while ((Character.isLetterOrDigit(source.getChar()) || source.getChar() == '_')
-                && builder.length() < MAX_ID_LENGTH) {
+        while ((Character.isLetterOrDigit(source.getChar()) || source.getChar() == '_')) {
+            if (builder.length() >= MAX_ID_LENGTH) {
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+                return true;
+            }
 
             builder.append(source.getChar());
             source.advance();
@@ -182,8 +194,12 @@ public class Lexer {
 
             // integer -> 0
             if (source.getChar() != '.') {
-                int intNumber = Integer.parseInt(builder.toString());
-                token = new IntToken(Token.TokenType.INT_NUMBER, position, intNumber);
+                try {
+                    int intNumber = Integer.parseInt(builder.toString());
+                    token = new IntToken(Token.TokenType.INT_NUMBER, position, intNumber);
+                } catch (NumberFormatException ex) {
+                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+                }
                 return true;
             }
 
@@ -193,15 +209,23 @@ public class Lexer {
         }
 
         // [1-9]...
-        while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
+        while (Character.isDigit(source.getChar())) {
+            if (builder.length() >= MAX_NUMBER_LENGTH) {
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+                return true;
+            }
             builder.append(source.getChar());
             source.advance();
         }
 
         // integer
         if (source.getChar() != '.') {
-            int intNumber = Integer.parseInt(builder.toString());
-            token = new IntToken(Token.TokenType.INT_NUMBER, position, intNumber);
+            try {
+                int intNumber = Integer.parseInt(builder.toString());
+                token = new IntToken(Token.TokenType.INT_NUMBER, position, intNumber);
+            } catch (NumberFormatException ex) {
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+            }
             return true;
         }
 
@@ -219,9 +243,14 @@ public class Lexer {
             source.advance();
         } else {
             token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+            return;
         }
 
-        while (Character.isDigit(source.getChar()) && builder.length() < MAX_NUMBER_LENGTH) {
+        while (Character.isDigit(source.getChar())) {
+            if (builder.length() >= MAX_NUMBER_LENGTH) {
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+                return;
+            }
             builder.append(source.getChar());
             source.advance();
         }
@@ -229,7 +258,7 @@ public class Lexer {
         try {
             double doubleNumber = Double.parseDouble(builder.toString());
             token = new DoubleToken(Token.TokenType.DOUBLE_NUMBER, position, doubleNumber);
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
         }
     }
@@ -248,7 +277,11 @@ public class Lexer {
         StringBuilder builder = new StringBuilder();
         source.advance();
 
-        while (source.getChar() != '"' && source.getChar() != '\'' && builder.length() < MAX_STR_LENGTH) {
+        while (source.getChar() != '"' && source.getChar() != '\'') {
+            if (builder.length() >= MAX_STR_LENGTH) {
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position);
+                return true;
+            }
             builder.append(source.getChar());
             source.advance();
         }

@@ -1381,7 +1381,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseBackSlashCommentWithEndOfLine() {
+    void shouldRecogniseSlashCommentWithEndOfLine() {
         Source source = new StringSource(" //aaa\n ");
         Lexer lexer = new Lexer(source);
 
@@ -1391,13 +1391,61 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseBackSlashCommentWithoutEndOfLine() {
+    void shouldRecogniseSlashCommentWithoutEndOfLine() {
         Source source = new StringSource(" //aaa ");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(7, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSlashCommentWithStarInside() {
+        Source source = new StringSource(" //*aaa\n bb ");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("bb", stringToken.getValue());
+        assertEquals(9, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(12, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSlashCommentWithMultilinearCommentInside() {
+        Source source = new StringSource(" // /*aaa*/ bb\n    cc ");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("cc", stringToken.getValue());
+        assertEquals(19, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(22, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSlashCommentWithHashCommentInside() {
+        Source source = new StringSource(" // #/*aaa*/ bb\n   cc ");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("cc", stringToken.getValue());
+        assertEquals(19, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(22, lexer.getToken().getPosition());
     }
 
     @Test
@@ -1408,6 +1456,22 @@ class LexerTest {
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(11, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseMultilinearCommentWithStarsInside() {
+        Source source = new StringSource("  /**aaa**/ aa ");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(12, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(15, lexer.getToken().getPosition());
     }
 
     @Test
@@ -1671,5 +1735,763 @@ class LexerTest {
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(64, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseFunctionDefinition() {
+        Source source = new StringSource("double getDouble(double aa = 0.310, double bb = 0.020) {\n\treturn aa;\n}\n");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("getDouble", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
+        assertEquals(16, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
+        assertEquals(17, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(24, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(27, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        DoubleToken doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(0.31, doubleToken.getValue());
+        assertEquals(29, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.COMMA, lexer.getToken().getType());
+        assertEquals(34, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
+        assertEquals(36, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("bb", stringToken.getValue());
+        assertEquals(43, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(46, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(0.02, doubleToken.getValue());
+        assertEquals(48, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
+        assertEquals(53, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_BRACE, lexer.getToken().getType());
+        assertEquals(55, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.RETURN, lexer.getToken().getType());
+        assertEquals(58, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(65, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(67, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_BRACE, lexer.getToken().getType());
+        assertEquals(69, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(71, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseDoubleDeclaration() {
+        Source source = new StringSource("double abc;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("abc", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(10, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseStructVariableInitialisation() {
+        Source source = new StringSource("Student student; \n student.name = \"Jan\"; \n student.albumNr = 100200;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("Student", stringToken.getValue());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("student", stringToken.getValue());
+        assertEquals(8, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(15, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("student", stringToken.getValue());
+        assertEquals(19, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOT, lexer.getToken().getType());
+        assertEquals(26, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("name", stringToken.getValue());
+        assertEquals(27, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(32, lexer.getToken().getPosition());
+
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("Jan", stringToken.getValue());
+        assertEquals(34, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(39, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("student", stringToken.getValue());
+        assertEquals(43, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOT, lexer.getToken().getType());
+        assertEquals(50, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("albumNr", stringToken.getValue());
+        assertEquals(51, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(59, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        IntToken intToken = (IntToken) lexer.getToken();
+        assertEquals(100200, intToken.getValue());
+        assertEquals(61, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(67, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(68, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseIntAssignment() {
+        Source source = new StringSource("int abc = 12345;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("abc", stringToken.getValue());
+        assertEquals(4, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(8, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        IntToken intToken = (IntToken) lexer.getToken();
+        assertEquals(12345, intToken.getValue());
+        assertEquals(10, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(15, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(16, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseDoubleAssignment() {
+        Source source = new StringSource("double abc = 0.570;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("abc", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        DoubleToken doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(0.57, doubleToken.getValue());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(18, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(19, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseBoolAssignment() {
+        Source source = new StringSource("bool abc = true;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.BOOL, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("abc", stringToken.getValue());
+        assertEquals(5, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(9, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.TRUE, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(15, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(16, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseDoubleQuoteStringAssignment() {
+        Source source = new StringSource("string abc = \"Hello\";");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("abc", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("Hello", stringToken.getValue());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(20, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(21, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseApostropheStringAssignment() {
+        Source source = new StringSource("string abc = 'Hello';");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("abc", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("Hello", stringToken.getValue());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(20, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(21, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseFunctionCalling() {
+        Source source = new StringSource("someFunc(aa, 11.24, bb, 22);");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("someFunc", stringToken.getValue());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
+        assertEquals(8, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(9, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.COMMA, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        DoubleToken doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(11.24, doubleToken.getValue());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.COMMA, lexer.getToken().getType());
+        assertEquals(18, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("bb", stringToken.getValue());
+        assertEquals(20, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.COMMA, lexer.getToken().getType());
+        assertEquals(22, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        IntToken intToken = (IntToken) lexer.getToken();
+        assertEquals(22, intToken.getValue());
+        assertEquals(24, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
+        assertEquals(26, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(27, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(28, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseIfElseInstruction() {
+        Source source = new StringSource("if (aa == 1.5010) return aa; else return -1.010;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.IF, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
+        assertEquals(3, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(4, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EQ, lexer.getToken().getType());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        DoubleToken doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(1.501, doubleToken.getValue());
+        assertEquals(10, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
+        assertEquals(16, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.RETURN, lexer.getToken().getType());
+        assertEquals(18, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(25, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(27, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ELSE, lexer.getToken().getType());
+        assertEquals(29, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.RETURN, lexer.getToken().getType());
+        assertEquals(34, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.MINUS, lexer.getToken().getType());
+        assertEquals(41, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(1.010, doubleToken.getValue());
+        assertEquals(42, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(47, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(48, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseWhileInstruction() {
+        Source source = new StringSource("while (aa <= 50) aa++;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.WHILE, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
+        assertEquals(6, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.LEQT, lexer.getToken().getType());
+        assertEquals(10, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        IntToken intToken = (IntToken) lexer.getToken();
+        assertEquals(50, intToken.getValue());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
+        assertEquals(15, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(17, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.POSTINC, lexer.getToken().getType());
+        assertEquals(19, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(21, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(22, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseMultipleConditions() {
+        Source source = new StringSource("if ((11 < 22 && 30 != -15) || aa == 0.010) aa--;");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.IF, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
+        assertEquals(3, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
+        assertEquals(4, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        IntToken intToken = (IntToken) lexer.getToken();
+        assertEquals(11, intToken.getValue());
+        assertEquals(5, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.LT, lexer.getToken().getType());
+        assertEquals(8, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        intToken = (IntToken) lexer.getToken();
+        assertEquals(22, intToken.getValue());
+        assertEquals(10, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.CONJUNCTION, lexer.getToken().getType());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        intToken = (IntToken) lexer.getToken();
+        assertEquals(30, intToken.getValue());
+        assertEquals(16, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.NEQ, lexer.getToken().getType());
+        assertEquals(19, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.MINUS, lexer.getToken().getType());
+        assertEquals(22, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        intToken = (IntToken) lexer.getToken();
+        assertEquals(15, intToken.getValue());
+        assertEquals(23, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
+        assertEquals(25, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ALTERNATIVE, lexer.getToken().getType());
+        assertEquals(27, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(30, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EQ, lexer.getToken().getType());
+        assertEquals(33, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
+        DoubleToken doubleToken = (DoubleToken) lexer.getToken();
+        assertEquals(0.01, doubleToken.getValue());
+        assertEquals(36, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
+        assertEquals(41, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("aa", stringToken.getValue());
+        assertEquals(43, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.POSTDEC, lexer.getToken().getType());
+        assertEquals(45, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(47, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(48, lexer.getToken().getPosition());
+    }
+
+
+    @Test
+    void shouldRecogniseStringWithWhitespaces() {
+        Source source = new StringSource("string str = \"Ala ma kota\";");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ID, lexer.getToken().getType());
+        StringToken stringToken = (StringToken) lexer.getToken();
+        assertEquals("str", stringToken.getValue());
+        assertEquals(7, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
+        assertEquals(11, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
+        stringToken = (StringToken) lexer.getToken();
+        assertEquals("Ala ma kota", stringToken.getValue());
+        assertEquals(13, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
+        assertEquals(26, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(27, lexer.getToken().getPosition());
+    }
+
+
+
+    // max values of int, double and string tests
+
+    @Test
+    void shouldRecogniseUndefinedBecauseOfTooBigInt() {
+        Source source = new StringSource("2147483648");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(10, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseMaxInt() {
+        Source source = new StringSource("2147483647");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
+        IntToken intToken = (IntToken) lexer.getToken();
+        assertEquals(2147483647, intToken.getValue());
+        assertEquals(0, lexer.getToken().getPosition());
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(10, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseUndefinedBecauseOfTooBigDouble() {
+        Source source = new StringSource("111111111100000000002222222223333333333444444444455.00000000001111111111222222222233333333334444444444");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
     }
 }
