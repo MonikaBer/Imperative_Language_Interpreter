@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LexerTest {
 
     @Test
-    void shouldRecogniseIdToken() {
+    void shouldRecogniseSingleIdToken() {
         Source source = new StringSource("variableName");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -27,7 +27,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseTextToken() {
+    void shouldRecogniseSingleTextToken() {
         Source source = new StringSource("\"some text\"");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -41,7 +41,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseIntNumberToken() {
+    void shouldRecogniseSingleIntNumberToken() {
         Source source = new StringSource("2578");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -55,7 +55,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseDoubleNumberToken() {
+    void shouldRecogniseSingleDoubleNumberToken() {
         Source source = new StringSource("34.17");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -69,7 +69,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseTrueToken() {
+    void shouldRecogniseSingleTrueToken() {
         Source source = new StringSource("true");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -79,7 +79,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseFalseToken() {
+    void shouldRecogniseSingleFalseToken() {
         Source source = new StringSource("false");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -89,7 +89,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseIfToken() {
+    void shouldRecogniseSingleIfToken() {
         Source source = new StringSource("if");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -99,7 +99,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseElseToken() {
+    void shouldRecogniseSingleElseToken() {
         Source source = new StringSource("else");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -109,7 +109,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseSwitchToken() {
+    void shouldRecogniseSingleSwitchToken() {
         Source source = new StringSource("switch");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -119,7 +119,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseCaseToken() {
+    void shouldRecogniseSingleCaseToken() {
         Source source = new StringSource("case");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -129,7 +129,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseDefaultToken() {
+    void shouldRecogniseSingleDefaultToken() {
         Source source = new StringSource("default");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -139,7 +139,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseWhileToken() {
+    void shouldRecogniseSingleWhileToken() {
         Source source = new StringSource("while");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -149,7 +149,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseAssignToken() {
+    void shouldRecogniseSingleAssignToken() {
         Source source = new StringSource("=");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -159,7 +159,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseReturnToken() {
+    void shouldRecogniseSingleReturnToken() {
         Source source = new StringSource("return");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -169,7 +169,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseLParenthToken() {
+    void shouldRecogniseSingleLParenthToken() {
         Source source = new StringSource("(");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -179,7 +179,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseRParenthToken() {
+    void shouldRecogniseSingleRParenthToken() {
         Source source = new StringSource(")");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -189,7 +189,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseLBraceToken() {
+    void shouldRecogniseSingleLBraceToken() {
         Source source = new StringSource("{");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -199,7 +199,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseRBraceToken() {
+    void shouldRecogniseSingleRBraceToken() {
         Source source = new StringSource("}");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -209,7 +209,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseIntToken() {
+    void shouldRecogniseSingleIntToken() {
         Source source = new StringSource("int");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -219,7 +219,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseDoubleToken() {
+    void shouldRecogniseSingleDoubleToken() {
         Source source = new StringSource("double");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -229,7 +229,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseBoolToken() {
+    void shouldRecogniseSingleBoolToken() {
         Source source = new StringSource("bool");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -239,7 +239,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseStringToken() {
+    void shouldRecogniseSingleStringToken() {
         Source source = new StringSource("string");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -249,7 +249,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseVoidToken() {
+    void shouldRecogniseSingleVoidToken() {
         Source source = new StringSource("void");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -259,7 +259,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseStructToken() {
+    void shouldRecogniseSingleStructToken() {
         Source source = new StringSource("struct");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -269,7 +269,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseEqToken() {
+    void shouldRecogniseSingleEqToken() {
         Source source = new StringSource("==");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -279,7 +279,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseNeqToken() {
+    void shouldRecogniseSingleNeqToken() {
         Source source = new StringSource("!=");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -289,7 +289,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseGeqtToken() {
+    void shouldRecogniseSingleGeqtToken() {
         Source source = new StringSource(">=");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -299,7 +299,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseGtToken() {
+    void shouldRecogniseSingleGtToken() {
         Source source = new StringSource(">");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -309,7 +309,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseLeqtToken() {
+    void shouldRecogniseSingleLeqtToken() {
         Source source = new StringSource("<=");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -319,7 +319,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseLtToken() {
+    void shouldRecogniseSingleLtToken() {
         Source source = new StringSource("<");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -329,7 +329,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecognisePlusToken() {
+    void shouldRecogniseSinglePlusToken() {
         Source source = new StringSource("+");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -339,7 +339,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseMinusToken() {
+    void shouldRecogniseSingleMinusToken() {
         Source source = new StringSource("-");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -349,7 +349,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecognisePostincToken() {
+    void shouldRecogniseSinglePostincToken() {
         Source source = new StringSource("++");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -359,7 +359,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecognisePostdecToken() {
+    void shouldRecogniseSinglePostdecToken() {
         Source source = new StringSource("--");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -369,7 +369,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseMulToken() {
+    void shouldRecogniseSingleMulToken() {
         Source source = new StringSource("*");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -379,7 +379,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseDivToken() {
+    void shouldRecogniseSingleDivToken() {
         Source source = new StringSource("/");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -389,7 +389,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseModToken() {
+    void shouldRecogniseSingleModToken() {
         Source source = new StringSource("%");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -399,7 +399,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseAlternativeToken() {
+    void shouldRecogniseSingleAlternativeToken() {
         Source source = new StringSource("||");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -409,7 +409,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseConjuctionToken() {
+    void shouldRecogniseSingleConjuctionToken() {
         Source source = new StringSource("&&");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -419,7 +419,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseNegationToken() {
+    void shouldRecogniseSingleNegationToken() {
         Source source = new StringSource("!");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -429,7 +429,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseSemicolonToken() {
+    void shouldRecogniseSingleSemicolonToken() {
         Source source = new StringSource(";");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -439,7 +439,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseDotToken() {
+    void shouldRecogniseSingleDotToken() {
         Source source = new StringSource(".");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -449,7 +449,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseColonToken() {
+    void shouldRecogniseSingleColonToken() {
         Source source = new StringSource(":");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -459,7 +459,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseCommaToken() {
+    void shouldRecogniseSingleCommaToken() {
         Source source = new StringSource(",");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -469,7 +469,7 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseEOTToken() {
+    void shouldRecogniseSingleEOTToken() {
         Source source = new StringSource("");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
@@ -479,8 +479,88 @@ class LexerTest {
     }
 
     @Test
-    void shouldRecogniseUndefinedToken() {
+    void shouldRecogniseSingleUndefinedTokenAt() {
         Source source = new StringSource("@");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenDolar() {
+        Source source = new StringSource("$");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenPeak() {
+        Source source = new StringSource("^");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenAnd() {
+        Source source = new StringSource("&");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenOr() {
+        Source source = new StringSource("|");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenLSquareBracket() {
+        Source source = new StringSource("[");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenRSquareBracket() {
+        Source source = new StringSource("]");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenBackSlash() {
+        Source source = new StringSource("\\");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+    }
+
+    @Test
+    void shouldRecogniseSingleUndefinedTokenQuestionMark() {
+        Source source = new StringSource("?");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
 
