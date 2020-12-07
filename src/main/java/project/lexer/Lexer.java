@@ -28,6 +28,7 @@ public class Lexer {
         position = -1;
         lineNr = 0;
         positionAtLine = 0;
+        passedCharsCount = 0;
         keywordsMap = new HashMap<>();
 
         keywordsMap.put("true", Token.TokenType.TRUE);
