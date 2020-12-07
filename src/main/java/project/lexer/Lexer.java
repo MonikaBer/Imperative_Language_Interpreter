@@ -311,9 +311,8 @@ public class Lexer {
         }
 
         if ((source.getChar() == '"' && !isSingleQuote) || (source.getChar() == '\'' && isSingleQuote)) {
-            passOneCharAndAdvanceSource();
             token = new StringToken(Token.TokenType.TEXT, position, lineNr, positionAtLine, builder.toString());
-            advancePositionAtLine();
+            advance();
             return true;
         }
 
@@ -325,24 +324,20 @@ public class Lexer {
     private boolean tryToBuildSingleOrDoubleChar() throws IOException {
         switch (source.getChar()) {
             case '(':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.L_PARENTH, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case ')':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.R_PARENTH, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case '{':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.L_BRACE, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case '}':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.R_BRACE, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case '=':
                 passOneCharAndAdvanceSource();
@@ -375,14 +370,12 @@ public class Lexer {
                 advancePositionAtLine();
                 return true;
             case '*':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.MUL, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case '%':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.MOD, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case '>':
                 passOneCharAndAdvanceSource();
@@ -435,24 +428,20 @@ public class Lexer {
                 advancePositionAtLine();
                 return true;
             case ';':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.SEMICOLON, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case '.':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.DOT, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case ',':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.COMMA, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             case ':':
-                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.COLON, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+                advance();
                 return true;
             default:;
         }
@@ -460,20 +449,24 @@ public class Lexer {
         return false;
     }
 
-
     private void advancePositionAtLine() {
         positionAtLine += passedCharsCount;
         passedCharsCount = 0;
     }
 
-    private void advancePositionAtLineAndSource(int number) throws IOException {
-        positionAtLine += passedCharsCount + number;
-        passedCharsCount = 0;
+    private void passOneCharAndAdvanceSource() throws IOException {
+        ++passedCharsCount;
         source.advance();
     }
 
-    private void passOneCharAndAdvanceSource() throws IOException {
-        ++passedCharsCount;
+    private void advance() throws IOException {
+        passOneCharAndAdvanceSource();
+        advancePositionAtLine();
+    }
+
+    private void advancePositionAtLineAndSource(int number) throws IOException {
+        positionAtLine += passedCharsCount + number;
+        passedCharsCount = 0;
         source.advance();
     }
 
