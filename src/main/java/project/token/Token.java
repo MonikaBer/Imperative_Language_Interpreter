@@ -15,10 +15,14 @@ public abstract class Token implements IToken {
 
     protected TokenType type;
     protected int position;
+    protected int lineNr;
+    protected int positionAtLine;
 
-    public Token(TokenType type, int position) {
+    public Token(TokenType type, int position, int lineNr, int positionAtLine) {
         this.type = type;
         this.position = position;
+        this.lineNr = lineNr;
+        this.positionAtLine = positionAtLine;
     }
 
     @Override
@@ -29,5 +33,15 @@ public abstract class Token implements IToken {
     @Override
     public int getPosition() {
         return position;
+    }
+
+    @Override
+    public int getLineNr() {
+        return lineNr;
+    }
+
+    @Override
+    public int getPositionAtLine() {
+        return positionAtLine;
     }
 }
