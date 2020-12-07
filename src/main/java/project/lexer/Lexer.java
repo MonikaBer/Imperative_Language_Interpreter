@@ -310,12 +310,7 @@ public class Lexer {
             appendBuilderAndPassOneCharAndAdvanceSource(builder);
         }
 
-        if (source.getChar() == '"' && !isSingleQuote) {
-            passOneCharAndAdvanceSource();
-            token = new StringToken(Token.TokenType.TEXT, position, lineNr, positionAtLine, builder.toString());
-            advancePositionAtLine();
-            return true;
-        } else if (source.getChar() == '\'' && isSingleQuote) {
+        if ((source.getChar() == '"' && !isSingleQuote) || (source.getChar() == '\'' && isSingleQuote)) {
             passOneCharAndAdvanceSource();
             token = new StringToken(Token.TokenType.TEXT, position, lineNr, positionAtLine, builder.toString());
             advancePositionAtLine();
