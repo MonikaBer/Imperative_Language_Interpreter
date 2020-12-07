@@ -13,13 +13,13 @@ public class Lexer {
     private final int MAX_STR_LENGTH = 1048576;
     private final int MAX_NUMBER_LENGTH = 50;
 
-    private Source source;
+    private final Source source;
     private Token token;
     private int position;
     private int lineNr;
     private int positionAtLine;
     private int passedCharsCount;
-    private HashMap<String, Token.TokenType> keywordsMap;
+    private final HashMap<String, Token.TokenType> keywordsMap;
 
 
     public Lexer(Source source) {
@@ -66,6 +66,7 @@ public class Lexer {
         }
 
         try {
+
             if (tryToBuildIdOrKeyword())
                 return Result.OK;;
             if (tryToBuildIntegerOrDouble())
@@ -74,14 +75,14 @@ public class Lexer {
                 return Result.OK;;
             if (tryToBuildSingleOrDoubleChar())
                 return Result.OK;;
+
         } catch (IOException ex) {
             System.out.println("[lexer] Problem during opening/reading from/closing file source");
             return Result.IO_ERROR;
         }
 
         token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-        positionAtLine += passedCharsCount;
-        passedCharsCount = 0;
+        advancePositionAtLine();
         return Result.OK;
     }
 
@@ -95,56 +96,42 @@ public class Lexer {
         while (isWhitespaceOrComment) {
             if (Character.isWhitespace(source.getChar())) {
                 if (source.getChar() == '\n') {
-                    ++lineNr;
-                    positionAtLine = 0;
-                } else {
-                    ++positionAtLine;
+                    goToNewLineAndAdvanceSource();
+                    continue;
                 }
-                source.advance();
+                advancePositionAtLineAndSource();
                 continue;
             }
 
             if (source.getChar() == '#') {
-                ++positionAtLine;
-                source.advance();
+                advancePositionAtLineAndSource();
                 while (source.getChar() != '\n') {
                     if (source.isEOT())
                         return true;
-                    ++positionAtLine;
-                    source.advance();
+                    advancePositionAtLineAndSource();
                 }
-                ++lineNr;
-                positionAtLine = 0;
-                source.advance();
+                goToNewLineAndAdvanceSource();
                 continue;
             }
 
             position = source.getPosition();
 
             if (source.getChar() == '/') {
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
 
                 if (source.getChar() == '/') {  // single line comment
-                    positionAtLine += passedCharsCount + 1;
-                    passedCharsCount = 0;
-                    source.advance();
+                    advancePositionAtLineAndSource(1);
 
                     while (source.getChar() != '\n') {
                         if (source.isEOT())
                             return true;
-                        ++positionAtLine;
-                        source.advance();
+                        advancePositionAtLineAndSource();
                     }
-                    ++lineNr;
-                    positionAtLine = 0;
-                    source.advance();
+                    goToNewLineAndAdvanceSource();
                     continue;
                 }
                 else if (source.getChar() == '*') {  // multilinear comment
-                    positionAtLine += passedCharsCount + 1;
-                    passedCharsCount = 0;
-                    source.advance();
+                    advancePositionAtLineAndSource(1);
 
                     boolean ifInsideMultilinearComment = true;
                     while (ifInsideMultilinearComment) {
@@ -153,37 +140,31 @@ public class Lexer {
 
                         if (source.getChar() != '*') {
                             if (source.getChar() == '\n') {
-                                ++lineNr;
-                                positionAtLine = 0;
-                            } else {
-                                ++positionAtLine;
+                                goToNewLineAndAdvanceSource();
+                                continue;
                             }
-                            source.advance();
+                            advancePositionAtLineAndSource();
                             continue;
                         }
 
                         // character is '*'
-                        ++positionAtLine;
-                        source.advance();
+                        advancePositionAtLineAndSource();
                         if (source.getChar() != '/') {
                             if (source.getChar() == '\n') {
-                                ++lineNr;
-                                positionAtLine = 0;
+                                goToNewLine();
                             }
                             continue;
                         }
 
                         // another character is '/'
-                        ++positionAtLine;
-                        source.advance();
+                        advancePositionAtLineAndSource();
                         ifInsideMultilinearComment = false;
                     }
                     continue;
                 }
                 else {  // div token found
                     token = new PrimitiveToken(Token.TokenType.DIV, position, lineNr, positionAtLine);
-                    positionAtLine += passedCharsCount;
-                    passedCharsCount = 0;
+                    advancePositionAtLine();
                     return false;
                 }
             }
@@ -199,32 +180,24 @@ public class Lexer {
             return false;
 
         StringBuilder builder = new StringBuilder();
-        builder.append(source.getChar());
-        ++passedCharsCount;
-        source.advance();
+        appendBuilderAndPassOneCharAndAdvanceSource(builder);
         while ((Character.isLetterOrDigit(source.getChar()) || source.getChar() == '_')) {
             if (builder.length() >= MAX_ID_LENGTH) {
                 token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             }
-
-            builder.append(source.getChar());
-            ++passedCharsCount;
-            source.advance();
+            appendBuilderAndPassOneCharAndAdvanceSource(builder);
         }
 
         if (keywordsMap.containsKey(builder.toString())) {
             token = new PrimitiveToken(keywordsMap.get(builder.toString()), position, lineNr, positionAtLine);
-            positionAtLine += passedCharsCount;
-            passedCharsCount = 0;
+            advancePositionAtLine();
             return true;
         }
 
         token = new StringToken(Token.TokenType.ID, position, lineNr, positionAtLine, builder.toString());
-        positionAtLine += passedCharsCount;
-        passedCharsCount = 0;
+        advancePositionAtLine();
 
         return true;
     }
@@ -237,9 +210,7 @@ public class Lexer {
 
         // 0...
         if (source.getChar() == '0') {
-            builder.append(source.getChar());
-            ++passedCharsCount;
-            source.advance();
+            appendBuilderAndPassOneCharAndAdvanceSource(builder);
 
             // integer -> 0
             if (source.getChar() != '.') {
@@ -249,8 +220,7 @@ public class Lexer {
                 } catch (NumberFormatException ex) {
                     token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             }
 
@@ -263,13 +233,10 @@ public class Lexer {
         while (Character.isDigit(source.getChar())) {
             if (builder.length() >= MAX_NUMBER_LENGTH) {
                 token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             }
-            builder.append(source.getChar());
-            ++passedCharsCount;
-            source.advance();
+            appendBuilderAndPassOneCharAndAdvanceSource(builder);
         }
 
         // integer
@@ -280,8 +247,7 @@ public class Lexer {
             } catch (NumberFormatException ex) {
                 token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
             }
-            positionAtLine += passedCharsCount;
-            passedCharsCount = 0;
+            advancePositionAtLine();
             return true;
         }
 
@@ -291,31 +257,23 @@ public class Lexer {
     }
 
     private void tryToBuildFraction(StringBuilder builder) throws IOException {
-        builder.append(source.getChar());
-        ++passedCharsCount;
-        source.advance();
+        appendBuilderAndPassOneCharAndAdvanceSource(builder);
 
         if (Character.isDigit(source.getChar())) {
-            builder.append(source.getChar());
-            ++passedCharsCount;
-            source.advance();
+            appendBuilderAndPassOneCharAndAdvanceSource(builder);
         } else {
             token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-            positionAtLine += passedCharsCount;
-            passedCharsCount = 0;
+            advancePositionAtLine();
             return;
         }
 
         while (Character.isDigit(source.getChar())) {
             if (builder.length() >= MAX_NUMBER_LENGTH) {
                 token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return;
             }
-            builder.append(source.getChar());
-            ++passedCharsCount;
-            source.advance();
+            appendBuilderAndPassOneCharAndAdvanceSource(builder);
         }
 
         try {
@@ -325,8 +283,7 @@ public class Lexer {
             token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
         }
 
-        positionAtLine += passedCharsCount;
-        passedCharsCount = 0;
+        advancePositionAtLine();
     }
 
     private boolean tryToBuildToBuildStringConst() throws IOException {
@@ -341,222 +298,208 @@ public class Lexer {
         }
 
         StringBuilder builder = new StringBuilder();
-        ++passedCharsCount;
-        source.advance();
+        passOneCharAndAdvanceSource();
 
         while (source.getChar() != '"' && source.getChar() != '\'') {
             if (builder.length() >= MAX_STR_LENGTH) {
                 token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             }
-            builder.append(source.getChar());
-            ++passedCharsCount;
-            source.advance();
+            appendBuilderAndPassOneCharAndAdvanceSource(builder);
         }
 
         if (source.getChar() == '"' && !isSingleQuote) {
-            ++passedCharsCount;
-            source.advance();
+            passOneCharAndAdvanceSource();
             token = new StringToken(Token.TokenType.TEXT, position, lineNr, positionAtLine, builder.toString());
-            positionAtLine += passedCharsCount;
-            passedCharsCount = 0;
+            advancePositionAtLine();
             return true;
         } else if (source.getChar() == '\'' && isSingleQuote) {
-            ++passedCharsCount;
-            source.advance();
+            passOneCharAndAdvanceSource();
             token = new StringToken(Token.TokenType.TEXT, position, lineNr, positionAtLine, builder.toString());
-            positionAtLine += passedCharsCount;
-            passedCharsCount = 0;
+            advancePositionAtLine();
             return true;
         }
 
         token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-        positionAtLine += passedCharsCount;
-        passedCharsCount = 0;
+        advancePositionAtLine();
         return true;
     }
 
     private boolean tryToBuildSingleOrDoubleChar() throws IOException {
         switch (source.getChar()) {
             case '(':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.L_PARENTH, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case ')':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.R_PARENTH, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '{':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.L_BRACE, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '}':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.R_BRACE, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '=':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '=') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.EQ, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.ASSIGN, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '+':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '+') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.POSTINC, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.PLUS, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '-':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '-') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.POSTDEC, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.MINUS, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '*':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.MUL, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '%':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.MOD, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '>':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '=') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.GEQT, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.GT, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '<':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '=') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.LEQT, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.LT, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '!':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '=') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.NEQ, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.NEGATION, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '|':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '|') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.ALTERNATIVE, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '&':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 if (source.getChar() == '&') {
-                    ++passedCharsCount;
-                    source.advance();
+                    passOneCharAndAdvanceSource();
                     token = new PrimitiveToken(Token.TokenType.CONJUNCTION, position, lineNr, positionAtLine);
                 } else {
                     token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
                 }
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case ';':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.SEMICOLON, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case '.':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.DOT, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case ',':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.COMMA, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             case ':':
-                ++passedCharsCount;
-                source.advance();
+                passOneCharAndAdvanceSource();
                 token = new PrimitiveToken(Token.TokenType.COLON, position, lineNr, positionAtLine);
-                positionAtLine += passedCharsCount;
-                passedCharsCount = 0;
+                advancePositionAtLine();
                 return true;
             default:;
         }
 
         return false;
+    }
+
+
+    private void advancePositionAtLine() {
+        positionAtLine += passedCharsCount;
+        passedCharsCount = 0;
+    }
+
+    private void advancePositionAtLineAndSource(int number) throws IOException {
+        positionAtLine += passedCharsCount + number;
+        passedCharsCount = 0;
+        source.advance();
+    }
+
+    private void passOneCharAndAdvanceSource() throws IOException {
+        ++passedCharsCount;
+        source.advance();
+    }
+
+    private void appendBuilderAndPassOneCharAndAdvanceSource(StringBuilder builder) throws IOException {
+        builder.append(source.getChar());
+        ++passedCharsCount;
+        source.advance();
+    }
+
+    private void advancePositionAtLineAndSource() throws IOException {
+        ++positionAtLine;
+        source.advance();
+    }
+
+    private void goToNewLineAndAdvanceSource() throws IOException {
+        ++lineNr;
+        positionAtLine = 0;
+        source.advance();
+    }
+
+    private void goToNewLine() {
+        ++lineNr;
+        positionAtLine = 0;
     }
 }
