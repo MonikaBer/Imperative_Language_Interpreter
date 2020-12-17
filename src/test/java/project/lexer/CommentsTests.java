@@ -178,4 +178,18 @@ public class CommentsTests {
         assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(6, lexer.getToken().getLineNr());
     }
+
+    @Test
+    void shouldRecogniseAaa() {
+        Source source = new StringSource("/* a");
+        Lexer lexer = new Lexer(source);
+
+        lexer.nextToken();
+        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
+        assertEquals(4, lexer.getToken().getPosition());
+        assertEquals(4, lexer.getToken().getPositionAtLine());
+        assertEquals(0, lexer.getToken().getLineNr());
+
+
+    }
 }
