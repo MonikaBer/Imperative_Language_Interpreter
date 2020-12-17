@@ -1,17 +1,17 @@
 package project.program;
 
-import project.program.content.Declaration;
-import project.program.content.instructions.Instruction;
+import project.program.content.statements.Declaration;
+import project.program.content.statements.Statement;
 
 import java.util.ArrayList;
 
 public class Program {
 
     private ArrayList<Declaration> declarations;
-    private ArrayList<Instruction> instructions;
+    private ArrayList<Statement> statements;
 
-    public Program (ArrayList<Declaration> declarations, ArrayList<Instruction> instructions) {
+    public Program (ArrayList<Declaration> declarations, ArrayList<Statement> statements) {
         this.declarations = declarations;
-        this.instructions = instructions;
+        this.statements = statements;
     }
 }

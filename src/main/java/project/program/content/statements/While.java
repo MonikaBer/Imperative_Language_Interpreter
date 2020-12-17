@@ -1,9 +1,6 @@
-package project.program.content.instructions;
+package project.program.content.statements;
 
-import project.program.content.others.Block;
-import project.program.content.others.Condition;
-
-public class While extends Instruction {
+public class While extends Statement {
 
     private final Condition condition;
     private final Block block;

@@ -2,11 +2,11 @@ package project.parser;
 
 import project.lexer.Lexer;
 import project.program.Program;
-import project.program.content.Declaration;
-import project.program.content.instructions.Instruction;
-import project.program.content.instructions.While;
-import project.program.content.others.Block;
-import project.program.content.others.Condition;
+import project.program.content.statements.Declaration;
+import project.program.content.statements.Statement;
+import project.program.content.statements.While;
+import project.program.content.statements.Block;
+import project.program.content.statements.Condition;
 import project.token.StringToken;
 import project.token.Token;
 
@@ -22,7 +22,7 @@ public class Parser {
 
     public Program ParseProgram() {
         ArrayList<Declaration> declarations = new ArrayList<>();
-        ArrayList<Instruction> instructions = new ArrayList<>();
+        ArrayList<Statement> statements = new ArrayList<>();
 
         Declaration declaration = tryToParseDeclaration();
         while (declaration != null) {
@@ -30,49 +30,49 @@ public class Parser {
             declaration = tryToParseDeclaration();
         }
 
-        Instruction instruction = tryToParseInstruction();
-        while (instruction != null) {
-            instructions.add(instruction);
-            instruction = tryToParseInstruction();
+        Statement statement = tryToParseInstruction();
+        while (statement != null) {
+            statements.add(statement);
+            statement = tryToParseInstruction();
         }
 
         // eventually check if EOF
-        return new Program(declarations, instructions);
+        return new Program(declarations, statements);
     }
 
-    private Instruction tryToParseInstruction() {
-        Instruction instruction = null;
+    private Statement tryToParseInstruction() {
+        Statement statement = null;
 
-        if ((instruction = tryToParseIfInstruction()) != null)
-            return instruction;
-        if ((instruction = tryToParseIfElseInstruction()) != null)
-            return instruction;
-        if ((instruction = tryToParseSwitchInstruction()) != null)
-            return instruction;
-        if ((instruction = tryToParseWhileInstruction()) != null)
-            return instruction;
-        if ((instruction = tryToParseAssignmentOrFuncCallInstruction()) != null)
-            return instruction;
+        if ((statement = tryToParseIfInstruction()) != null)
+            return statement;
+        if ((statement = tryToParseIfElseInstruction()) != null)
+            return statement;
+        if ((statement = tryToParseSwitchInstruction()) != null)
+            return statement;
+        if ((statement = tryToParseWhileInstruction()) != null)
+            return statement;
+        if ((statement = tryToParseAssignmentOrFuncCallInstruction()) != null)
+            return statement;
 
         return null;
     }
 
-    private Instruction tryToParseIfInstruction() {
-        Instruction instruction = null;
+    private Statement tryToParseIfInstruction() {
+        Statement statement = null;
         return null;
     }
 
-    private Instruction tryToParseIfElseInstruction() {
-        Instruction instruction = null;
+    private Statement tryToParseIfElseInstruction() {
+        Statement statement = null;
         return null;
     }
 
-    private Instruction tryToParseSwitchInstruction() {
-        Instruction instruction = null;
+    private Statement tryToParseSwitchInstruction() {
+        Statement statement = null;
         return null;
     }
 
-    private Instruction tryToParseWhileInstruction() {
+    private Statement tryToParseWhileInstruction() {
         if (lexer.getToken().getType() == Token.TokenType.WHILE) {
             lexer.nextToken();
 
@@ -85,19 +85,9 @@ public class Parser {
                     if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
                         lexer.nextToken();
 
-                        if (lexer.getToken().getType() == Token.TokenType.L_BRACE) {
-                            lexer.nextToken();
-
-                            Block block;
-                            if ((block = tryToParseBlock()) != null) {
-
-                                if (lexer.getToken().getType() == Token.TokenType.R_BRACE) {
-                                    lexer.nextToken();
-                                    return new While(condition, block);
-                                }
-                                //return error
-                            }
-                            //return error
+                        Block block;
+                        if ((block = tryToParseBlock()) != null) {
+                            return new While(condition, block);
                         }
                         //return error
                     }
@@ -111,17 +101,17 @@ public class Parser {
         return null;
     }
 
-    private Instruction tryToParseAssignmentOrFuncCallInstruction() {
+    private Statement tryToParseAssignmentOrFuncCallInstruction() {
         if (lexer.getToken().getType() == Token.TokenType.ID) {
             String id = ((StringToken) lexer.getToken()).getValue();
             lexer.nextToken();
 
-            Instruction instruction;
-            if ((instruction = tryToParseFuncCallInstruction(id)) != null)
-                return instruction;
+            Statement statement;
+            if ((statement = tryToParseFuncCallInstruction(id)) != null)
+                return statement;
 
-            if ((instruction = tryToParseAssignmentInstruction(id)) != null)
-                return instruction;
+            if ((statement = tryToParseAssignmentInstruction(id)) != null)
+                return statement;
 
             //throw new SyntaxError();
         }
@@ -139,13 +129,13 @@ public class Parser {
         return null;
     }
 
-    private Instruction tryToParseFuncCallInstruction(String id) {
-        Instruction instruction = null;
+    private Statement tryToParseFuncCallInstruction(String id) {
+        Statement statement = null;
         return null;
     }
 
-    private Instruction tryToParseAssignmentInstruction(String id) {
-        Instruction instruction = null;
+    private Statement tryToParseAssignmentInstruction(String id) {
+        Statement statement = null;
         return null;
     }
 

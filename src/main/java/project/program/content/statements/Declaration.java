@@ -1,4 +1,4 @@
-package project.program.content;
+package project.program.content.statements;
 
 import project.program.content.types.Type;
 
