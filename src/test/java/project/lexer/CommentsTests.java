@@ -7,6 +7,8 @@ import project.token.IntToken;
 import project.token.StringToken;
 import project.token.Token;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommentsTests {
@@ -159,7 +161,8 @@ public class CommentsTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
-        assertEquals(1, intToken.getValue());
+        BigInteger bigInteger = new BigInteger("1");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(23, lexer.getToken().getPosition());
         assertEquals(2, lexer.getToken().getPositionAtLine());
         assertEquals(2, lexer.getToken().getLineNr());
@@ -167,7 +170,8 @@ public class CommentsTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         intToken = (IntToken) lexer.getToken();
-        assertEquals(2, intToken.getValue());
+        bigInteger = new BigInteger("2");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(48, lexer.getToken().getPosition());
         assertEquals(2, lexer.getToken().getPositionAtLine());
         assertEquals(4, lexer.getToken().getLineNr());
@@ -180,16 +184,14 @@ public class CommentsTests {
     }
 
     @Test
-    void shouldRecogniseAaa() {
+    void shouldRecogniseUndefinedComment() {
         Source source = new StringSource("/* a");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
-        assertEquals(4, lexer.getToken().getPosition());
-        assertEquals(4, lexer.getToken().getPositionAtLine());
+        assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
+        assertEquals(0, lexer.getToken().getPosition());
+        assertEquals(0, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
-
-
     }
 }

@@ -8,6 +8,9 @@ import project.token.IntToken;
 import project.token.StringToken;
 import project.token.Token;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleMultipleTokensTests {
@@ -156,7 +159,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
-        assertEquals(10, intToken.getValue());
+        BigInteger bigInteger = new BigInteger("10");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(2, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
@@ -164,7 +168,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         intToken = (IntToken) lexer.getToken();
-        assertEquals(0, intToken.getValue());
+        bigInteger = new BigInteger("0");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(5, lexer.getToken().getPosition());
         assertEquals(4, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
@@ -172,7 +177,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         intToken = (IntToken) lexer.getToken();
-        assertEquals(12, intToken.getValue());
+        bigInteger = new BigInteger("12");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(7, lexer.getToken().getPosition());
         assertEquals(6, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
@@ -180,7 +186,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         intToken = (IntToken) lexer.getToken();
-        assertEquals(0, intToken.getValue());
+        bigInteger = new BigInteger("0");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(10, lexer.getToken().getPosition());
         assertEquals(9, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
@@ -188,7 +195,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         intToken = (IntToken) lexer.getToken();
-        assertEquals(1, intToken.getValue());
+        bigInteger = new BigInteger("1");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(11, lexer.getToken().getPosition());
         assertEquals(10, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
@@ -208,7 +216,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         DoubleToken doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(34.17, doubleToken.getValue());
+        BigDecimal bigDouble = new BigDecimal("34.17");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));
         assertEquals(2, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
         assertEquals(2, lexer.getToken().getLineNr());
@@ -216,7 +225,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(34.0, doubleToken.getValue());
+        bigDouble = new BigDecimal("34.0");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));
         assertEquals(11, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(4, lexer.getToken().getLineNr());
@@ -224,7 +234,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(34.05, doubleToken.getValue());
+        bigDouble = new BigDecimal("34.05");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));
         assertEquals(19, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(6, lexer.getToken().getLineNr());
@@ -232,7 +243,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(38.07080, doubleToken.getValue());
+        BigDecimal bigDecimal = new BigDecimal("38.07080");
+        assertEquals(0, bigDecimal.compareTo(doubleToken.getValue()));
         assertEquals(28, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(8, lexer.getToken().getLineNr());
@@ -252,7 +264,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         DoubleToken doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(0.0, doubleToken.getValue());
+        BigDecimal bigDouble = new BigDecimal("0.0");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
@@ -260,7 +273,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(0.1, doubleToken.getValue());
+        bigDouble = new BigDecimal("0.1");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));
         assertEquals(5, lexer.getToken().getPosition());
         assertEquals(5, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
@@ -268,7 +282,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(0.01, doubleToken.getValue());
+        bigDouble = new BigDecimal("0.01");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));
         assertEquals(11, lexer.getToken().getPosition());
         assertEquals(11, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
@@ -276,8 +291,8 @@ public class SimpleMultipleTokensTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         doubleToken = (DoubleToken) lexer.getToken();
-        assertEquals(0.001, doubleToken.getValue());
-        assertEquals(17, lexer.getToken().getPosition());
+        bigDouble = new BigDecimal("0.001");
+        assertEquals(0, bigDouble.compareTo(doubleToken.getValue()));        assertEquals(17, lexer.getToken().getPosition());
         assertEquals(17, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
     }

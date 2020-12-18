@@ -4,20 +4,10 @@ import java.io.*;
 
 public class FileSource extends Source {
 
-    private final int BUFF_LEN = 1048576;
-
-    private FileReader fr;
-    private final BufferedReader source;
-    private char[] buff;
-    private int offs;
-    private int len;
+    private final FileInputStream source;
 
     public FileSource(String filename) throws IOException {
-        fr = new FileReader(filename);
-        this.source = new BufferedReader(fr);
-        buff = new char[BUFF_LEN];
-        offs = -1;
-        len = -1;
+        this.source = new FileInputStream(filename);
         advance();
     }
 
@@ -26,24 +16,16 @@ public class FileSource extends Source {
         if (EOT)
             return;
 
-        position++;
-        offs++;
+        advancePosition();
 
-        if (offs < len) {
-            character = buff[offs];
-            return;
-        }
-
-        offs = 0;
-        len = source.read(buff, 0, BUFF_LEN);
-
-        if (offs < len) {
-            character = buff[offs];
+        int readByte = source.read();
+        if (readByte != -1) {
+            character = (char) readByte;
             return;
         }
 
         EOT = true;
         character = 0x03;
-        fr.close();
+        source.close();
     }
 }

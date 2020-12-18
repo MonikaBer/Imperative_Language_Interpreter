@@ -14,7 +14,7 @@ public class StringSource extends Source {
         if (EOT)
             return;
 
-        position++;
+        advancePosition();
 
         if (position < source.length()) {
             character = source.charAt(position);

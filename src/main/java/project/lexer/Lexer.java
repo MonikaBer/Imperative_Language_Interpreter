@@ -2,33 +2,24 @@ package project.lexer;
 
 import project.source.Source;
 import project.token.*;
-import project.types.Result;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 
 public class Lexer {
 
-    private final int MAX_ID_LENGTH = 1048576;
-    private final int MAX_STR_LENGTH = 1048576;
-    private final int MAX_NUMBER_LENGTH = 50;
-
     private final Source source;
     private Token token;
-    private int position;
-    private int lineNr;
-    private int positionAtLine;
-    private int passedCharsCount;
+    private Buffer buffer;
     private final HashMap<String, Token.TokenType> keywordsMap;
 
 
     public Lexer(Source source) {
         this.source = source;
-        token = new PrimitiveToken(Token.TokenType.UNDEFINED,-1, -1, -1);
-        position = -1;
-        lineNr = 0;
-        positionAtLine = 0;
-        passedCharsCount = 0;
+        token = new PrimitiveToken(null,-1, -1, -1);
+        buffer = new Buffer();
         keywordsMap = new HashMap<>();
 
         keywordsMap.put("true", Token.TokenType.TRUE);
@@ -48,400 +39,429 @@ public class Lexer {
         keywordsMap.put("struct", Token.TokenType.STRUCT);
     }
 
-    public Result nextToken() {
-        passedCharsCount = 0;
-
+    public void nextToken() {
         try {
-            if (!skipWhitespacesAndComments())
-                return Result.OK;
+            skipWhitespacesAndComments();
         } catch (IOException ex) {
             System.out.println("[lexer] Problem during opening/reading from/closing file source");
-            return Result.IO_ERROR;
+            return;
         }
 
-        position = source.getPosition();
+        if (token.getType() == Token.TokenType.UNDEFINED)
+            return;
 
-        if (source.isEOT()) {
-            token = new PrimitiveToken(Token.TokenType.EOT, position, lineNr, positionAtLine);
-            return Result.OK;
+        if (buffer.length() == 0 && source.isEOT()) {
+            token = new PrimitiveToken(Token.TokenType.EOT, source.getPosition(), source.getLineNr(), source.getPositionAtLine());
+            return;
         }
 
         try {
 
             if (tryToBuildIdOrKeyword())
-                return Result.OK;;
+                return;
             if (tryToBuildIntegerOrDouble())
-                return Result.OK;;
+                return;
             if (tryToBuildToBuildStringConst())
-                return Result.OK;;
+                return;
             if (tryToBuildSingleOrDoubleChar())
-                return Result.OK;;
+                return;
 
         } catch (IOException ex) {
             System.out.println("[lexer] Problem during opening/reading from/closing file source");
-            return Result.IO_ERROR;
+            return;
         }
 
-        token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-        advancePositionAtLine();
-        return Result.OK;
+        token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+        return;
     }
 
     public Token getToken() {
         return token;
     }
 
-    // returns false if DIV token found
-    private boolean skipWhitespacesAndComments() throws IOException {
+    private void skipWhitespacesAndComments() throws IOException {
         boolean isWhitespaceOrComment = true;
         while (isWhitespaceOrComment) {
-            if (Character.isWhitespace(source.getChar())) {
-                if (source.getChar() == '\n') {
-                    goToNewLineAndAdvanceSource();
-                    continue;
-                }
-                advancePositionAtLineAndSource();
+            if (Character.isWhitespace(getChar())) {
+                advance();
+                buffer.clear();
                 continue;
             }
 
-            if (source.getChar() == '#') {
-                advancePositionAtLineAndSource();
-                while (source.getChar() != '\n') {
+            if (getChar() == '#') {
+                advance();
+                while (getChar() != '\n') {
                     if (source.isEOT())
-                        return true;
-                    advancePositionAtLineAndSource();
+                        return;
+                    advance();
                 }
-                goToNewLineAndAdvanceSource();
+                advance();
+                buffer.clear();
                 continue;
             }
 
-            position = source.getPosition();
+            if (getChar() == '/') {
+                buffer.append(getChar());
+                advance();
 
-            if (source.getChar() == '/') {
-                passOneCharAndAdvanceSource();
+                if (getChar() == '/') {  // single line comment
+                    advance();
 
-                if (source.getChar() == '/') {  // single line comment
-                    advancePositionAtLineAndSource(1);
-
-                    while (source.getChar() != '\n') {
-                        if (source.isEOT())
-                            return true;
-                        advancePositionAtLineAndSource();
+                    while (getChar() != '\n') {
+                        if (source.isEOT()) {
+                            buffer.clear();
+                            return;
+                        }
+                        advance();
                     }
-                    goToNewLineAndAdvanceSource();
+                    advance();
+                    buffer.clear();
                     continue;
                 }
-                else if (source.getChar() == '*') {  // multilinear comment
-                    advancePositionAtLineAndSource(1);
+                else if (getChar() == '*') {  // multilinear comment
+                    buffer.append(getChar());
+                    advance();
 
                     boolean ifInsideMultilinearComment = true;
                     while (ifInsideMultilinearComment) {
-                        if (source.isEOT())
-                            return true;
+                        if (source.isEOT()) {
+                            token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                            buffer.clearReadPart();
+                            return;
+                        }
 
-                        if (source.getChar() != '*') {
-                            if (source.getChar() == '\n') {
-                                goToNewLineAndAdvanceSource();
+                        if (getChar() == '*') {
+                            buffer.append(getChar());
+                            advance();
+                            if (getChar() == '/') {
+                                advance();
+                                ifInsideMultilinearComment = false;
+                                buffer.clear();
                                 continue;
                             }
-                            advancePositionAtLineAndSource();
                             continue;
                         }
 
-                        // character is '*'
-                        advancePositionAtLineAndSource();
-                        if (source.getChar() != '/') {
-                            if (source.getChar() == '\n') {
-                                goToNewLine();
-                            }
-                            continue;
-                        }
-
-                        // another character is '/'
-                        advancePositionAtLineAndSource();
-                        ifInsideMultilinearComment = false;
+                        // character is not '*'
+                        buffer.append(getChar());
+                        advance();
+                        continue;
                     }
+                    buffer.clear();
                     continue;
                 }
-                else {  // div token found
-                    token = new PrimitiveToken(Token.TokenType.DIV, position, lineNr, positionAtLine);
-                    advancePositionAtLine();
-                    return false;
-                }
+
+                // it is not comment or whitespace
+                return;
             }
 
             isWhitespaceOrComment = false;
         }
-
-        return true;
     }
 
     private boolean tryToBuildIdOrKeyword() throws IOException {
-        if (!Character.isLetter(source.getChar()) && source.getChar() != '_')
+        buffer.resetIdx();
+        if (!Character.isLetter(getChar()) && getChar() != '_')
             return false;
 
-        StringBuilder builder = new StringBuilder();
-        appendBuilderAndPassOneCharAndAdvanceSource(builder);
-        while ((Character.isLetterOrDigit(source.getChar()) || source.getChar() == '_')) {
-            if (builder.length() >= MAX_ID_LENGTH) {
-                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                advancePositionAtLine();
-                return true;
-            }
-            appendBuilderAndPassOneCharAndAdvanceSource(builder);
+        buffer.append(getChar());
+        advance();
+
+        while ((Character.isLetterOrDigit(getChar()) || getChar() == '_')) {
+            buffer.append(getChar());
+            advance();
         }
 
-        if (keywordsMap.containsKey(builder.toString())) {
-            token = new PrimitiveToken(keywordsMap.get(builder.toString()), position, lineNr, positionAtLine);
-            advancePositionAtLine();
+
+        if (keywordsMap.containsKey(buffer.get())) {
+            token = new PrimitiveToken(keywordsMap.get(buffer.get()), source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+            buffer.clearReadPart();
             return true;
         }
 
-        token = new StringToken(Token.TokenType.ID, position, lineNr, positionAtLine, builder.toString());
-        advancePositionAtLine();
-
+        token = new StringToken(Token.TokenType.ID, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx(), buffer.get());
+        buffer.clearReadPart();
         return true;
     }
 
     private boolean tryToBuildIntegerOrDouble() throws IOException {
-        if (!Character.isDigit(source.getChar()))
+        buffer.resetIdx();
+        if (!Character.isDigit(getChar()))
             return false;
 
-        StringBuilder builder = new StringBuilder();
-
         // 0...
-        if (source.getChar() == '0') {
-            appendBuilderAndPassOneCharAndAdvanceSource(builder);
+        if (getChar() == '0') {
+            buffer.append(getChar());
+            advance();
 
             // integer -> 0
-            if (source.getChar() != '.') {
+            if (getChar() != '.') {
                 try {
-                    int intNumber = Integer.parseInt(builder.toString());
-                    token = new IntToken(Token.TokenType.INT_NUMBER, position, lineNr, positionAtLine, intNumber);
+                    BigInteger intNumber = new BigInteger(buffer.get());
+                    token = new IntToken(Token.TokenType.INT_NUMBER, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx(), intNumber);
                 } catch (NumberFormatException ex) {
-                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             }
 
             // double -> 0. ...
-            tryToBuildFraction(builder);
+            tryToBuildFraction();
             return true;
         }
 
         // [1-9]...
-        while (Character.isDigit(source.getChar())) {
-            if (builder.length() >= MAX_NUMBER_LENGTH) {
-                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                advancePositionAtLine();
-                return true;
-            }
-            appendBuilderAndPassOneCharAndAdvanceSource(builder);
+        while (Character.isDigit(getChar())) {
+            buffer.append(getChar());
+            advance();
         }
 
         // integer
-        if (source.getChar() != '.') {
+        if (getChar() != '.') {
             try {
-                int intNumber = Integer.parseInt(builder.toString());
-                token = new IntToken(Token.TokenType.INT_NUMBER, position, lineNr, positionAtLine, intNumber);
+                BigInteger intNumber = new BigInteger(buffer.get());
+                token = new IntToken(Token.TokenType.INT_NUMBER, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx(), intNumber);
             } catch (NumberFormatException ex) {
-                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
             }
-            advancePositionAtLine();
+            buffer.clearReadPart();
             return true;
         }
 
         // double -> integer. ...
-        tryToBuildFraction(builder);
+        tryToBuildFraction();
         return true;
     }
 
-    private void tryToBuildFraction(StringBuilder builder) throws IOException {
-        appendBuilderAndPassOneCharAndAdvanceSource(builder);
+    private void tryToBuildFraction() throws IOException {
+        buffer.append(getChar());
+        advance();
 
-        if (Character.isDigit(source.getChar())) {
-            appendBuilderAndPassOneCharAndAdvanceSource(builder);
+        if (Character.isDigit(getChar())) {
+            buffer.append(getChar());
+            advance();
         } else {
-            token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-            advancePositionAtLine();
+            token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+            buffer.clearReadPart();
             return;
         }
 
-        while (Character.isDigit(source.getChar())) {
-            if (builder.length() >= MAX_NUMBER_LENGTH) {
-                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                advancePositionAtLine();
-                return;
-            }
-            appendBuilderAndPassOneCharAndAdvanceSource(builder);
+        while (Character.isDigit(getChar())) {
+            buffer.append(getChar());
+            advance();
         }
 
         try {
-            double doubleNumber = Double.parseDouble(builder.toString());
-            token = new DoubleToken(Token.TokenType.DOUBLE_NUMBER, position, lineNr, positionAtLine, doubleNumber);
+            BigDecimal doubleNumber = new BigDecimal(buffer.get());
+            token = new DoubleToken(Token.TokenType.DOUBLE_NUMBER, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx(), doubleNumber);
         } catch (NumberFormatException ex) {
-            token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
+            token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.toString().length());
         }
-
-        advancePositionAtLine();
+        buffer.clearReadPart();
     }
 
     private boolean tryToBuildToBuildStringConst() throws IOException {
+        buffer.resetIdx();
         boolean isSingleQuote;
 
-        if (source.getChar() == '"') {
+        if (getChar() == '"') {
             isSingleQuote = false;
-        } else if (source.getChar() == '\'') {
+        } else if (getChar() == '\'') {
             isSingleQuote = true;
         } else {
             return false;
         }
 
-        StringBuilder builder = new StringBuilder();
-        passOneCharAndAdvanceSource();
+        advance();
 
-        while (source.getChar() != '"' && source.getChar() != '\'') {
-            if (builder.length() >= MAX_STR_LENGTH) {
-                token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-                advancePositionAtLine();
+        while (getChar() != '"' && getChar() != '\'') {
+            if (getChar() == '\n' || source.isEOT()) {
+                token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx() - 1, source.getLineNr(), source.getPositionAtLine() - buffer.getIdx() - 1);
+                buffer.clearReadPart();
+                advance();
                 return true;
             }
-            appendBuilderAndPassOneCharAndAdvanceSource(builder);
+            buffer.append(getChar());
+            advance();
         }
 
-        if ((source.getChar() == '"' && !isSingleQuote) || (source.getChar() == '\'' && isSingleQuote)) {
-            token = new StringToken(Token.TokenType.TEXT, position, lineNr, positionAtLine, builder.toString());
+        if ((getChar() == '"' && !isSingleQuote) || (getChar() == '\'' && isSingleQuote)) {
             advance();
+            token = new StringToken(Token.TokenType.TEXT, source.getPosition() - buffer.getIdx() - 2, source.getLineNr(), source.getPositionAtLine() - buffer.getIdx() - 2, buffer.get());
+            buffer.clearReadPart();
             return true;
         }
 
-        token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
-        advancePositionAtLine();
+        token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx() - 2, source.getLineNr(), source.getPositionAtLine() - buffer.getIdx() - 2);
+        buffer.clearReadPart();
         return true;
     }
 
     private boolean tryToBuildSingleOrDoubleChar() throws IOException {
-        switch (source.getChar()) {
+        buffer.resetIdx();
+        switch (getChar()) {
             case '(':
-                token = new PrimitiveToken(Token.TokenType.L_PARENTH, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.L_PARENTH, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case ')':
-                token = new PrimitiveToken(Token.TokenType.R_PARENTH, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.R_PARENTH, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case '{':
-                token = new PrimitiveToken(Token.TokenType.L_BRACE, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.L_BRACE, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case '}':
-                token = new PrimitiveToken(Token.TokenType.R_BRACE, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.R_BRACE, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case '=':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '=') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.EQ, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '=') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.EQ, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.ASSIGN, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.ASSIGN, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '+':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '+') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.POSTINC, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '+') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.POSTINC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.PLUS, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.PLUS, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '-':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '-') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.POSTDEC, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '-') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.POSTDEC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.MINUS, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.MINUS, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '*':
-                token = new PrimitiveToken(Token.TokenType.MUL, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.MUL, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
+                return true;
+            case '/':
+                buffer.append(getChar());
+                advance();
+                token = new PrimitiveToken(Token.TokenType.DIV, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case '%':
-                token = new PrimitiveToken(Token.TokenType.MOD, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.MOD, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case '>':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '=') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.GEQT, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '=') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.GEQT, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.GT, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.GT, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '<':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '=') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.LEQT, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '=') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.LEQT, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.LT, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.LT, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '!':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '=') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.NEQ, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '=') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.NEQ, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.NEGATION, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.NEGATION, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '|':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '|') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.ALTERNATIVE, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '|') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.ALTERNATIVE, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case '&':
-                passOneCharAndAdvanceSource();
-                if (source.getChar() == '&') {
-                    passOneCharAndAdvanceSource();
-                    token = new PrimitiveToken(Token.TokenType.CONJUNCTION, position, lineNr, positionAtLine);
+                buffer.append(getChar());
+                advance();
+                if (getChar() == '&') {
+                    buffer.append(getChar());
+                    advance();
+                    token = new PrimitiveToken(Token.TokenType.CONJUNCTION, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
-                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, position, lineNr, positionAtLine);
+                    token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
-                advancePositionAtLine();
+                buffer.clearReadPart();
                 return true;
             case ';':
-                token = new PrimitiveToken(Token.TokenType.SEMICOLON, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.SEMICOLON, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case '.':
-                token = new PrimitiveToken(Token.TokenType.DOT, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.DOT, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case ',':
-                token = new PrimitiveToken(Token.TokenType.COMMA, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.COMMA, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             case ':':
-                token = new PrimitiveToken(Token.TokenType.COLON, position, lineNr, positionAtLine);
+                buffer.append(getChar());
                 advance();
+                token = new PrimitiveToken(Token.TokenType.COLON, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                buffer.clearReadPart();
                 return true;
             default:;
         }
@@ -449,46 +469,19 @@ public class Lexer {
         return false;
     }
 
-    private void advancePositionAtLine() {
-        positionAtLine += passedCharsCount;
-        passedCharsCount = 0;
-    }
+    private char getChar() {
+        char character = buffer.getChar();
+        if (character != 0x03)
+            return character;
 
-    private void passOneCharAndAdvanceSource() throws IOException {
-        ++passedCharsCount;
-        source.advance();
+        return source.getChar();
     }
 
     private void advance() throws IOException {
-        passOneCharAndAdvanceSource();
-        advancePositionAtLine();
-    }
-
-    private void advancePositionAtLineAndSource(int number) throws IOException {
-        positionAtLine += passedCharsCount + number;
-        passedCharsCount = 0;
+        if (buffer.getIdx() < buffer.length()) {
+            buffer.incrementIdx();
+            return;
+        }
         source.advance();
-    }
-
-    private void appendBuilderAndPassOneCharAndAdvanceSource(StringBuilder builder) throws IOException {
-        builder.append(source.getChar());
-        ++passedCharsCount;
-        source.advance();
-    }
-
-    private void advancePositionAtLineAndSource() throws IOException {
-        ++positionAtLine;
-        source.advance();
-    }
-
-    private void goToNewLineAndAdvanceSource() throws IOException {
-        ++lineNr;
-        positionAtLine = 0;
-        source.advance();
-    }
-
-    private void goToNewLine() {
-        ++lineNr;
-        positionAtLine = 0;
     }
 }

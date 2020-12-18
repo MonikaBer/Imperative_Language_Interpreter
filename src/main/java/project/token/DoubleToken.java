@@ -1,15 +1,17 @@
 package project.token;
 
+import java.math.BigDecimal;
+
 public class DoubleToken extends Token {
 
-    private final double value;
+    private final BigDecimal value;
 
-    public DoubleToken(TokenType type, int position, int lineNr, int positionAtLine, double value) {
+    public DoubleToken(TokenType type, int position, int lineNr, int positionAtLine, BigDecimal value) {
         super(type, position, lineNr, positionAtLine);
         this.value = value;
     }
 
-    public double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 }

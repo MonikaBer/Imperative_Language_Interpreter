@@ -7,6 +7,8 @@ import project.token.IntToken;
 import project.token.StringToken;
 import project.token.Token;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SingleTokenTests {
@@ -73,53 +75,53 @@ public class SingleTokenTests {
 
     @Test
     void shouldRecogniseSingleDoubleQuoteTextToken() {
-        Source source = new StringSource("\n \t \"some\n text\" \t \n \r");
+        Source source = new StringSource("\n \t \"some\\n text\" \t \n \r");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("some\n text", stringToken.getValue());
+        assertEquals("some\\n text", stringToken.getValue());
         assertEquals(4, lexer.getToken().getPosition());
         assertEquals(3, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
-        assertEquals(22, lexer.getToken().getPosition());
+        assertEquals(23, lexer.getToken().getPosition());
         assertEquals(2, lexer.getToken().getPositionAtLine());
         assertEquals(2, lexer.getToken().getLineNr());
     }
 
     @Test
     void shouldRecogniseSingleDoubleQuoteTextTokenWithWhitespaces() {
-        Source source = new StringSource("\n \t \"some\n text\" \r  ");
+        Source source = new StringSource("\n \t \"some\\n text\" \r  ");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("some\n text", stringToken.getValue());
+        assertEquals("some\\n text", stringToken.getValue());
         assertEquals(4, lexer.getToken().getPosition());
         assertEquals(3, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
-        assertEquals(20, lexer.getToken().getPosition());
-        assertEquals(19, lexer.getToken().getPositionAtLine());
+        assertEquals(21, lexer.getToken().getPosition());
+        assertEquals(20, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
     }
 
     @Test
     void shouldRecogniseMultipleApostropheTextTokens() {
-        Source source = new StringSource("\'txt1\n\' \'txt2\n\' \'txt3\n\'");
+        Source source = new StringSource("'txt1\\n' 'txt2\\n' 'txt3\\n'");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("txt1\n", stringToken.getValue());
+        assertEquals("txt1\\n", stringToken.getValue());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
@@ -127,23 +129,23 @@ public class SingleTokenTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         stringToken = (StringToken) lexer.getToken();
-        assertEquals("txt2\n", stringToken.getValue());
-        assertEquals(8, lexer.getToken().getPosition());
-        assertEquals(8, lexer.getToken().getPositionAtLine());
+        assertEquals("txt2\\n", stringToken.getValue());
+        assertEquals(9, lexer.getToken().getPosition());
+        assertEquals(9, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         stringToken = (StringToken) lexer.getToken();
-        assertEquals("txt3\n", stringToken.getValue());
-        assertEquals(16, lexer.getToken().getPosition());
-        assertEquals(16, lexer.getToken().getPositionAtLine());
+        assertEquals("txt3\\n", stringToken.getValue());
+        assertEquals(18, lexer.getToken().getPosition());
+        assertEquals(18, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
-        assertEquals(23, lexer.getToken().getPosition());
-        assertEquals(23, lexer.getToken().getPositionAtLine());
+        assertEquals(26, lexer.getToken().getPosition());
+        assertEquals(26, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
     }
 
@@ -191,7 +193,8 @@ public class SingleTokenTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
-        assertEquals(2578, intToken.getValue());
+        BigInteger bigInteger = new BigInteger("2578");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(3, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
         assertEquals(3, lexer.getToken().getLineNr());
@@ -211,7 +214,8 @@ public class SingleTokenTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
-        assertEquals(2578, intToken.getValue());
+        BigInteger bigInteger = new BigInteger("2578");
+        assertEquals(0, bigInteger.compareTo(intToken.getValue()));
         assertEquals(22, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(2, lexer.getToken().getLineNr());
