@@ -1,5 +1,4 @@
 package project.program.content.statements;
 
-public class Statement {
-
+public abstract class Statement {
 }

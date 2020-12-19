@@ -1,5 +1,6 @@
 package project.program.content.types;
 
-public class DoubleType extends NumericalType {
+import java.math.BigDecimal;
 
+public class DoubleType extends NumericalType {
 }

@@ -6,7 +6,6 @@ import project.program.content.statements.Declaration;
 import project.program.content.statements.Statement;
 import project.program.content.statements.While;
 import project.program.content.statements.Block;
-import project.program.content.statements.Condition;
 import project.token.StringToken;
 import project.token.Token;
 

@@ -1,5 +1,6 @@
 package project.program.content.types;
 
-public class IntType extends NumericalType {
+import java.math.BigInteger;
 
+public class IntType extends NumericalType {
 }

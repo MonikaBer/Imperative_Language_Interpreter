@@ -1,4 +1,4 @@
 package project.program.content.types;
 
-public abstract class Type {
+public class VoidType extends Type {
 }

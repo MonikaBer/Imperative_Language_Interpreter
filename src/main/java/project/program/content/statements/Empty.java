@@ -1,5 +1,4 @@
 package project.program.content.statements;
 
-public class FuncCall extends Statement {
-
+public class Empty extends Statement {
 }
