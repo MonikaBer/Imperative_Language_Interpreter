@@ -25,7 +25,7 @@ public class Main {
 	private static void fileSourceTest() {
 		Source source = null;
 		try {
-			source = new FileSource("mainTest");
+			source = new FileSource("test_sources/mainTest");
 		} catch (IOException ex) {
 			System.out.println("Error: " + ex.getMessage());
 		}

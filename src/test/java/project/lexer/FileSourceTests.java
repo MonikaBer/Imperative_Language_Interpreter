@@ -17,7 +17,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseNumberMinusOne() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source");
+        Source source = new FileSource("test_sources/test_source");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -65,7 +65,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseNumberMinusEleven() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source2");
+        Source source = new FileSource("test_sources/test_source2");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -116,7 +116,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseErrorInDoubleQuoteString() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source3");
+        Source source = new FileSource("test_sources/test_source3");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -128,7 +128,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseErrorInSingleQuoteString() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source4");
+        Source source = new FileSource("test_sources/test_source4");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -140,7 +140,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseSlashSlashNInDoubleQuoteString() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source5");
+        Source source = new FileSource("test_sources/test_source5");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -154,7 +154,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseSlashNInDoubleQuoteString() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source6");
+        Source source = new FileSource("test_sources/test_source6");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -168,7 +168,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseSlashSlashNInSingleQuoteString() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source7");
+        Source source = new FileSource("test_sources/test_source7");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
@@ -182,7 +182,7 @@ public class FileSourceTests {
 
     @Test
     void shouldRecogniseSlashNInSingleQuoteString() throws IOException, FileSourceReadException {
-        Source source = new FileSource("test_source8");
+        Source source = new FileSource("test_sources/test_source8");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
