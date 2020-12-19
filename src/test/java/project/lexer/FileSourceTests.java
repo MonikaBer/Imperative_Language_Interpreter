@@ -1,6 +1,7 @@
 package project.lexer;
 
 import org.junit.jupiter.api.Test;
+import project.exceptions.FileSourceReadException;
 import project.source.FileSource;
 import project.source.Source;
 import project.token.IntToken;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FileSourceTests {
 
     @Test
-    void shouldRecogniseNumberMinusOne() throws IOException {
+    void shouldRecogniseNumberMinusOne() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source");
         Lexer lexer = new Lexer(source);
 
@@ -63,7 +64,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseNumberMinusEleven() throws IOException {
+    void shouldRecogniseNumberMinusEleven() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source2");
         Lexer lexer = new Lexer(source);
 
@@ -114,7 +115,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseErrorInDoubleQuoteString() throws IOException {
+    void shouldRecogniseErrorInDoubleQuoteString() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source3");
         Lexer lexer = new Lexer(source);
 
@@ -126,7 +127,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseErrorInSingleQuoteString() throws IOException {
+    void shouldRecogniseErrorInSingleQuoteString() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source4");
         Lexer lexer = new Lexer(source);
 
@@ -138,7 +139,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseSlashSlashNInDoubleQuoteString() throws IOException {
+    void shouldRecogniseSlashSlashNInDoubleQuoteString() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source5");
         Lexer lexer = new Lexer(source);
 
@@ -152,7 +153,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseSlashNInDoubleQuoteString() throws IOException {
+    void shouldRecogniseSlashNInDoubleQuoteString() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source6");
         Lexer lexer = new Lexer(source);
 
@@ -166,7 +167,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseSlashSlashNInSingleQuoteString() throws IOException {
+    void shouldRecogniseSlashSlashNInSingleQuoteString() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source7");
         Lexer lexer = new Lexer(source);
 
@@ -180,7 +181,7 @@ public class FileSourceTests {
     }
 
     @Test
-    void shouldRecogniseSlashNInSingleQuoteString() throws IOException {
+    void shouldRecogniseSlashNInSingleQuoteString() throws IOException, FileSourceReadException {
         Source source = new FileSource("test_source8");
         Lexer lexer = new Lexer(source);
 

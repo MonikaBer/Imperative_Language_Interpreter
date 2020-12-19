@@ -1,7 +1,5 @@
 package project.source;
 
-import java.io.IOException;
-
 public interface ISource {
 
     boolean isEOT();
@@ -9,5 +7,5 @@ public interface ISource {
     int getPosition();
     int getLineNr();
     int getPositionAtLine();
-    void advance() throws IOException;
+    void advance();
 }

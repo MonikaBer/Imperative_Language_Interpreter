@@ -1,5 +1,7 @@
 package project.source;
 
+import project.exceptions.FileSourceReadException;
+
 import java.io.*;
 
 public class FileSource extends Source {
@@ -12,20 +14,28 @@ public class FileSource extends Source {
     }
 
     @Override
-    public void advance() throws IOException {
+    public void advance() {
         if (EOT)
             return;
 
         advancePosition();
 
-        int readByte = source.read();
-        if (readByte != -1) {
-            character = (char) readByte;
-            return;
+        try {
+            int readByte = source.read();
+            if (readByte != -1) {
+                character = (char) readByte;
+                return;
+            }
+        } catch (IOException ex) {
+            throw new FileSourceReadException();
         }
 
         EOT = true;
         character = 0x03;
-        source.close();
+        try {
+            source.close();
+        } catch (IOException ex) {
+            System.out.println("Problem with closing file source");
+        }
     }
 }

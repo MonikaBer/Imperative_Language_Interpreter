@@ -3,7 +3,6 @@ package project.lexer;
 import project.source.Source;
 import project.token.*;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -40,12 +39,7 @@ public class Lexer {
     }
 
     public void nextToken() {
-        try {
-            skipWhitespacesAndComments();
-        } catch (IOException ex) {
-            System.out.println("[lexer] Problem during opening/reading from/closing file source");
-            return;
-        }
+        skipWhitespacesAndComments();
 
         if (token.getType() == Token.TokenType.UNDEFINED)
             return;
@@ -55,31 +49,23 @@ public class Lexer {
             return;
         }
 
-        try {
-
-            if (tryToBuildIdOrKeyword())
-                return;
-            if (tryToBuildIntegerOrDouble())
-                return;
-            if (tryToBuildToBuildStringConst())
-                return;
-            if (tryToBuildSingleOrDoubleChar())
-                return;
-
-        } catch (IOException ex) {
-            System.out.println("[lexer] Problem during opening/reading from/closing file source");
+        if (tryToBuildIdOrKeyword())
             return;
-        }
+        if (tryToBuildIntegerOrDouble())
+            return;
+        if (tryToBuildToBuildStringConst())
+            return;
+        if (tryToBuildSingleOrDoubleChar())
+            return;
 
         token = new PrimitiveToken(Token.TokenType.UNDEFINED, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
-        return;
     }
 
     public Token getToken() {
         return token;
     }
 
-    private void skipWhitespacesAndComments() throws IOException {
+    private void skipWhitespacesAndComments() {
         boolean isWhitespaceOrComment = true;
         while (isWhitespaceOrComment) {
             if (Character.isWhitespace(getChar())) {
@@ -159,7 +145,7 @@ public class Lexer {
         }
     }
 
-    private boolean tryToBuildIdOrKeyword() throws IOException {
+    private boolean tryToBuildIdOrKeyword() {
         buffer.resetIdx();
         if (!Character.isLetter(getChar()) && getChar() != '_')
             return false;
@@ -184,7 +170,7 @@ public class Lexer {
         return true;
     }
 
-    private boolean tryToBuildIntegerOrDouble() throws IOException {
+    private boolean tryToBuildIntegerOrDouble() {
         buffer.resetIdx();
         if (!Character.isDigit(getChar()))
             return false;
@@ -234,7 +220,7 @@ public class Lexer {
         return true;
     }
 
-    private void tryToBuildFraction() throws IOException {
+    private void tryToBuildFraction() {
         buffer.append(getChar());
         advance();
 
@@ -261,7 +247,7 @@ public class Lexer {
         buffer.clearReadPart();
     }
 
-    private boolean tryToBuildToBuildStringConst() throws IOException {
+    private boolean tryToBuildToBuildStringConst() {
         buffer.resetIdx();
         boolean isSingleQuote;
 
@@ -298,7 +284,7 @@ public class Lexer {
         return true;
     }
 
-    private boolean tryToBuildSingleOrDoubleChar() throws IOException {
+    private boolean tryToBuildSingleOrDoubleChar() {
         buffer.resetIdx();
         switch (getChar()) {
             case '(':
@@ -477,7 +463,7 @@ public class Lexer {
         return source.getChar();
     }
 
-    private void advance() throws IOException {
+    private void advance() {
         if (buffer.getIdx() < buffer.length()) {
             buffer.incrementIdx();
             return;
