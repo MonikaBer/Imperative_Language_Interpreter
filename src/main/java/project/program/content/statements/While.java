@@ -5,18 +5,18 @@ import project.program.content.statements.expressions.boolExpressions.BoolExpres
 public class While extends Statement {
 
     private final BoolExpression condition;
-    private final Statement statement;
+    private final Statement stmt;
 
-    public While(BoolExpression condition, Statement statement) {
+    public While(BoolExpression condition, Statement stmt) {
         this.condition = condition;
-        this.statement = statement;
+        this.stmt = stmt;
     }
 
     public BoolExpression getCondition() {
         return condition;
     }
 
-    public Statement getStatement() {
-        return statement;
+    public Statement getStmt() {
+        return stmt;
     }
 }

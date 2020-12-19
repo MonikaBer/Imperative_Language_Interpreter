@@ -33,32 +33,32 @@ public class Switch extends Statement {
 class Case {
 
     private final Expression expression;
-    private final Statement statement;
+    private final Statement stmt;
 
-    public Case(Expression expression, Statement statement) {
+    public Case(Expression expression, Statement stmt) {
         this.expression = expression;
-        this.statement = statement;
+        this.stmt = stmt;
     }
 
     public Expression getExpression() {
         return expression;
     }
 
-    public Statement getStatement() {
-        return statement;
+    public Statement getStmt() {
+        return stmt;
     }
 }
 
 
 class Default {
 
-    private final Statement statement;
+    private final Statement stmt;
 
-    public Default(Statement statement) {
-        this.statement = statement;
+    public Default(Statement stmt) {
+        this.stmt = stmt;
     }
 
-    public Statement getStatement() {
-        return statement;
+    public Statement getStmt() {
+        return stmt;
     }
 }

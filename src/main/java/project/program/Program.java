@@ -17,4 +17,16 @@ public class Program {
         this.funcDefs = funcDefs;
         this.structDefs = structDefs;
     }
+
+    public ArrayList<Declaration> getDeclarations() {
+        return declarations;
+    }
+
+    public ArrayList<FuncDef> getFuncDefs() {
+        return funcDefs;
+    }
+
+    public ArrayList<StructDef> getStructDefs() {
+        return structDefs;
+    }
 }

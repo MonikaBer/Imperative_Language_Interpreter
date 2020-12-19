@@ -1,26 +1,28 @@
 package project.program.content.statements;
 
+import project.program.content.statements.expressions.boolExpressions.BoolExpression;
+
 public class IfElse extends Statement {
 
-    private final Condition condition;
-    private final Statement ifStatement;
-    private final Statement elseStatement;
+    private final BoolExpression condition;
+    private final Statement ifStmt;
+    private final Statement elseStmt;
 
-    public IfElse(Condition condition, Statement ifStatement, Statement elseStatement) {
+    public IfElse(BoolExpression condition, Statement ifStmt, Statement elseStmt) {
         this.condition = condition;
-        this.ifStatement = ifStatement;
-        this.elseStatement = elseStatement;
+        this.ifStmt = ifStmt;
+        this.elseStmt = elseStmt;
     }
 
-    public Condition getCondition() {
+    public BoolExpression getCondition() {
         return condition;
     }
 
-    public Statement getIfStatement() {
-        return ifStatement;
+    public Statement getIfStmt() {
+        return ifStmt;
     }
 
-    public Statement getElseStatement() {
-        return elseStatement;
+    public Statement getElseStmt() {
+        return elseStmt;
     }
 }

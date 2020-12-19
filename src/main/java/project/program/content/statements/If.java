@@ -1,20 +1,22 @@
 package project.program.content.statements;
 
+import project.program.content.statements.expressions.boolExpressions.BoolExpression;
+
 public class If extends Statement {
 
-    private final Condition condition;
-    private final Statement statement;
+    private final BoolExpression condition;
+    private final Statement stmt;
 
-    public If(Condition condition, Statement statement) {
+    public If(BoolExpression condition, Statement stmt) {
         this.condition = condition;
-        this.statement = statement;
+        this.stmt = stmt;
     }
 
-    public Condition getCondition() {
+    public BoolExpression getCondition() {
         return condition;
     }
 
-    public Statement getStatement() {
-        return statement;
+    public Statement getStmt() {
+        return stmt;
     }
 }

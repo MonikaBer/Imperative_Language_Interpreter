@@ -1,11 +1,14 @@
 package project.parser;
 
+import project.exceptions.SyntaxError;
 import project.lexer.Lexer;
 import project.program.Program;
+import project.program.content.FuncDef;
+import project.program.content.StructDef;
 import project.program.content.statements.Declaration;
 import project.program.content.statements.Statement;
 import project.program.content.statements.While;
-import project.program.content.statements.Block;
+import project.program.content.statements.expressions.boolExpressions.BoolExpression;
 import project.token.StringToken;
 import project.token.Token;
 
@@ -21,126 +24,146 @@ public class Parser {
 
     public Program ParseProgram() {
         ArrayList<Declaration> declarations = new ArrayList<>();
-        ArrayList<Statement> statements = new ArrayList<>();
+        ArrayList<FuncDef> funcDefs = new ArrayList<>();
+        ArrayList<StructDef> structDefs = new ArrayList<>();
 
-        Declaration declaration = tryToParseDeclaration();
-        while (declaration != null) {
-            declarations.add(declaration);
+        Declaration declaration;
+        FuncDef funcDef;
+        StructDef structDef;
+
+        while (lexer.getToken().getType() != Token.TokenType.EOT) {
             declaration = tryToParseDeclaration();
+            if (declaration != null)
+                declarations.add(declaration);
+
+            funcDef = tryToParseFuncDef();
+            if (funcDef != null)
+                funcDefs.add(funcDef);
+
+            structDef = tryToParseStructDef();
+            if (structDef != null)
+                structDefs.add(structDef);
         }
 
-        Statement statement = tryToParseInstruction();
-        while (statement != null) {
-            statements.add(statement);
-            statement = tryToParseInstruction();
-        }
-
-        // eventually check if EOF
-        return new Program(declarations, statements);
-    }
-
-    private Statement tryToParseInstruction() {
-        Statement statement = null;
-
-        if ((statement = tryToParseIfInstruction()) != null)
-            return statement;
-        if ((statement = tryToParseIfElseInstruction()) != null)
-            return statement;
-        if ((statement = tryToParseSwitchInstruction()) != null)
-            return statement;
-        if ((statement = tryToParseWhileInstruction()) != null)
-            return statement;
-        if ((statement = tryToParseAssignmentOrFuncCallInstruction()) != null)
-            return statement;
-
-        return null;
-    }
-
-    private Statement tryToParseIfInstruction() {
-        Statement statement = null;
-        return null;
-    }
-
-    private Statement tryToParseIfElseInstruction() {
-        Statement statement = null;
-        return null;
-    }
-
-    private Statement tryToParseSwitchInstruction() {
-        Statement statement = null;
-        return null;
-    }
-
-    private Statement tryToParseWhileInstruction() {
-        if (lexer.getToken().getType() == Token.TokenType.WHILE) {
-            lexer.nextToken();
-
-            if (lexer.getToken().getType() == Token.TokenType.L_PARENTH) {
-                lexer.nextToken();
-
-                Condition condition;
-                if ((condition = tryToParseCondition()) != null) {
-
-                    if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
-                        lexer.nextToken();
-
-                        Block block;
-                        if ((block = tryToParseBlock()) != null) {
-                            return new While(condition, block);
-                        }
-                        //return error
-                    }
-                    //return error
-                }
-                //return error
-            }
-            //return error
-        }
-
-        return null;
-    }
-
-    private Statement tryToParseAssignmentOrFuncCallInstruction() {
-        if (lexer.getToken().getType() == Token.TokenType.ID) {
-            String id = ((StringToken) lexer.getToken()).getValue();
-            lexer.nextToken();
-
-            Statement statement;
-            if ((statement = tryToParseFuncCallInstruction(id)) != null)
-                return statement;
-
-            if ((statement = tryToParseAssignmentInstruction(id)) != null)
-                return statement;
-
-            //throw new SyntaxError();
-        }
-
-        return null;
-    }
-
-    private Condition tryToParseCondition() {
-        Condition condition = null;
-        return null;
-    }
-
-    private Block tryToParseBlock() {
-        Block block = null;
-        return null;
-    }
-
-    private Statement tryToParseFuncCallInstruction(String id) {
-        Statement statement = null;
-        return null;
-    }
-
-    private Statement tryToParseAssignmentInstruction(String id) {
-        Statement statement = null;
-        return null;
+        return new Program(declarations, funcDefs, structDefs);
     }
 
     private Declaration tryToParseDeclaration() {
         Declaration declaration = null;
 
         return null;
+    }
+
+    private FuncDef tryToParseFuncDef() {
+        FuncDef funcDef = null;
+
+        return null;
+    }
+
+    private StructDef tryToParseStructDef() {
+        StructDef structDef = null;
+
+        return null;
+    }
+
+    private Statement tryToParseStatement() {
+        Statement statement = null;
+
+        if ((statement = tryToParseIfStatement()) != null)
+            return statement;
+        if ((statement = tryToParseIfElseStatement()) != null)
+            return statement;
+        if ((statement = tryToParseSwitchStatement()) != null)
+            return statement;
+        if ((statement = tryToParseWhileStatement()) != null)
+            return statement;
+        if ((statement = tryToParseBlockStatement()) != null)
+            return statement;
+        if ((statement = tryToParseDeclarationStatement()) != null)
+            return statement;
+        if ((statement = tryToParseEmptyStatement()) != null)
+            return statement;
+        if ((statement = tryToParseAssignmentOrFuncCallStatement()) != null)
+            return statement;
+        if ((statement = tryToParseExpressionStatement()) != null)
+            return statement;
+
+        return null;
+    }
+
+    private Statement tryToParseIfStatement() {
+    }
+
+    private Statement tryToParseIfElseStatement() {
+    }
+
+    private Statement tryToParseSwitchStatement() {
+    }
+
+    private Statement tryToParseWhileStatement() {
+        if (lexer.getToken().getType() == Token.TokenType.WHILE) {
+            lexer.nextToken();
+
+            if (lexer.getToken().getType() == Token.TokenType.L_PARENTH) {
+                lexer.nextToken();
+
+                BoolExpression condition;
+                if ((condition = tryToParseBoolExpression()) != null) {
+
+                    if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
+                        lexer.nextToken();
+
+                        Statement statement;
+                        if ((statement = tryToParseStatement()) != null) {
+                            return new While(condition, statement);
+                        }
+                    }
+                    throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No right parenthesis (after condition)");
+                }
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No left parenthesis (after while keyword)");
+        }
+
+        return null;
+    }
+
+    private Statement tryToParseBlockStatement() {
+    }
+
+    private Statement tryToParseDeclarationStatement() {
+    }
+
+    private Statement tryToParseEmptyStatement() {
+    }
+
+    private Statement tryToParseAssignmentOrFuncCallStatement() {
+        if (lexer.getToken().getType() == Token.TokenType.ID) {
+            String id = ((StringToken) lexer.getToken()).getValue();
+            lexer.nextToken();
+
+            Statement statement;
+            if ((statement = tryToParseFuncCallStatement(id)) != null)
+                return statement;
+            if ((statement = tryToParseAssignmentStatement(id)) != null)
+                return statement;
+
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "Wrong usage of identifier");
+        }
+
+        return null;
+    }
+
+    private Statement tryToParseExpressionStatement() {
+    }
+
+
+
+    private BoolExpression tryToParseBoolExpression() {
+    }
+
+    private Statement tryToParseFuncCallStatement(String id) {
+    }
+
+    private Statement tryToParseAssignmentStatement(String id) {
     }
 }
