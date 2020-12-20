@@ -1,7 +1,7 @@
 package project.program.content;
 
 import project.program.content.statements.Block;
-import project.program.content.statements.Declaration;
+import project.program.content.statements.declarations.Declaration;
 import project.program.content.types.Type;
 
 import java.util.ArrayList;

@@ -5,18 +5,18 @@ import project.program.content.statements.expressions.boolExpressions.BoolExpres
 public class If extends Statement {
 
     private final BoolExpression condition;
-    private final Statement stmt;
+    private final Statement ifStmt;
 
-    public If(BoolExpression condition, Statement stmt) {
+    public If(BoolExpression condition, Statement ifStmt) {
         this.condition = condition;
-        this.stmt = stmt;
+        this.ifStmt = ifStmt;
     }
 
     public BoolExpression getCondition() {
         return condition;
     }
 
-    public Statement getStmt() {
-        return stmt;
+    public Statement getIfStmt() {
+        return ifStmt;
     }
 }

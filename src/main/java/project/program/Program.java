@@ -2,7 +2,7 @@ package project.program;
 
 import project.program.content.FuncDef;
 import project.program.content.StructDef;
-import project.program.content.statements.Declaration;
+import project.program.content.statements.declarations.Declaration;
 
 import java.util.ArrayList;
 

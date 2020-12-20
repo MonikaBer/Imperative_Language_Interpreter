@@ -1,6 +1,6 @@
 package project.program.content.types;
 
-public class StructType extends Type {
+public class StructType extends NonVoidType {
 
     private final String name;
 

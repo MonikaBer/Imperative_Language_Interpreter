@@ -1,4 +1,4 @@
 package project.program.content.types;
 
-public class BoolType extends Type {
+public class BoolType extends NonVoidType {
 }
