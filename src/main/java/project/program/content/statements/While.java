@@ -1,18 +1,18 @@
 package project.program.content.statements;
 
-import project.program.content.statements.expressions.boolExpressions.BoolExpression;
+import project.program.content.statements.expressions.Expression;
 
 public class While extends Statement {
 
-    private final BoolExpression condition;
+    private final Expression condition;
     private final Statement stmt;
 
-    public While(BoolExpression condition, Statement stmt) {
+    public While(Expression condition, Statement stmt) {
         this.condition = condition;
         this.stmt = stmt;
     }
 
-    public BoolExpression getCondition() {
+    public Expression getCondition() {
         return condition;
     }
 

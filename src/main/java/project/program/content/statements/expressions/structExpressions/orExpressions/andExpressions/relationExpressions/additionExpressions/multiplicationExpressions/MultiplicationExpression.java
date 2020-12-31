@@ -1,0 +1,6 @@
+package project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions;
+
+import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
+
+public abstract class MultiplicationExpression extends AdditionExpression {
+}

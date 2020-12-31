@@ -1,0 +1,33 @@
+package project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions;
+
+import project.program.content.statements.expressions.Expression;
+
+import java.util.ArrayList;
+
+public class FuncCall extends SimpleExpression {
+
+    private final String funcName;
+    private final ArrayList<Expression> params;
+    private Expression result;
+
+    public FuncCall(String funcName, ArrayList<Expression> params) {
+        this.funcName = funcName;
+        this.params = params;
+    }
+
+    public String getFuncName() {
+        return funcName;
+    }
+
+    public ArrayList<Expression> getParams() {
+        return params;
+    }
+
+    public Expression getResult() {
+        return result;
+    }
+
+    public void setResult(Expression result) {
+        this.result = result;
+    }
+}

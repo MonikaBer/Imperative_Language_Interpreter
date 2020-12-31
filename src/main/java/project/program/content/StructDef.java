@@ -7,10 +7,16 @@ import java.util.ArrayList;
 
 public class StructDef extends Type {
 
+    private String name;
     private ArrayList<Declaration> body;
 
-    public StructDef(ArrayList<Declaration> body) {
+    public StructDef(String name, ArrayList<Declaration> body) {
+        this.name = name;
         this.body = body;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public ArrayList<Declaration> getBody() {

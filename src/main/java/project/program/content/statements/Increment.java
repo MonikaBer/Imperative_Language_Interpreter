@@ -1,23 +1,16 @@
 package project.program.content.statements;
 
-import project.program.content.statements.expressions.Expression;
 import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 
-public class Assignment extends Statement {
+public class Increment extends Statement {
 
-    private final Identifier identifier;
-    private final Expression expression;
+    private Identifier identifier;
 
-    public Assignment(Identifier identifier, Expression expression) {
+    public Increment(Identifier identifier) {
         this.identifier = identifier;
-        this.expression = expression;
     }
 
     public Identifier getIdentifier() {
         return identifier;
-    }
-
-    public Expression getExpression() {
-        return expression;
     }
 }
