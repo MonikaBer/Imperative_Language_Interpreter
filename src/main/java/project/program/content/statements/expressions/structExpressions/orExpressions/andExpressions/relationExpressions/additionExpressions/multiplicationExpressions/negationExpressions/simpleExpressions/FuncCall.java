@@ -6,16 +6,16 @@ import java.util.ArrayList;
 
 public class FuncCall extends SimpleExpression {
 
-    private final String funcName;
+    private final Identifier funcName;
     private final ArrayList<Expression> params;
     private Expression result;
 
-    public FuncCall(String funcName, ArrayList<Expression> params) {
+    public FuncCall(Identifier funcName, ArrayList<Expression> params) {
         this.funcName = funcName;
         this.params = params;
     }
 
-    public String getFuncName() {
+    public Identifier getFuncName() {
         return funcName;
     }
 

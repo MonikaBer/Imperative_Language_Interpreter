@@ -4,7 +4,7 @@ import project.program.content.statements.expressions.Expression;
 
 public class Return extends Statement {
 
-    private Expression expression;
+    private final Expression expression;
 
     public Return(Expression expression) {
         this.expression = expression;

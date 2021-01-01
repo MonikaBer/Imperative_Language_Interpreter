@@ -1,14 +1,16 @@
 package project.program.content.types;
 
+import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
+
 public class StructType extends NonVoidType {
 
-    private final String name;
+    private final Identifier id;
 
-    public StructType(String name) {
-        this.name = name;
+    public StructType(Identifier id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Identifier getId() {
+        return id;
     }
 }

@@ -4,7 +4,7 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 
 public class Increment extends Statement {
 
-    private Identifier identifier;
+    private final Identifier identifier;
 
     public Increment(Identifier identifier) {
         this.identifier = identifier;

@@ -1,23 +1,24 @@
 package project.program.content.statements.declarations;
 
 import project.program.content.statements.Statement;
+import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 import project.program.content.types.Type;
 
 public abstract class Declaration extends Statement {
 
-    private Type type;
-    private String name;
+    private final Type type;
+    private final Identifier id;
 
-    public Declaration(Type type, String name) {
+    public Declaration(Type type, Identifier id) {
         this.type = type;
-        this.name = name;
+        this.id = id;
     }
 
     public Type getType() {
         return type;
     }
 
-    public String getName() {
-        return name;
+    public Identifier getId() {
+        return id;
     }
 }

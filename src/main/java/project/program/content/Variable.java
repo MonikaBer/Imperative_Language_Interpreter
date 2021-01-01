@@ -1,5 +1,6 @@
 package project.program.content;
 
+import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 import project.program.content.types.Type;
 
 import java.beans.Expression;
@@ -7,12 +8,12 @@ import java.beans.Expression;
 public class Variable {
 
     private Type type;
-    private final String Name;
+    private final Identifier id;
     private Expression expression;
 
-    public Variable(Type type, String name, Expression expression) {
+    public Variable(Type type, Identifier id, Expression expression) {
         this.type = type;
-        Name = name;
+        this.id = id;
         this.expression = expression;
     }
 
@@ -24,8 +25,8 @@ public class Variable {
         this.type = type;
     }
 
-    public String getName() {
-        return Name;
+    public Identifier getName() {
+        return id;
     }
 
     public Expression getExpression() {

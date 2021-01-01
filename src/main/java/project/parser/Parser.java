@@ -36,6 +36,7 @@ import project.token.IntToken;
 import project.token.StringToken;
 import project.token.Token;
 
+import java.awt.dnd.InvalidDnDOperationException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class Parser {
         this.lexer = lexer;
     }
 
-    public Program ParseProgram() {
+    public Program parseProgram() {
         ArrayList<Declaration> declarations = new ArrayList<>();
         ArrayList<FuncDef> funcDefs = new ArrayList<>();
         ArrayList<StructDef> structDefs = new ArrayList<>();
@@ -93,7 +94,7 @@ public class Parser {
 
                             Statement block;
                             if ((block = tryToParseBlockStatement()) != null) {
-                                return new FuncDef(retType, funcName, args, (Block)block);
+                                return new FuncDef(retType, new Identifier(funcName), args, (Block)block);
                             }
                             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No block statement (after args in function definition)");
                         }
@@ -125,7 +126,7 @@ public class Parser {
 
                         if (lexer.getToken().getType() == Token.TokenType.R_BRACE) {
                             lexer.nextToken();
-                            return new StructDef(structTypeName, structTypeBody);
+                            return new StructDef(new Identifier(structTypeName), structTypeBody);
                         }
                         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No '}' (at the end of struct definition)");
                     }
@@ -323,7 +324,7 @@ public class Parser {
     }
 
     private Statement tryToParseDeclarationStatement() {
-        Declaration declaration ;
+        Declaration declaration;
         if ((declaration = tryToParseDeclaration()) != null) {
 
             if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
@@ -386,7 +387,7 @@ public class Parser {
 
                 if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
                     lexer.nextToken();
-                    return new FuncCall(id, params);
+                    return new FuncCall(new Identifier(id), params);
                 }
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after list of params in function calling)");
             }
@@ -424,14 +425,14 @@ public class Parser {
                 lexer.nextToken();
 
                 if (lexer.getToken().getType() != Token.TokenType.ASSIGN) {
-                    return new OnlyDeclaration(type, id);
+                    return new OnlyDeclaration(type, new Identifier(id));
                 }
 
                 lexer.nextToken();
 
                 Expression expression;
                 if ((expression = tryToParseExpression()) != null) {
-                    return new Initialisation(type, id, expression);
+                    return new Initialisation(type, new Identifier(id), expression);
                 }
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No expression (after '=' in initialisation)");
             }
@@ -461,7 +462,7 @@ public class Parser {
         else if (lexer.getToken().getType() == Token.TokenType.ID) {
             String id = ((StringToken)lexer.getToken()).getValue();
             lexer.nextToken();
-            return new StructType(id);
+            return new StructType(new Identifier(id));
         }
 
         return null;

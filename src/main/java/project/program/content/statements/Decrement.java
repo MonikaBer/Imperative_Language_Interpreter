@@ -4,7 +4,7 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 
 public class Decrement extends Statement {
 
-    private Identifier identifier;
+    private final Identifier identifier;
 
     public Decrement(Identifier identifier) {
         this.identifier = identifier;
