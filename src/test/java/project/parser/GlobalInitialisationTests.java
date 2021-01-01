@@ -6,21 +6,24 @@ import project.program.Program;
 import project.program.content.FuncDef;
 import project.program.content.StructDef;
 import project.program.content.statements.declarations.Declaration;
-import project.program.content.statements.declarations.OnlyDeclaration;
+import project.program.content.statements.declarations.Initialisation;
+import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
 import project.program.content.types.*;
 import project.source.Source;
 import project.source.StringSource;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OnlyDeclarationTests {
+public class GlobalInitialisationTests {
 
     @Test
-    void shouldParseOnlyDeclarationOfInt() {
-        Source source = new StringSource("int a;");
+    void shouldParseInitialisationOfInt() {
+        Source source = new StringSource("int a = 1;");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
         Parser parser = new Parser(lexer);
@@ -35,14 +38,19 @@ public class OnlyDeclarationTests {
         assertEquals(0, structDefs.size());
 
         Declaration declaration = declarations.get(0);
-        assertTrue(declaration instanceof OnlyDeclaration);
+        assertTrue(declaration instanceof Initialisation);
         assertTrue(declaration.getType() instanceof IntType);
         assertEquals("a", declaration.getId().getName());
+        assertTrue(((Initialisation) declaration).getExpression() instanceof IntValue);
+
+        BigInteger actualValue = new BigInteger(String.valueOf(((IntValue)((Initialisation) declaration).getExpression()).getValue()));
+        BigInteger expectedValue = new BigInteger("1");
+        assertEquals(0, expectedValue.compareTo(actualValue));
     }
 
     @Test
-    void shouldParseOnlyDeclarationOfDouble() {
-        Source source = new StringSource("double a;");
+    void shouldParseInitialisationOfDouble() {
+        Source source = new StringSource("double a = 0.01;");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
         Parser parser = new Parser(lexer);
@@ -57,14 +65,19 @@ public class OnlyDeclarationTests {
         assertEquals(0, structDefs.size());
 
         Declaration declaration = declarations.get(0);
-        assertTrue(declaration instanceof OnlyDeclaration);
+        assertTrue(declaration instanceof Initialisation);
         assertTrue(declaration.getType() instanceof DoubleType);
         assertEquals("a", declaration.getId().getName());
+        assertTrue(((Initialisation) declaration).getExpression() instanceof DoubleValue);
+
+        BigDecimal actualValue = new BigDecimal(String.valueOf(((DoubleValue)((Initialisation) declaration).getExpression()).getValue()));
+        BigDecimal expectedValue = new BigDecimal("0.01");
+        assertEquals(0, expectedValue.compareTo(actualValue));
     }
 
     @Test
-    void shouldParseOnlyDeclarationOfBool() {
-        Source source = new StringSource("bool a;");
+    void shouldParseInitialisationOfTrueBool() {
+        Source source = new StringSource("bool a = true;");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
         Parser parser = new Parser(lexer);
@@ -79,14 +92,15 @@ public class OnlyDeclarationTests {
         assertEquals(0, structDefs.size());
 
         Declaration declaration = declarations.get(0);
-        assertTrue(declaration instanceof OnlyDeclaration);
+        assertTrue(declaration instanceof Initialisation);
         assertTrue(declaration.getType() instanceof BoolType);
         assertEquals("a", declaration.getId().getName());
+        assertTrue(((Initialisation) declaration).getExpression() instanceof TrueExpression);
     }
 
     @Test
-    void shouldParseOnlyDeclarationOfString() {
-        Source source = new StringSource("string a;");
+    void shouldParseInitialisationOfFalseBool() {
+        Source source = new StringSource("bool a = false;");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
         Parser parser = new Parser(lexer);
@@ -101,14 +115,39 @@ public class OnlyDeclarationTests {
         assertEquals(0, structDefs.size());
 
         Declaration declaration = declarations.get(0);
-        assertTrue(declaration instanceof OnlyDeclaration);
+        assertTrue(declaration instanceof Initialisation);
+        assertTrue(declaration.getType() instanceof BoolType);
+        assertEquals("a", declaration.getId().getName());
+        assertTrue(((Initialisation) declaration).getExpression() instanceof FalseExpression);
+    }
+
+    @Test
+    void shouldParseInitialisationOfApostropheString() {
+        Source source = new StringSource("string a = 'Ala ma kota';");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(1, declarations.size());
+        assertEquals(0, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        Declaration declaration = declarations.get(0);
+        assertTrue(declaration instanceof Initialisation);
         assertTrue(declaration.getType() instanceof StringType);
         assertEquals("a", declaration.getId().getName());
+        assertTrue(((Initialisation) declaration).getExpression() instanceof StringValue);
+        assertEquals("Ala ma kota", ((StringValue)((Initialisation) declaration).getExpression()).getValue());
     }
 
     @Test
-    void shouldParseOnlyDeclarationOfStructVar() {
-        Source source = new StringSource("Student a;");
+    void shouldParseInitialisationOfDoubleQuoteString() {
+        Source source = new StringSource("string a = \"Ala ma kota\";");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
         Parser parser = new Parser(lexer);
@@ -123,9 +162,10 @@ public class OnlyDeclarationTests {
         assertEquals(0, structDefs.size());
 
         Declaration declaration = declarations.get(0);
-        assertTrue(declaration instanceof OnlyDeclaration);
-        assertTrue(declaration.getType() instanceof StructType);
-        assertEquals("Student", ((StructType)declaration.getType()).getId().getName());
+        assertTrue(declaration instanceof Initialisation);
+        assertTrue(declaration.getType() instanceof StringType);
         assertEquals("a", declaration.getId().getName());
+        assertTrue(((Initialisation) declaration).getExpression() instanceof StringValue);
+        assertEquals("Ala ma kota", ((StringValue)((Initialisation) declaration).getExpression()).getValue());
     }
 }

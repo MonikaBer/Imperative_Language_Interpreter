@@ -149,6 +149,8 @@ public class Parser {
             return statement;
         if ((statement = tryToParseWhileStatement()) != null)
             return statement;
+        if ((statement = tryToParseReturnStatement()) != null)
+            return statement;
         if ((statement = tryToParseBlockStatement()) != null)
             return statement;
         if ((statement = tryToParseDeclarationStatement()) != null)
@@ -296,6 +298,22 @@ public class Parser {
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No condition (after left parenthesis)");
             }
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No '(' (after 'while' keyword)");
+        }
+
+        return null;
+    }
+
+    private Statement tryToParseReturnStatement() {
+        if (lexer.getToken().getType() == Token.TokenType.RETURN) {
+            lexer.nextToken();
+
+            Expression expression = tryToParseExpression();
+            if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                lexer.nextToken();
+
+                return new Return(expression);
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (after expression in return statement)");
         }
 
         return null;
