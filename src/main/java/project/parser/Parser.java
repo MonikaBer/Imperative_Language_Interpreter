@@ -36,7 +36,6 @@ import project.token.IntToken;
 import project.token.StringToken;
 import project.token.Token;
 
-import java.awt.dnd.InvalidDnDOperationException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -54,14 +53,17 @@ public class Parser {
         ArrayList<FuncDef> funcDefs = new ArrayList<>();
         ArrayList<StructDef> structDefs = new ArrayList<>();
 
-        Statement declaration;
+        ArrayList<Statement> declarationsStatement;
         FuncDef funcDef;
         StructDef structDef;
 
         while (lexer.getToken().getType() != Token.TokenType.EOT) {
-            declaration = tryToParseDeclarationStatement();
-            if (declaration != null)
-                declarations.add((Declaration)declaration);
+            declarationsStatement = tryToParseDeclarationsList();
+            if (declarationsStatement != null) {
+                for (Statement declaration : declarationsStatement) {
+                    declarations.add((Declaration)declaration);
+                }
+            }
 
             funcDef = tryToParseFuncDef();
             if (funcDef != null)
@@ -140,27 +142,36 @@ public class Parser {
         return null;
     }
 
-    private Statement tryToParseStatement() {
+    private ArrayList<Statement> tryToParseStatement() {
+        ArrayList<Statement> statements = new ArrayList<>();
         Statement statement;
 
-        if ((statement = tryToParseIfOrIfElseStatement()) != null)
-            return statement;
-        if ((statement = tryToParseSwitchStatement()) != null)
-            return statement;
-        if ((statement = tryToParseWhileStatement()) != null)
-            return statement;
-        if ((statement = tryToParseReturnStatement()) != null)
-            return statement;
-        if ((statement = tryToParseBlockStatement()) != null)
-            return statement;
-        if ((statement = tryToParseDeclarationStatement()) != null)
-            return statement;
-        if ((statement = tryToParseEmptyStatement()) != null)
-            return statement;
-        if ((statement = tryToParseAssignmentOrFuncCallStatement()) != null)
-            return statement;
+        if ((statement = tryToParseIfOrIfElseStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
+        if ((statement = tryToParseSwitchStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
+        if ((statement = tryToParseWhileStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
+        if ((statement = tryToParseReturnStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
+        if ((statement = tryToParseBlockStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
+        if ((statement = tryToParseEmptyStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
 
-        return null;
+        return tryToParseFuncCallOrAssignmentOrDeclarationStatement();
     }
 
     private Statement tryToParseIfOrIfElseStatement() {
@@ -177,15 +188,24 @@ public class Parser {
                         lexer.nextToken();
 
                         Statement ifStatement;
-                        if ((ifStatement = tryToParseStatement()) != null) {
+                        ArrayList<Statement> stmts;
+                        if ((stmts = tryToParseStatement()) != null) {
 
+                            if (stmts.size() != 1)
+                                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No if body (after right parenthesis in if statement)");
+
+                            ifStatement = stmts.get(0);
                             if (lexer.getToken().getType() != Token.TokenType.ELSE) {
                                 return new If(condition, ifStatement);
                             }
                             lexer.nextToken();
 
                             Statement elseStatement;
-                            if ((elseStatement = tryToParseStatement()) != null) {
+                            if ((stmts = tryToParseStatement()) != null) {
+                                if (stmts.size() != 1)
+                                    throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No else body (after 'else' keyword in ifElse statement)");
+
+                                elseStatement = stmts.get(0);
                                 return new IfElse(condition, ifStatement, elseStatement);
                             }
                             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No statement (after right parenthesis)");
@@ -217,6 +237,7 @@ public class Parser {
 
                         if (lexer.getToken().getType() == Token.TokenType.L_BRACE) {
                             lexer.nextToken();
+                            ArrayList<Statement> stmts;
 
                             ArrayList<Case> cases = new ArrayList<>();
                             while (lexer.getToken().getType() == Token.TokenType.CASE) {
@@ -228,9 +249,12 @@ public class Parser {
                                     if (lexer.getToken().getType() == Token.TokenType.COLON) {
                                         lexer.nextToken();
 
-                                        Statement statement;
-                                        if ((statement = tryToParseStatement()) != null) {
-                                            cases.add(new Case(caseExp, statement));
+                                        if ((stmts = tryToParseStatement()) != null) {
+
+                                            if (stmts.size() != 1)
+                                                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No statement (after expression in case in switch statement)");
+
+                                            cases.add(new Case(caseExp, stmts.get(0)));
                                             continue;
                                         }
                                         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No statement (after colon in case)");
@@ -247,8 +271,12 @@ public class Parser {
                                     lexer.nextToken();
 
                                     Statement defaultStmt;
-                                    if ((defaultStmt = tryToParseStatement()) != null) {
+                                    if ((stmts = tryToParseStatement()) != null) {
 
+                                        if (stmts.size() != 1)
+                                            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No statement (after 'default' keyword in switch statement)");
+
+                                        defaultStmt = stmts.get(0);
                                         if (lexer.getToken().getType() == Token.TokenType.R_BRACE) {
                                             lexer.nextToken();
 
@@ -287,9 +315,13 @@ public class Parser {
                     if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
                         lexer.nextToken();
 
-                        Statement statement;
-                        if ((statement = tryToParseStatement()) != null) {
-                            return new While(condition, statement);
+                        ArrayList<Statement> stmts;
+                        if ((stmts = tryToParseStatement()) != null) {
+
+                            if (stmts.size() != 1)
+                                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No while body (after condition)");
+
+                            return new While(condition, stmts.get(0));
                         }
                         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No statement (after right parenthesis)");
                     }
@@ -325,10 +357,9 @@ public class Parser {
 
             ArrayList<Statement> statements = new ArrayList<>();
 
-            Statement statement;
-            while ((statement = tryToParseStatement()) != null) {
-                statements.add(statement);
-            }
+            ArrayList<Statement> stmts;
+            while ((stmts = tryToParseStatement()) != null)
+                statements.addAll(stmts);
 
             if (lexer.getToken().getType() == Token.TokenType.R_BRACE) {
                 lexer.nextToken();
@@ -336,6 +367,66 @@ public class Parser {
                 return new Block(statements);
             }
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No '}' (after list of statements in block)");
+        }
+
+        return null;
+    }
+
+    private Statement tryToParseEmptyStatement() {
+        if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+            lexer.nextToken();
+            return new Empty();
+        }
+        return null;
+    }
+
+    private ArrayList<Statement> tryToParseFuncCallOrAssignmentOrDeclarationStatement() {
+        ArrayList<Statement> stmts = new ArrayList<>();
+        Statement stmt;
+
+        if (lexer.getToken().getType() == Token.TokenType.ID) {
+            Expression expression = tryToParseExpression();
+
+            if (expression instanceof FuncCall) {
+                if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                    lexer.nextToken();
+                    stmts.add(expression);
+                    return stmts;
+                }
+                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (after function calling)");
+            }
+
+            if ((stmt = tryToParseAssignmentStatement(expression)) != null) {
+                stmts.add(stmt);
+                return stmts;
+            }
+
+            if (expression instanceof Identifier) {
+
+                if ((stmts = tryToParseDeclarationsList(new StructType((Identifier)expression))) != null)
+                    return stmts;
+            }
+
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "Wrong usage of identifier");
+        }
+
+        return tryToParseDeclarationsList();
+    }
+
+    private Statement tryToParseAssignmentStatement(Expression id) {
+        if (lexer.getToken().getType() == Token.TokenType.ASSIGN) {
+            lexer.nextToken();
+
+            Expression expression;
+            if ((expression = tryToParseExpression()) != null) {
+
+                if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                    lexer.nextToken();
+                    return new Assignment(id, expression);
+                }
+                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of assignment statement)");
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No expression on the right side of assignment");
         }
 
         return null;
@@ -350,85 +441,6 @@ public class Parser {
                 return declaration;
             }
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of declaration statement)");
-        }
-
-        return null;
-    }
-
-    private Statement tryToParseEmptyStatement() {
-        if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
-            lexer.nextToken();
-
-            return new Empty();
-        }
-
-        return null;
-    }
-
-    private Statement tryToParseAssignmentOrFuncCallStatement() {
-        if (lexer.getToken().getType() == Token.TokenType.ID) {
-            String id = ((StringToken) lexer.getToken()).getValue();
-            lexer.nextToken();
-
-            Statement statement;
-            if ((statement = tryToParseFuncCallStatement(id)) != null)
-                return statement;
-            if ((statement = tryToParseAssignmentStatement(id)) != null)
-                return statement;
-
-            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "Wrong usage of identifier");
-        }
-
-        return null;
-    }
-
-    private Statement tryToParseFuncCallStatement(String id) {
-        FuncCall funcCall;
-        if ((funcCall = tryToParseFuncCall(id)) != null) {
-
-            if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
-                lexer.nextToken();
-                return funcCall;
-            }
-            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (after function calling)");
-        }
-
-        return null;
-    }
-
-    private FuncCall tryToParseFuncCall(String id) {
-        if (lexer.getToken().getType() == Token.TokenType.L_PARENTH) {
-            lexer.nextToken();
-
-            ArrayList<Expression> params = tryToParseParams();
-            if (params != null) {
-
-                if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
-                    lexer.nextToken();
-                    return new FuncCall(new Identifier(id), params);
-                }
-                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after list of params in function calling)");
-            }
-            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No list of params in function calling");
-        }
-
-        return null;
-    }
-
-    private Statement tryToParseAssignmentStatement(String id) {
-        if (lexer.getToken().getType() == Token.TokenType.ASSIGN) {
-            lexer.nextToken();
-
-            Expression expression;
-            if ((expression = tryToParseExpression()) != null) {
-
-                if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
-                    lexer.nextToken();
-                    return new Assignment(new Identifier(id), expression);
-                }
-                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of assignment statement)");
-            }
-            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No expression on the right side of assignment");
         }
 
         return null;
@@ -460,6 +472,93 @@ public class Parser {
         return null;
     }
 
+    private ArrayList<Statement> tryToParseDeclarationsList() {
+        ArrayList<Statement> declarations = new ArrayList<>();
+
+        Declaration declaration;
+        if ((declaration = tryToParseDeclaration()) != null) {
+            declarations.add(declaration);
+
+            while (lexer.getToken().getType() == Token.TokenType.COMMA) {
+                lexer.nextToken();
+                if ((declaration = tryToParseDeclaration(declaration.getType())) != null)
+                    declarations.add(declaration);
+                else
+                    throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No variable name (after ',' in list of declarations)");
+            }
+
+            if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                lexer.nextToken();
+                return declarations;
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of list of declarations)");
+        }
+
+        return null;
+    }
+
+//    private Statement tryToParseDeclarationStatement(Identifier type) {
+//        Declaration declaration;
+//        if ((declaration = tryToParseDeclaration(type)) != null) {
+//
+//            if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+//                lexer.nextToken();
+//                return declaration;
+//            }
+//
+//            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of declaration statement)");
+//        }
+//
+//        return null;
+//    }
+
+
+    private ArrayList<Statement> tryToParseDeclarationsList(Type type) {
+        ArrayList<Statement> declarations = new ArrayList<>();
+
+        Declaration declaration;
+        if ((declaration = tryToParseDeclaration(type)) != null) {
+            declarations.add(declaration);
+
+            while (lexer.getToken().getType() == Token.TokenType.COMMA) {
+                lexer.nextToken();
+                if ((declaration = tryToParseDeclaration(type)) != null)
+                    declarations.add(declaration);
+                else
+                    throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No variable name (after ',' in list of declarations)");
+            }
+
+            if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                lexer.nextToken();
+                return declarations;
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of list of declarations)");
+        }
+
+        return null;
+    }
+
+    private Declaration tryToParseDeclaration(Type type) {
+        if (lexer.getToken().getType() == Token.TokenType.ID) {
+            String id = ((StringToken) lexer.getToken()).getValue();
+            lexer.nextToken();
+
+            if (lexer.getToken().getType() != Token.TokenType.ASSIGN) {
+                return new OnlyDeclaration(type, new Identifier(id));
+            }
+
+            lexer.nextToken();
+
+            Expression expression;
+            if ((expression = tryToParseExpression()) != null) {
+                return new Initialisation(type, new Identifier(id), expression);
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No expression (after '=' in initialisation)");
+        }
+
+        return null;
+    }
+
     private NonVoidType tryToParseNonVoidType() {
         if (lexer.getToken().getType() == Token.TokenType.BOOL) {
             lexer.nextToken();
@@ -478,9 +577,9 @@ public class Parser {
             return new DoubleType();
         }
         else if (lexer.getToken().getType() == Token.TokenType.ID) {
-            String id = ((StringToken)lexer.getToken()).getValue();
+            String typeName = ((StringToken)lexer.getToken()).getValue();
             lexer.nextToken();
-            return new StructType(new Identifier(id));
+            return new StructType(new Identifier(typeName));
         }
 
         return null;
@@ -873,11 +972,30 @@ public class Parser {
             lexer.nextToken();
 
             FuncCall funcCall;
-            if ((funcCall = tryToParseFuncCall(id)) != null) {
+            if ((funcCall = tryToParseFuncCall(new Identifier(id))) != null) {
                 return funcCall;
             }
 
             return new Identifier(id);
+        }
+
+        return null;
+    }
+
+    private FuncCall tryToParseFuncCall(Identifier id) {
+        if (lexer.getToken().getType() == Token.TokenType.L_PARENTH) {
+            lexer.nextToken();
+
+            ArrayList<Expression> params = tryToParseParams();
+            if (params != null) {
+
+                if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
+                    lexer.nextToken();
+                    return new FuncCall(id, params);
+                }
+                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after list of params in function calling)");
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No list of params in function calling");
         }
 
         return null;

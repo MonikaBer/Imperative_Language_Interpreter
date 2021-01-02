@@ -5,16 +5,16 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 
 public class Assignment extends Statement {
 
-    private final Identifier identifier;
+    private final Expression id;
     private final Expression expression;
 
-    public Assignment(Identifier identifier, Expression expression) {
-        this.identifier = identifier;
+    public Assignment(Expression id, Expression expression) {
+        this.id = id;
         this.expression = expression;
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public Expression getId() {
+        return id;
     }
 
     public Expression getExpression() {
