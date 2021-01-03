@@ -2353,4 +2353,223 @@ public class ExpressionTests {
         BigInteger expectedValue = new BigInteger("2");
         assertEquals(0, expectedValue.compareTo(actualValue));
     }
+
+
+
+    @Test
+    void shouldParseSimpleFuncCallWithoutParamsExpression() {
+        Source source = new StringSource("void function() { int a = func(); }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(1, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof Initialisation);
+        assertTrue(((Initialisation)stmt).getType() instanceof IntType);
+        assertEquals("a", ((Initialisation)stmt).getId().getName());
+
+        Expression expression = ((Initialisation)stmt).getExpression();
+        assertTrue(expression instanceof FuncCall);
+
+        FuncCall funcCall = (FuncCall) expression;
+        assertEquals("func", funcCall.getFuncName().getName());
+        assertNull(funcCall.getParams());
+    }
+
+    @Test
+    void shouldParseSimpleFuncCallWithTwoParamsExpression() {
+        Source source = new StringSource("void function() { int a = func(b, c); }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(1, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof Initialisation);
+        assertTrue(((Initialisation)stmt).getType() instanceof IntType);
+        assertEquals("a", ((Initialisation)stmt).getId().getName());
+
+        Expression expression = ((Initialisation)stmt).getExpression();
+        assertTrue(expression instanceof FuncCall);
+
+        FuncCall funcCall = (FuncCall) expression;
+        assertEquals("func", funcCall.getFuncName().getName());
+        assertEquals(2, funcCall.getParams().size());
+
+        assertTrue(funcCall.getParams().get(0) instanceof Identifier);
+        assertEquals("b", ((Identifier)funcCall.getParams().get(0)).getName());
+
+        assertTrue(funcCall.getParams().get(1) instanceof Identifier);
+        assertEquals("c", ((Identifier)funcCall.getParams().get(1)).getName());
+    }
+
+    @Test
+    void shouldParseFuncCallWithAnotherFuncCallAsFirstParamExpression() {
+        Source source = new StringSource("void function() { int a = func( func2(b, c), d ); }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(1, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof Initialisation);
+        assertTrue(((Initialisation)stmt).getType() instanceof IntType);
+        assertEquals("a", ((Initialisation)stmt).getId().getName());
+
+        Expression expression = ((Initialisation)stmt).getExpression();
+        assertTrue(expression instanceof FuncCall);
+
+        FuncCall funcCall = (FuncCall) expression;
+        assertEquals("func", funcCall.getFuncName().getName());
+        assertEquals(2, funcCall.getParams().size());
+
+
+        assertTrue(funcCall.getParams().get(0) instanceof FuncCall);
+        FuncCall funcCall2 = (FuncCall) funcCall.getParams().get(0);
+        assertEquals("func2", funcCall2.getFuncName().getName());
+        assertEquals(2, funcCall2.getParams().size());
+        assertEquals("b", ((Identifier)funcCall2.getParams().get(0)).getName());
+        assertEquals("c", ((Identifier)funcCall2.getParams().get(1)).getName());
+
+
+        assertTrue(funcCall.getParams().get(1) instanceof Identifier);
+        assertEquals("d", ((Identifier)funcCall.getParams().get(1)).getName());
+    }
+
+    @Test
+    void shouldParseFuncCallWithTwoMixParamsExpression() {
+        Source source = new StringSource("void function() { int a = func( (1+2)*3, b&&(c||d) ); }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(1, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof Initialisation);
+        assertTrue(((Initialisation)stmt).getType() instanceof IntType);
+        assertEquals("a", ((Initialisation)stmt).getId().getName());
+
+        Expression expression = ((Initialisation)stmt).getExpression();
+        assertTrue(expression instanceof FuncCall);
+
+        FuncCall funcCall = (FuncCall) expression;
+        assertEquals("func", funcCall.getFuncName().getName());
+        assertEquals(2, funcCall.getParams().size());
+
+
+        assertTrue(funcCall.getParams().get(0) instanceof MultExpression);
+        MultExpression multExpression = (MultExpression) funcCall.getParams().get(0);
+        assertTrue(multExpression.getLeftOperand() instanceof ParenthExpression);
+
+        Expression exp = ((ParenthExpression) multExpression.getLeftOperand()).getExpression();
+        assertTrue(exp instanceof AddExpression);
+
+        AddExpression addExpression = (AddExpression) exp;
+        assertTrue(addExpression.getLeftOperand() instanceof IntValue);
+        BigInteger actualValue = new BigInteger (String.valueOf(((IntValue)addExpression.getLeftOperand()).getValue()));
+        BigInteger expectedValue = new BigInteger("1");
+        assertEquals(0, expectedValue.compareTo(actualValue));
+
+        assertTrue(addExpression.getRightOperand() instanceof IntValue);
+        actualValue = new BigInteger (String.valueOf(((IntValue)addExpression.getRightOperand()).getValue()));
+        expectedValue = new BigInteger("2");
+        assertEquals(0, expectedValue.compareTo(actualValue));
+
+
+        assertTrue(multExpression.getRightOperand() instanceof IntValue);
+        actualValue = new BigInteger (String.valueOf(((IntValue)(multExpression.getRightOperand())).getValue()));
+        expectedValue = new BigInteger("3");
+        assertEquals(0, expectedValue.compareTo(actualValue));
+
+
+        assertTrue(funcCall.getParams().get(1) instanceof ConjunctionExpression);
+        ConjunctionExpression conjunctionExpression = (ConjunctionExpression) funcCall.getParams().get(1);
+
+        assertTrue(conjunctionExpression.getLeftOperand() instanceof Identifier);
+        assertEquals("b", ((Identifier) conjunctionExpression.getLeftOperand()).getName());
+
+        assertTrue(conjunctionExpression.getRightOperand() instanceof ParenthExpression);
+        exp = ((ParenthExpression) conjunctionExpression.getRightOperand()).getExpression();
+        assertTrue(exp instanceof AlternativeExpression);
+
+        AlternativeExpression alternativeExpression = (AlternativeExpression) exp;
+        assertTrue(alternativeExpression.getLeftOperand() instanceof Identifier);
+        assertEquals("c", ((Identifier)alternativeExpression.getLeftOperand()).getName());
+
+        assertTrue(alternativeExpression.getRightOperand() instanceof Identifier);
+        assertEquals("d", ((Identifier)alternativeExpression.getRightOperand()).getName());
+    }
 }
