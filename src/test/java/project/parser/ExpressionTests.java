@@ -1,6 +1,5 @@
 package project.parser;
 
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import project.lexer.Lexer;
 import project.program.Program;
@@ -11,22 +10,18 @@ import project.program.content.statements.Statement;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.declarations.Initialisation;
 import project.program.content.statements.expressions.Expression;
-import project.program.content.statements.expressions.structExpressions.StructFieldExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.AlternativeExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.ConjunctionExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.*;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AddExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.SubtractExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.DivExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.ModExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegativeExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NotExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.IntValue;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.ParenthExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.SimpleExpression;
+import project.program.content.statements.expressions.orExpressions.AlternativeExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.ConjunctionExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.*;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AddExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.SubtractExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.DivExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.ModExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegativeExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NotExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
 import project.program.content.types.BoolType;
 import project.program.content.types.IntType;
 import project.program.content.types.VoidType;
@@ -34,7 +29,6 @@ import project.source.Source;
 import project.source.StringSource;
 
 import java.math.BigInteger;
-import java.sql.Struct;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -2302,61 +2296,61 @@ public class ExpressionTests {
 
 
 
-//    @Test
-//    void shouldParseMixParenthAddMultWithStructsExpression() {
-//        Source source = new StringSource("void function() { int var = (student.a + student.b) / 2; }");
-//        Lexer lexer = new Lexer(source);
-//        lexer.nextToken();
-//        Parser parser = new Parser(lexer);
-//        Program program = parser.parseProgram();
-//
-//        ArrayList<Declaration> declarations = program.getDeclarations();
-//        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
-//        ArrayList<StructDef> structDefs = program.getStructDefs();
-//
-//        assertEquals(0, declarations.size());
-//        assertEquals(1, funcDefs.size());
-//        assertEquals(0, structDefs.size());
-//
-//        FuncDef funcDef = funcDefs.get(0);
-//        assertTrue(funcDef.getRetType() instanceof VoidType);
-//        assertEquals("function", funcDef.getId().getName());
-//
-//        ArrayList<Declaration> args = funcDef.getArgs();
-//        assertNull(args);
-//
-//        Block block = funcDef.getBlock();
-//        assertEquals(1, block.getStmts().size());
-//
-//        Statement stmt = block.getStmts().get(0);
-//        assertTrue(stmt instanceof Initialisation);
-//        assertTrue(((Initialisation)stmt).getType() instanceof IntType);
-//        assertEquals("a", ((Initialisation)stmt).getId().getName());
-//
-//        Expression expression = ((Initialisation)stmt).getExpression();
-//        assertTrue(expression instanceof DivExpression);
-//
-//        Expression leftOperandDivExpression = ((DivExpression) expression).getLeftOperand();
-//        assertTrue(leftOperandDivExpression instanceof ParenthExpression);
-//
-//
-//        Expression exp = ((ParenthExpression) leftOperandDivExpression).getExpression();
-//        assertTrue(exp instanceof AddExpression);
-//        assertTrue(((AddExpression) exp).getLeftOperand() instanceof );
-//        BigInteger actualValue = new BigInteger(String.valueOf(((IntValue) ((AddExpression) exp).getLeftOperand()).getValue()));
-//        BigInteger expectedValue = new BigInteger("1");
-//        assertEquals(0, expectedValue.compareTo(actualValue));
-//
-//        assertTrue(((AddExpression) exp).getRightOperand() instanceof IntValue);
-//        actualValue = new BigInteger(String.valueOf(((IntValue) ((AddExpression) exp).getRightOperand()).getValue()));
-//        expectedValue = new BigInteger("2");
-//        assertEquals(0, expectedValue.compareTo(actualValue));
-//
-//
-//        Expression rightOperandDivExpression = ((DivExpression) expression).getRightOperand();
-//        assertTrue(rightOperandDivExpression instanceof IntValue);
-//        actualValue = new BigInteger(String.valueOf(((IntValue) ((DivExpression) expression).getRightOperand()).getValue()));
-//        expectedValue = new BigInteger("3");
-//        assertEquals(0, expectedValue.compareTo(actualValue));
-//    }
+    @Test
+    void shouldParseMixParenthAddMultWithStructsExpression() {
+        Source source = new StringSource("void function() { int var = (student.a + student.b) / 2; }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(1, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof Initialisation);
+        assertTrue(((Initialisation)stmt).getType() instanceof IntType);
+        assertEquals("var", ((Initialisation)stmt).getId().getName());
+
+        Expression expression = ((Initialisation)stmt).getExpression();
+        assertTrue(expression instanceof DivExpression);
+
+        Expression leftOperandDivExpression = ((DivExpression) expression).getLeftOperand();
+        assertTrue(leftOperandDivExpression instanceof ParenthExpression);
+
+
+        Expression exp = ((ParenthExpression) leftOperandDivExpression).getExpression();
+        assertTrue(exp instanceof AddExpression);
+
+        AddExpression addExpression = (AddExpression) exp;
+        assertTrue(addExpression.getLeftOperand() instanceof StructFieldExpression);
+        assertEquals("student", ((StructFieldExpression)addExpression.getLeftOperand()).getStructVarName().getName());
+        assertEquals("a", ((Identifier) ((StructFieldExpression)addExpression.getLeftOperand()).getFieldName()).getName());
+
+
+        assertTrue(addExpression.getRightOperand() instanceof StructFieldExpression);
+        assertEquals("student", ((StructFieldExpression)addExpression.getRightOperand()).getStructVarName().getName());
+        assertEquals("b", ((Identifier) ((StructFieldExpression)addExpression.getRightOperand()).getFieldName()).getName());
+
+        Expression rightOperandDivExpression = ((DivExpression) expression).getRightOperand();
+        assertTrue(rightOperandDivExpression instanceof IntValue);
+        BigInteger actualValue = new BigInteger(String.valueOf(((IntValue) rightOperandDivExpression).getValue()));
+        BigInteger expectedValue = new BigInteger("2");
+        assertEquals(0, expectedValue.compareTo(actualValue));
+    }
 }

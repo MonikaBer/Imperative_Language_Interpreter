@@ -1,7 +1,6 @@
 package project.program.content.statements;
 
 import project.program.content.statements.expressions.Expression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 
 public class Assignment extends Statement {
 

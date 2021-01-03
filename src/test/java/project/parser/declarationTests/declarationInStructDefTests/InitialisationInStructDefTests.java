@@ -8,7 +8,7 @@ import project.program.content.FuncDef;
 import project.program.content.StructDef;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.declarations.Initialisation;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
 import project.program.content.types.*;
 import project.source.Source;
 import project.source.StringSource;

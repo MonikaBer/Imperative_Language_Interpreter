@@ -10,24 +10,22 @@ import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.declarations.Initialisation;
 import project.program.content.statements.declarations.OnlyDeclaration;
 import project.program.content.statements.expressions.Expression;
-import project.program.content.statements.expressions.structExpressions.StructExpression;
-import project.program.content.statements.expressions.structExpressions.StructFieldExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.AlternativeExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.OrExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.AndExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.ConjunctionExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.*;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AddExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.SubtractExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.DivExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.ModExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultiplicationExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegationExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegativeExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NotExpression;
-import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.*;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
+import project.program.content.statements.expressions.orExpressions.AlternativeExpression;
+import project.program.content.statements.expressions.orExpressions.OrExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.AndExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.ConjunctionExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AddExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.SubtractExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.DivExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.ModExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultiplicationExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegationExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegativeExpression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NotExpression;
 import project.program.content.statements.switchStmt.Case;
 import project.program.content.statements.switchStmt.Switch;
 import project.program.content.types.*;
@@ -38,6 +36,7 @@ import project.token.Token;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Struct;
 import java.util.ArrayList;
 
 public class Parser {
@@ -630,44 +629,7 @@ public class Parser {
 
 
     private Expression tryToParseExpression() {
-        return tryToParseStructExpression();
-    }
-
-
-    private StructExpression tryToParseStructExpression() {
-        OrExpression orExpression;
-        if ((orExpression = tryToParseOrExpression()) != null) {
-
-            StructFieldExpression structFieldExpression;
-            if ((structFieldExpression = tryToParseStructFieldExpression(orExpression)) != null) {
-                return structFieldExpression;
-            }
-
-            return orExpression;
-        }
-
-        return null;
-    }
-
-    private StructFieldExpression tryToParseStructFieldExpression(OrExpression structVarName) {
-        if (lexer.getToken().getType() == Token.TokenType.DOT) {
-            lexer.nextToken();
-
-            OrExpression orExpression;
-            if ((orExpression = tryToParseOrExpression()) != null) {
-
-                StructFieldExpression structFieldExpression;
-                if ((structFieldExpression = tryToParseStructFieldExpression(orExpression)) != null) {
-                    return new StructFieldExpression(structVarName, structFieldExpression);
-                }
-
-                return new StructFieldExpression(structVarName, orExpression);
-            }
-
-            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No field name (after '.' in struct type variable");
-        }
-
-        return null;
+        return tryToParseOrExpression();
     }
 
 
@@ -960,6 +922,11 @@ public class Parser {
                 return funcCall;
             }
 
+            StructFieldExpression structFieldExpression;
+            if ((structFieldExpression = tryToParseStructFieldExpression(new Identifier(id))) != null) {
+                return structFieldExpression;
+            }
+
             return new Identifier(id);
         }
 
@@ -976,6 +943,28 @@ public class Parser {
                 return new FuncCall(id, params);
             }
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after list of params in function calling)");
+        }
+
+        return null;
+    }
+
+    private StructFieldExpression tryToParseStructFieldExpression(Identifier structVarName) {
+        if (lexer.getToken().getType() == Token.TokenType.DOT) {
+            lexer.nextToken();
+
+            if (lexer.getToken().getType() == Token.TokenType.ID) {
+                String id = ((StringToken)lexer.getToken()).getValue();
+                lexer.nextToken();
+
+                StructFieldExpression structFieldExpression;
+                if ((structFieldExpression = tryToParseStructFieldExpression(new Identifier(id))) != null) {
+                    return new StructFieldExpression(structVarName, structFieldExpression);
+                }
+
+                return new StructFieldExpression(structVarName, new Identifier(id));
+            }
+
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No field name (after '.' in struct type variable");
         }
 
         return null;

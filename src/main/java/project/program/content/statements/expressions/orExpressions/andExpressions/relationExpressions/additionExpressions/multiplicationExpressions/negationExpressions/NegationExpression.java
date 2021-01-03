@@ -1,0 +1,6 @@
+package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions;
+
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultiplicationExpression;
+
+public abstract class NegationExpression extends MultiplicationExpression {
+}
