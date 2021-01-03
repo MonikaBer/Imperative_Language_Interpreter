@@ -673,11 +673,15 @@ public class Parser {
         if (lexer.getToken().getType() == Token.TokenType.DOT) {
             lexer.nextToken();
 
-            if (lexer.getToken().getType() == Token.TokenType.ID) {
-                String fieldName = ((StringToken)lexer.getToken()).getValue();
-                lexer.nextToken();
+            OrExpression orExpression;
+            if ((orExpression = tryToParseOrExpression()) != null) {
 
-                return new StructFieldExpression(structVarName, new Identifier(fieldName));
+                StructFieldExpression structFieldExpression;
+                if ((structFieldExpression = tryToParseStructFieldExpression(orExpression)) != null) {
+                    return new StructFieldExpression(structVarName, structFieldExpression);
+                }
+
+                return new StructFieldExpression(structVarName, orExpression);
             }
 
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No field name (after '.' in struct type variable");

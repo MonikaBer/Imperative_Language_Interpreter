@@ -11,6 +11,7 @@ import project.program.content.statements.Statement;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.declarations.OnlyDeclaration;
 import project.program.content.statements.expressions.structExpressions.StructFieldExpression;
+import project.program.content.statements.expressions.structExpressions.orExpressions.OrExpression;
 import project.program.content.statements.expressions.structExpressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
 import project.program.content.types.*;
 import project.source.Source;
@@ -397,59 +398,64 @@ public class AssignmentTests {
         assertTrue(((Assignment)stmt).getId() instanceof StructFieldExpression);
         StructFieldExpression id = (StructFieldExpression) ((Assignment)stmt).getId();
         assertEquals("student", ((Identifier)id.getStructVarName()).getName());
-        assertEquals("name", id.getFieldName().getName());
+        assertEquals("name", ((Identifier)id.getFieldName()).getName());
 
         assertTrue(((Assignment) stmt).getExpression() instanceof StringValue);
         assertEquals("Ala", ((StringValue)((Assignment)stmt).getExpression()).getValue());
     }
 
-//    @Test
-//    void shouldParseAssignmentToComplexStructField() {
-//        Source source = new StringSource("void function(int a) { Student student; student.address.street = 'Akacjowa'; }");
-//        Lexer lexer = new Lexer(source);
-//        lexer.nextToken();
-//        Parser parser = new Parser(lexer);
-//        Program program = parser.parseProgram();
-//
-//        ArrayList<Declaration> declarations = program.getDeclarations();
-//        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
-//        ArrayList<StructDef> structDefs = program.getStructDefs();
-//
-//        assertEquals(0, declarations.size());
-//        assertEquals(1, funcDefs.size());
-//        assertEquals(0, structDefs.size());
-//
-//        FuncDef funcDef = funcDefs.get(0);
-//        assertTrue(funcDef.getRetType() instanceof VoidType);
-//        assertEquals("function", funcDef.getId().getName());
-//
-//        ArrayList<Declaration> args = funcDef.getArgs();
-//        assertEquals(1, args.size());
-//
-//        Declaration declaration = args.get(0);
-//        assertTrue(declaration instanceof OnlyDeclaration);
-//        assertTrue(declaration.getType() instanceof IntType);
-//        assertEquals("a", declaration.getId().getName());
-//
-//        Block block = funcDef.getBlock();
-//        assertEquals(2, block.getStmts().size());
-//
-//        Statement stmt = block.getStmts().get(0);
-//        assertTrue(stmt instanceof OnlyDeclaration);
-//        assertTrue(((OnlyDeclaration)stmt).getType() instanceof StructType);
-//        assertEquals("Student", ((StructType) ((OnlyDeclaration)stmt).getType()).getId().getName());
-//        assertEquals("student", ((OnlyDeclaration)stmt).getId().getName());
-//
-//        stmt = block.getStmts().get(1);
-//        assertTrue(stmt instanceof Assignment);
-//        assertTrue(((Assignment)stmt).getId() instanceof StructFieldExpression);
-//        StructFieldExpression assignmentId = (StructFieldExpression) ((Assignment)stmt).getId();
-//
-//        StructFieldExpression id = ((StructFieldExpression)assignmentId).getStructVarName();
-//        assertEquals("student", ((Identifier)id.getStructVarName()).getName());
-//        assertEquals("name", id.getFieldName().getName());
-//
-//        assertTrue(((Assignment) stmt).getExpression() instanceof StringValue);
-//        assertEquals("Ala", ((StringValue)((Assignment)stmt).getExpression()).getValue());
-//    }
+    @Test
+    void shouldParseAssignmentToComplexStructField() {
+        Source source = new StringSource("void function(int a) { Student student; student.address.street = 'Akacjowa'; }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertEquals(1, args.size());
+
+        Declaration declaration = args.get(0);
+        assertTrue(declaration instanceof OnlyDeclaration);
+        assertTrue(declaration.getType() instanceof IntType);
+        assertEquals("a", declaration.getId().getName());
+
+        Block block = funcDef.getBlock();
+        assertEquals(2, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof OnlyDeclaration);
+        assertTrue(((OnlyDeclaration)stmt).getType() instanceof StructType);
+        assertEquals("Student", ((StructType) ((OnlyDeclaration)stmt).getType()).getId().getName());
+        assertEquals("student", ((OnlyDeclaration)stmt).getId().getName());
+
+        stmt = block.getStmts().get(1);
+        assertTrue(stmt instanceof Assignment);
+        assertTrue(((Assignment)stmt).getId() instanceof StructFieldExpression);
+        StructFieldExpression assignmentId = (StructFieldExpression) ((Assignment)stmt).getId();
+
+        OrExpression id = assignmentId.getStructVarName();
+        assertEquals("student", ((Identifier)id).getName());
+
+        StructFieldExpression structFieldExpression =
+                            (StructFieldExpression) ((StructFieldExpression)((Assignment)stmt).getId()).getFieldName();
+
+        assertEquals("address", ((Identifier)structFieldExpression.getStructVarName()).getName());
+        assertEquals("street", ((Identifier)structFieldExpression.getFieldName()).getName());
+
+        assertTrue(((Assignment) stmt).getExpression() instanceof StringValue);
+        assertEquals("Akacjowa", ((StringValue)((Assignment)stmt).getExpression()).getValue());
+    }
 }
