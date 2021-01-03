@@ -89,20 +89,16 @@ public class Parser {
                     lexer.nextToken();
 
                     ArrayList<Declaration> args = tryToParseArgs();
-                    if (args != null) {
+                    if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
+                        lexer.nextToken();
 
-                        if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
-                            lexer.nextToken();
-
-                            Statement block;
-                            if ((block = tryToParseBlockStatement()) != null) {
-                                return new FuncDef(retType, new Identifier(funcName), args, (Block)block);
-                            }
-                            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No block statement (after args in function definition)");
+                        Statement block;
+                        if ((block = tryToParseBlockStatement()) != null) {
+                            return new FuncDef(retType, new Identifier(funcName), args, (Block)block);
                         }
-                        throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after args in function definition)");
+                        throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No block statement (after args in function definition)");
                     }
-                    throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No args (after function name in function definition)");
+                    throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after args in function definition)");
                 }
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No '(' (after function name in function definition)");
             }
@@ -991,15 +987,11 @@ public class Parser {
             lexer.nextToken();
 
             ArrayList<Expression> params = tryToParseParams();
-            if (params != null) {
-
-                if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
-                    lexer.nextToken();
-                    return new FuncCall(id, params);
-                }
-                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after list of params in function calling)");
+            if (lexer.getToken().getType() == Token.TokenType.R_PARENTH) {
+                lexer.nextToken();
+                return new FuncCall(id, params);
             }
-            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No list of params in function calling");
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ')' (after list of params in function calling)");
         }
 
         return null;

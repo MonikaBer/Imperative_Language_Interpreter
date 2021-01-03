@@ -30,6 +30,42 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FunctionDefinitionTests {
 
     @Test
+    void shouldParseVoidFuncDefWithoutArgs() {
+        Source source = new StringSource("void function() { int b; return; }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(2, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof OnlyDeclaration);
+        assertTrue(((OnlyDeclaration)stmt).getType() instanceof IntType);
+        assertEquals("b", ((OnlyDeclaration)stmt).getId().getName());
+
+        stmt = block.getStmts().get(1);
+        assertTrue(stmt instanceof Return);
+        assertNull(((Return) stmt).getExpression());
+    }
+
+    @Test
     void shouldParseVoidFuncDefWithOneArg() {
         Source source = new StringSource("void function(int a) { int b; return; }");
         Lexer lexer = new Lexer(source);
