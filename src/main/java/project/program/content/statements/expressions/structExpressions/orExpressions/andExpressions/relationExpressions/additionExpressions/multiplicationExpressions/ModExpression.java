@@ -5,9 +5,9 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 public class ModExpression extends MultiplicationExpression {
 
     private NegationExpression leftOperand;
-    private NegationExpression rightOperand;
+    private MultiplicationExpression rightOperand;
 
-    public ModExpression(NegationExpression leftOperand, NegationExpression rightOperand) {
+    public ModExpression(NegationExpression leftOperand, MultiplicationExpression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
@@ -16,7 +16,7 @@ public class ModExpression extends MultiplicationExpression {
         return leftOperand;
     }
 
-    public NegationExpression getRightOperand() {
+    public MultiplicationExpression getRightOperand() {
         return rightOperand;
     }
 }

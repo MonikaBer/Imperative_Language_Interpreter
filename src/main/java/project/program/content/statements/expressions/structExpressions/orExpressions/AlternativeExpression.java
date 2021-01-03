@@ -5,9 +5,9 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 public class AlternativeExpression extends OrExpression {
 
     private AndExpression leftOperand;
-    private AndExpression rightOperand;
+    private OrExpression rightOperand;
 
-    public AlternativeExpression(AndExpression leftOperand, AndExpression rightOperand) {
+    public AlternativeExpression(AndExpression leftOperand, OrExpression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
@@ -16,7 +16,7 @@ public class AlternativeExpression extends OrExpression {
         return leftOperand;
     }
 
-    public AndExpression getRightOperand() {
+    public OrExpression getRightOperand() {
         return rightOperand;
     }
 }

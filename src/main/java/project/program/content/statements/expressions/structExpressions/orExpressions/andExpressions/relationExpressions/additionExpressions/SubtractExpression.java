@@ -5,9 +5,9 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 public class SubtractExpression extends AdditionExpression {
 
     private MultiplicationExpression leftOperand;
-    private MultiplicationExpression rightOperand;
+    private AdditionExpression rightOperand;
 
-    public SubtractExpression(MultiplicationExpression leftOperand, MultiplicationExpression rightOperand) {
+    public SubtractExpression(MultiplicationExpression leftOperand, AdditionExpression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
@@ -16,7 +16,7 @@ public class SubtractExpression extends AdditionExpression {
         return leftOperand;
     }
 
-    public MultiplicationExpression getRightOperand() {
+    public AdditionExpression getRightOperand() {
         return rightOperand;
     }
 }

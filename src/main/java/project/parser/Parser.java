@@ -493,22 +493,6 @@ public class Parser {
         return null;
     }
 
-//    private Statement tryToParseDeclarationStatement(Identifier type) {
-//        Declaration declaration;
-//        if ((declaration = tryToParseDeclaration(type)) != null) {
-//
-//            if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
-//                lexer.nextToken();
-//                return declaration;
-//            }
-//
-//            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of declaration statement)");
-//        }
-//
-//        return null;
-//    }
-
-
     private ArrayList<Statement> tryToParseDeclarationsList(Type type) {
         ArrayList<Statement> declarations = new ArrayList<>();
 
@@ -707,8 +691,8 @@ public class Parser {
         if (lexer.getToken().getType() == Token.TokenType.ALTERNATIVE) {
             lexer.nextToken();
 
-            AndExpression rightOperand;
-            if ((rightOperand = tryToParseAndExpression()) != null) {
+            OrExpression rightOperand;
+            if ((rightOperand = tryToParseOrExpression()) != null) {
                 return new AlternativeExpression(leftOperand, rightOperand);
             }
 
@@ -738,8 +722,8 @@ public class Parser {
         if (lexer.getToken().getType() == Token.TokenType.CONJUNCTION) {
             lexer.nextToken();
 
-            RelationExpression rightOperand;
-            if ((rightOperand = tryToParseRelationExpression()) != null) {
+            AndExpression rightOperand;
+            if ((rightOperand = tryToParseAndExpression()) != null) {
                 return new ConjunctionExpression(leftOperand, rightOperand);
             }
 
@@ -766,12 +750,12 @@ public class Parser {
     }
 
     private RelationExpression tryToParseRelation(AdditionExpression leftOperand) {
-        AdditionExpression rightOperand;
+        RelationExpression rightOperand;
 
         if (lexer.getToken().getType() == Token.TokenType.EQ) {
             lexer.nextToken();
 
-            if ((rightOperand = tryToParseAdditionExpression()) != null) {
+            if ((rightOperand = tryToParseRelationExpression()) != null) {
                 return new EqualExpression(leftOperand, rightOperand);
             }
 
@@ -780,7 +764,7 @@ public class Parser {
         else if (lexer.getToken().getType() == Token.TokenType.NEQ) {
             lexer.nextToken();
 
-            if ((rightOperand = tryToParseAdditionExpression()) != null) {
+            if ((rightOperand = tryToParseRelationExpression()) != null) {
                 return new NotEqualExpression(leftOperand, rightOperand);
             }
 
@@ -789,7 +773,7 @@ public class Parser {
         else if (lexer.getToken().getType() == Token.TokenType.GEQT) {
             lexer.nextToken();
 
-            if ((rightOperand = tryToParseAdditionExpression()) != null) {
+            if ((rightOperand = tryToParseRelationExpression()) != null) {
                 return new GreaterEqualExpression(leftOperand, rightOperand);
             }
 
@@ -798,7 +782,7 @@ public class Parser {
         else if (lexer.getToken().getType() == Token.TokenType.GT) {
             lexer.nextToken();
 
-            if ((rightOperand = tryToParseAdditionExpression()) != null) {
+            if ((rightOperand = tryToParseRelationExpression()) != null) {
                 return new GreaterExpression(leftOperand, rightOperand);
             }
 
@@ -807,7 +791,7 @@ public class Parser {
         else if (lexer.getToken().getType() == Token.TokenType.LEQT) {
             lexer.nextToken();
 
-            if ((rightOperand = tryToParseAdditionExpression()) != null) {
+            if ((rightOperand = tryToParseRelationExpression()) != null) {
                 return new LesserEqualExpression(leftOperand, rightOperand);
             }
 
@@ -816,7 +800,7 @@ public class Parser {
         else if (lexer.getToken().getType() == Token.TokenType.LT) {
             lexer.nextToken();
 
-            if ((rightOperand = tryToParseAdditionExpression()) != null) {
+            if ((rightOperand = tryToParseRelationExpression()) != null) {
                 return new LesserExpression(leftOperand, rightOperand);
             }
 
@@ -831,11 +815,11 @@ public class Parser {
         MultiplicationExpression multiplicationExpression;
         if ((multiplicationExpression = tryToParseMultiplicationExpression()) != null) {
 
-            MultiplicationExpression rightOperand;
+            AdditionExpression rightOperand;
             if (lexer.getToken().getType() == Token.TokenType.PLUS) {
                 lexer.nextToken();
 
-                if ((rightOperand = tryToParseMultiplicationExpression()) != null) {
+                if ((rightOperand = tryToParseAdditionExpression()) != null) {
                     return new AddExpression(multiplicationExpression, rightOperand);
                 }
 
@@ -844,7 +828,7 @@ public class Parser {
             else if (lexer.getToken().getType() == Token.TokenType.MINUS) {
                 lexer.nextToken();
 
-                if ((rightOperand = tryToParseMultiplicationExpression()) != null) {
+                if ((rightOperand = tryToParseAdditionExpression()) != null) {
                     return new SubtractExpression(multiplicationExpression, rightOperand);
                 }
 
@@ -862,11 +846,11 @@ public class Parser {
         NegationExpression negationExpression;
         if ((negationExpression = tryToParseNegationExpression()) != null) {
 
-            NegationExpression rightOperand;
+            MultiplicationExpression rightOperand;
             if (lexer.getToken().getType() == Token.TokenType.MUL) {
                 lexer.nextToken();
 
-                if ((rightOperand = tryToParseNegationExpression()) != null) {
+                if ((rightOperand = tryToParseMultiplicationExpression()) != null) {
                     return new MultExpression(negationExpression, rightOperand);
                 }
 
@@ -875,7 +859,7 @@ public class Parser {
             else if (lexer.getToken().getType() == Token.TokenType.DIV) {
                 lexer.nextToken();
 
-                if ((rightOperand = tryToParseNegationExpression()) != null) {
+                if ((rightOperand = tryToParseMultiplicationExpression()) != null) {
                     return new DivExpression(negationExpression, rightOperand);
                 }
 
@@ -884,7 +868,7 @@ public class Parser {
             else if (lexer.getToken().getType() == Token.TokenType.MOD) {
                 lexer.nextToken();
 
-                if ((rightOperand = tryToParseNegationExpression()) != null) {
+                if ((rightOperand = tryToParseMultiplicationExpression()) != null) {
                     return new ModExpression(negationExpression, rightOperand);
                 }
 

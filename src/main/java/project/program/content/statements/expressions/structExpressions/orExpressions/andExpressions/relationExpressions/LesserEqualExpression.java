@@ -5,9 +5,9 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 public class LesserEqualExpression extends RelationExpression {
 
     private AdditionExpression leftOperand;
-    private AdditionExpression rightOperand;
+    private RelationExpression rightOperand;
 
-    public LesserEqualExpression(AdditionExpression leftOperand, AdditionExpression rightOperand) {
+    public LesserEqualExpression(AdditionExpression leftOperand,RelationExpression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
@@ -16,7 +16,7 @@ public class LesserEqualExpression extends RelationExpression {
         return leftOperand;
     }
 
-    public AdditionExpression getRightOperand() {
+    public RelationExpression getRightOperand() {
         return rightOperand;
     }
 }

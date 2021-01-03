@@ -5,9 +5,9 @@ import project.program.content.statements.expressions.structExpressions.orExpres
 public class ConjunctionExpression extends AndExpression {
 
     private RelationExpression leftOperand;
-    private RelationExpression rightOperand;
+    private AndExpression rightOperand;
 
-    public ConjunctionExpression(RelationExpression leftOperand, RelationExpression rightOperand) {
+    public ConjunctionExpression(RelationExpression leftOperand, AndExpression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
@@ -16,7 +16,7 @@ public class ConjunctionExpression extends AndExpression {
         return leftOperand;
     }
 
-    public RelationExpression getRightOperand() {
+    public AndExpression getRightOperand() {
         return rightOperand;
     }
 }
