@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StructDefinitionTests {
 
     @Test
-    void shouldParseVoidFuncDefWithOneArg() {
+    void shouldParseStructDefWithTwoSimpleFields() {
         Source source = new StringSource("struct Student { int a; double b; }");
         Lexer lexer = new Lexer(source);
         lexer.nextToken();
