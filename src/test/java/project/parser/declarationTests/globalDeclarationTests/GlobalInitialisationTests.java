@@ -42,8 +42,8 @@ public class GlobalInitialisationTests {
         assertTrue(declaration instanceof Initialisation);
         assertTrue(declaration.getType() instanceof IntType);
         assertEquals("a", declaration.getId().getName());
-        assertTrue(((Initialisation) declaration).getExpression() instanceof IntValue);
 
+        assertTrue(((Initialisation) declaration).getExpression() instanceof IntValue);
         BigInteger actualValue = new BigInteger(String.valueOf(((IntValue)((Initialisation) declaration).getExpression()).getValue()));
         BigInteger expectedValue = new BigInteger("1");
         assertEquals(0, expectedValue.compareTo(actualValue));
