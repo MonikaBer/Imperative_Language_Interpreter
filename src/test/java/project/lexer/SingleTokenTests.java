@@ -517,7 +517,7 @@ public class SingleTokenTests {
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.POSTINC, lexer.getToken().getType());
+        assertEquals(Token.TokenType.PREINC, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
 
@@ -527,7 +527,7 @@ public class SingleTokenTests {
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.POSTDEC, lexer.getToken().getType());
+        assertEquals(Token.TokenType.PREDEC, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
 

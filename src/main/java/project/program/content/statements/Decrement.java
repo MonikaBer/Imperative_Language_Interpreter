@@ -1,16 +1,14 @@
 package project.program.content.statements;
 
-import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
+import project.program.content.statements.expressions.Expression;
 
 public class Decrement extends Statement {
 
-    private final Identifier identifier;
+    private final Expression expression;
 
-    public Decrement(Identifier identifier) {
-        this.identifier = identifier;
+    public Decrement(Expression expression) {
+        this.expression = expression;
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
-    }
+    public Expression getExpression() { return expression; }
 }

@@ -7,7 +7,7 @@ public abstract class Token implements IToken {
                             ASSIGN, RETURN,
                             L_PARENTH, R_PARENTH, L_BRACE, R_BRACE,
                             INT, DOUBLE, BOOL, STRING, VOID, STRUCT,
-                            EQ, NEQ, GEQT, GT, LEQT, LT, PLUS, MINUS, POSTINC, POSTDEC, MUL, DIV, MOD,
+                            EQ, NEQ, GEQT, GT, LEQT, LT, PLUS, MINUS, PREINC, PREDEC, MUL, DIV, MOD,
                             ALTERNATIVE, CONJUNCTION, NEGATION,
                             SEMICOLON, DOT, COLON, COMMA,
                             EOT, UNDEFINED

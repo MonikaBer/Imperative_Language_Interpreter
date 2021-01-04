@@ -329,7 +329,7 @@ public class Lexer {
                 if (getChar() == '+') {
                     buffer.append(getChar());
                     advance();
-                    token = new PrimitiveToken(Token.TokenType.POSTINC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                    token = new PrimitiveToken(Token.TokenType.PREINC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
                     token = new PrimitiveToken(Token.TokenType.PLUS, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
@@ -341,7 +341,7 @@ public class Lexer {
                 if (getChar() == '-') {
                     buffer.append(getChar());
                     advance();
-                    token = new PrimitiveToken(Token.TokenType.POSTDEC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                    token = new PrimitiveToken(Token.TokenType.PREDEC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
                     token = new PrimitiveToken(Token.TokenType.MINUS, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }

@@ -1,7 +1,8 @@
-package project.parser;
+package project.parser.anotherStatementsTests;
 
 import org.junit.jupiter.api.Test;
 import project.lexer.Lexer;
+import project.parser.Parser;
 import project.program.Program;
 import project.program.content.FuncDef;
 import project.program.content.StructDef;

@@ -36,7 +36,6 @@ import project.token.Token;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Struct;
 import java.util.ArrayList;
 
 public class Parser {
@@ -165,6 +164,14 @@ public class Parser {
             statements.add(statement);
             return statements;
         }
+        if ((statement = tryToParseIncrementStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
+        if ((statement = tryToParseDecrementStatement()) != null) {
+            statements.add(statement);
+            return statements;
+        }
 
         return tryToParseFuncCallOrAssignmentOrDeclarationStatement();
     }
@@ -259,6 +266,9 @@ public class Parser {
                                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No expression (after 'case' keyword)");
                             }
 
+                            if (cases.isEmpty())
+                                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No case (in switch statement)");
+
                             if (lexer.getToken().getType() == Token.TokenType.DEFAULT) {
                                 lexer.nextToken();
 
@@ -333,12 +343,14 @@ public class Parser {
     private Statement tryToParseReturnStatement() {
         if (lexer.getToken().getType() == Token.TokenType.RETURN) {
             lexer.nextToken();
-
             Expression expression = tryToParseExpression();
+
             if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
                 lexer.nextToken();
 
-                return new Return(expression);
+                if (expression != null)
+                    return new Return(expression);
+                return new VoidReturn();
             }
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (after expression in return statement)");
         }
@@ -358,7 +370,8 @@ public class Parser {
 
             if (lexer.getToken().getType() == Token.TokenType.R_BRACE) {
                 lexer.nextToken();
-
+                if (statements.isEmpty())
+                    statements = null;
                 return new Block(statements);
             }
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No '}' (after list of statements in block)");
@@ -372,6 +385,44 @@ public class Parser {
             lexer.nextToken();
             return new Empty();
         }
+        return null;
+    }
+
+    private Statement tryToParseIncrementStatement() {
+        if (lexer.getToken().getType() == Token.TokenType.PREINC) {
+            lexer.nextToken();
+
+            if (lexer.getToken().getType() == Token.TokenType.ID) {
+                Expression expression = tryToParseExpression();
+
+                if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                    lexer.nextToken();
+                    return new Increment(expression);
+                }
+                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of increment statement)");
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No identifier (after '++' in increment statement)");
+        }
+
+        return null;
+    }
+
+    private Statement tryToParseDecrementStatement() {
+        if (lexer.getToken().getType() == Token.TokenType.PREDEC) {
+            lexer.nextToken();
+
+            if (lexer.getToken().getType() == Token.TokenType.ID) {
+                Expression expression = tryToParseExpression();
+
+                if (lexer.getToken().getType() == Token.TokenType.SEMICOLON) {
+                    lexer.nextToken();
+                    return new Decrement(expression);
+                }
+                throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No ';' (at the end of decrement statement)");
+            }
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), "No identifier (after '--' in decrement statement)");
+        }
+
         return null;
     }
 

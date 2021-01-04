@@ -7,8 +7,8 @@ import project.program.Program;
 import project.program.content.FuncDef;
 import project.program.content.StructDef;
 import project.program.content.statements.Block;
-import project.program.content.statements.Return;
 import project.program.content.statements.Statement;
+import project.program.content.statements.VoidReturn;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.declarations.Initialisation;
 import project.program.content.statements.declarations.OnlyDeclaration;
@@ -91,7 +91,6 @@ public class MixDeclarationInFuncDefTests {
 
 
         stmt = block.getStmts().get(4);
-        assertTrue(stmt instanceof Return);
-        assertNull(((Return) stmt).getExpression());
+        assertTrue(stmt instanceof VoidReturn);
     }
 }
