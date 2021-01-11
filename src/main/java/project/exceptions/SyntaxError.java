@@ -4,12 +4,14 @@ public class SyntaxError extends RuntimeException {
 
     private final int lineNr;
     private final int positionAtLine;
+    private final String desc;
     private final String message;
 
-    public SyntaxError(int lineNr, int positionAtLine, String message) {
+    public SyntaxError(int lineNr, int positionAtLine, String desc) {
         this.lineNr = lineNr;
         this.positionAtLine = positionAtLine;
-        this.message = message;
+        this.desc = desc;
+        this.message = "(" + lineNr + ":" + positionAtLine + ") " + desc;
     }
 
     public int getLineNr() {
@@ -18,6 +20,10 @@ public class SyntaxError extends RuntimeException {
 
     public int getPositionAtLine() {
         return positionAtLine;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     @Override

@@ -1277,6 +1277,54 @@ public class ExpressionTests {
     }
 
     @Test
+    void shouldParseSimpleGreaterEqualExpression1() {
+        Source source = new StringSource("void function() { bool a = a + b > c; }");
+        Lexer lexer = new Lexer(source);
+        lexer.nextToken();
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        ArrayList<Declaration> declarations = program.getDeclarations();
+        ArrayList<FuncDef> funcDefs = program.getFuncDefs();
+        ArrayList<StructDef> structDefs = program.getStructDefs();
+
+        assertEquals(0, declarations.size());
+        assertEquals(1, funcDefs.size());
+        assertEquals(0, structDefs.size());
+
+        FuncDef funcDef = funcDefs.get(0);
+        assertTrue(funcDef.getRetType() instanceof VoidType);
+        assertEquals("function", funcDef.getId().getName());
+
+        ArrayList<Declaration> args = funcDef.getArgs();
+        assertNull(args);
+
+        Block block = funcDef.getBlock();
+        assertEquals(1, block.getStmts().size());
+
+        Statement stmt = block.getStmts().get(0);
+        assertTrue(stmt instanceof Initialisation);
+        assertTrue(((Initialisation)stmt).getType() instanceof BoolType);
+        assertEquals("a", ((Initialisation)stmt).getId().getName());
+
+        Expression expression = ((Initialisation)stmt).getExpression();
+        assertTrue(expression instanceof GreaterExpression);
+
+        Expression leftOperandGreaterExpression = ((GreaterExpression) expression).getLeftOperand();
+        assertTrue(leftOperandGreaterExpression instanceof AddExpression);
+
+        assertTrue(((AddExpression)leftOperandGreaterExpression).getLeftOperand() instanceof Identifier);
+        assertEquals("a", ((Identifier)(((AddExpression)leftOperandGreaterExpression).getLeftOperand())).getName());
+
+        assertEquals("b", ((Identifier)(((AddExpression)leftOperandGreaterExpression).getRightOperand())).getName());
+
+
+        Expression rightOperandGreaterExpression = ((GreaterExpression) expression).getRightOperand();
+        assertTrue(rightOperandGreaterExpression instanceof Identifier);
+        assertEquals("c", ((Identifier)(rightOperandGreaterExpression)).getName());
+    }
+
+    @Test
     void shouldParseSimpleGreaterExpression() {
         Source source = new StringSource("void function() { bool a = 1 > 2; }");
         Lexer lexer = new Lexer(source);
