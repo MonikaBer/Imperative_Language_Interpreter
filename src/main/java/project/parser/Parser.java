@@ -4,6 +4,7 @@ import project.exceptions.SyntaxError;
 import project.lexer.Lexer;
 import project.program.Program;
 import project.program.content.FuncDef;
+import project.program.content.ProgramContent;
 import project.program.content.StructDef;
 import project.program.content.statements.*;
 import project.program.content.statements.declarations.Declaration;
@@ -50,6 +51,7 @@ public class Parser {
         ArrayList<Declaration> declarations = new ArrayList<>();
         ArrayList<FuncDef> funcDefs = new ArrayList<>();
         ArrayList<StructDef> structDefs = new ArrayList<>();
+        ArrayList<ProgramContent> programContents = new ArrayList<>();
 
         ArrayList<Statement> declarationsStatement;
         FuncDef funcDef;
@@ -58,6 +60,7 @@ public class Parser {
         while (lexer.getToken().getType() != Token.TokenType.EOT) {
             if ((structDef = tryToParseStructDef()) != null) {
                 structDefs.add(structDef);
+                programContents.add(structDef);
                 continue;
             }
 
@@ -69,6 +72,7 @@ public class Parser {
 
                 if ((funcDef = tryToParseFuncDef(type, id)) != null) {
                     funcDefs.add(funcDef);
+                    programContents.add(funcDef);
                     continue;
                 }
 
@@ -77,11 +81,12 @@ public class Parser {
 
                 for (Statement declaration : declarationsStatement) {
                     declarations.add((Declaration) declaration);
+                    programContents.add(declaration);
                 }
             }
         }
 
-        return new Program(declarations, funcDefs, structDefs);
+        return new Program(declarations, funcDefs, structDefs, programContents);
     }
 
     private FuncDef tryToParseFuncDef(Type retType, String funcName) {

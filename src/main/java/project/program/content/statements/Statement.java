@@ -1,4 +1,6 @@
 package project.program.content.statements;
 
-public abstract class Statement {
+import project.program.content.ProgramContent;
+
+public abstract class Statement extends ProgramContent {
 }

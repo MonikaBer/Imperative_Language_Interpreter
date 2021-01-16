@@ -1,6 +1,7 @@
 package project.program;
 
 import project.program.content.FuncDef;
+import project.program.content.ProgramContent;
 import project.program.content.StructDef;
 import project.program.content.statements.declarations.Declaration;
 
@@ -12,10 +13,15 @@ public class Program {
     private ArrayList<FuncDef> funcDefs;
     private ArrayList<StructDef> structDefs;
 
-    public Program (ArrayList<Declaration> declarations, ArrayList<FuncDef> funcDefs, ArrayList<StructDef> structDefs) {
+    private ArrayList<ProgramContent> programContents;
+
+    public Program (ArrayList<Declaration> declarations, ArrayList<FuncDef> funcDefs, ArrayList<StructDef> structDefs,
+                    ArrayList<ProgramContent> programContents) {
         this.declarations = declarations;
         this.funcDefs = funcDefs;
         this.structDefs = structDefs;
+
+        this.programContents = programContents;
     }
 
     public ArrayList<Declaration> getDeclarations() {
@@ -29,4 +35,6 @@ public class Program {
     public ArrayList<StructDef> getStructDefs() {
         return structDefs;
     }
+
+    public ArrayList<ProgramContent> getProgramContents() { return programContents; }
 }

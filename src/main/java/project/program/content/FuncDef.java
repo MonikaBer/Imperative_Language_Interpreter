@@ -7,7 +7,7 @@ import project.program.content.types.Type;
 
 import java.util.ArrayList;
 
-public class FuncDef {
+public class FuncDef extends ProgramContent {
 
     private final Type retType;
     private final Identifier id;

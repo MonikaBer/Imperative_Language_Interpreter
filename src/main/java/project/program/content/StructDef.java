@@ -6,7 +6,7 @@ import project.program.content.types.Type;
 
 import java.util.ArrayList;
 
-public class StructDef extends Type {
+public class StructDef extends ProgramContent {
 
     private final Identifier id;
     private final ArrayList<Declaration> body;
