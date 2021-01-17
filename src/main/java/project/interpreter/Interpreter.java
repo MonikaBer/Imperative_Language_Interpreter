@@ -1,6 +1,9 @@
 package project.interpreter;
 
 import project.exceptions.SemanticError;
+import project.interpreter.definitions.FuncDefinition;
+import project.interpreter.definitions.StructDefinition;
+import project.interpreter.definitions.Variable;
 import project.program.Program;
 import project.program.content.FuncDef;
 import project.program.content.ProgramContent;
@@ -30,6 +33,7 @@ import project.program.content.statements.switchStmt.Case;
 import project.program.content.statements.switchStmt.Switch;
 import project.program.content.types.*;
 
+
 public class Interpreter implements INodeVisitor {
 
     private Program program;
@@ -51,37 +55,84 @@ public class Interpreter implements INodeVisitor {
 
     @Override
     public void visit(Program program) {
-
+        for (ProgramContent programContent : program.getProgramContents()) {
+            programContent.accept(this);
+        }
     }
 
     @Override
     public void visit(ProgramContent programContent) {
-
+        if (programContent instanceof OnlyDeclaration)
+            ((OnlyDeclaration) programContent).accept(this);
+        else if (programContent instanceof Initialisation)
+            ((Initialisation) programContent).accept(this);
+        else if (programContent instanceof FuncDef)
+            ((FuncDef) programContent).accept(this);
+        else if (programContent instanceof StructDef)
+            ((StructDef) programContent).accept(this);
     }
 
     @Override
     public void visit(Declaration declaration) {
-
+        if (declaration instanceof OnlyDeclaration)
+            ((OnlyDeclaration)declaration).accept(this);
+        else if (declaration instanceof Initialisation)
+            ((Initialisation)declaration).accept(this);
     }
 
     @Override
     public void visit(OnlyDeclaration onlyDeclaration) {
-
+        Type type = onlyDeclaration.getType();
+        if (type instanceof VoidType) {
+            String desc = "Type of variable in declaration is instance of void";
+            throw new SemanticError(((VoidType)type).getLineNr(), ((VoidType)type).getPositionAtLine(), desc);
+        }
+        env.makeVar(new Variable(onlyDeclaration));
     }
 
     @Override
     public void visit(Initialisation initialisation) {
+        Type type = initialisation.getType();
+        if (type instanceof VoidType) {
+            String desc = "Type of variable in definition is instance of void";
+            throw new SemanticError(((VoidType)type).getLineNr(), ((VoidType)type).getPositionAtLine(), desc);
+        }
 
+        initialisation.getExpression().accept(this);
+        Expression value = env.getLastResult();
+
+        if (type instanceof IntType && !(value instanceof IntValue)) {
+            String desc = "Wrong type of variable in initialisation expression, int is required";
+            throw new SemanticError(value.getLineNr(), value.getPositionAtLine(), desc);
+        }
+        else if (type instanceof DoubleType && !(value instanceof DoubleValue)) {
+            String desc = "Wrong type of variable in initialisation expression, double is required";
+            throw new SemanticError(value.getLineNr(), value.getPositionAtLine(), desc);
+        }
+        else if (type instanceof StringType && !(value instanceof StringValue)) {
+            String desc = "Wrong type of variable in initialisation expression, string is required";
+            throw new SemanticError(value.getLineNr(), value.getPositionAtLine(), desc);
+        }
+        else if (type instanceof BoolType && !((value instanceof TrueExpression) || (value instanceof FalseExpression))) {
+            String desc = "Wrong type of variable in initialisation expression, bool is required";
+            throw new SemanticError(value.getLineNr(), value.getPositionAtLine(), desc);
+        }
+        else if (type instanceof StructType) {
+            String desc = "Initialisation of variable of struct type is prohibited";
+            throw new SemanticError(value.getLineNr(), value.getPositionAtLine(), desc);
+        }
+
+        env.makeVar(new Variable(initialisation));
     }
 
     @Override
     public void visit(FuncDef funcDef) {
-
+        env.makeFuncDefinition(new FuncDefinition(funcDef));
     }
 
     @Override
     public void visit(StructDef structDef) {
-
+        env.makeStructDefinition(new StructDefinition(structDef));
     }
 
     @Override
@@ -127,7 +178,9 @@ public class Interpreter implements INodeVisitor {
             return;
 
         String desc = "Condition in if statement is not a type of bool expression";
-        throw new SemanticError(env.getLastResult().getLineNr(), env.getLastResult().getPositionAtLine(), desc);
+        int lineNr = ((Expression)env.getLastResult()).getLineNr();
+        int posAtLine = ((Expression)env.getLastResult()).getPositionAtLine();
+        throw new SemanticError(lineNr, posAtLine, desc);
     }
 
     @Override
@@ -145,7 +198,9 @@ public class Interpreter implements INodeVisitor {
         }
 
         String desc = "Condition in if statement is not a type of bool expression";
-        throw new SemanticError(env.getLastResult().getLineNr(), env.getLastResult().getPositionAtLine(), desc);
+        int lineNr = ((Expression)env.getLastResult()).getLineNr();
+        int posAtLine = ((Expression)env.getLastResult()).getPositionAtLine();
+        throw new SemanticError(lineNr, posAtLine, desc);
     }
 
     @Override

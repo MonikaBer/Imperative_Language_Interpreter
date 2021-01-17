@@ -8,7 +8,6 @@ import project.program.content.FuncDef;
 import project.program.content.StructDef;
 import project.program.content.statements.Block;
 import project.program.content.statements.Decrement;
-import project.program.content.statements.Increment;
 import project.program.content.statements.Statement;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;

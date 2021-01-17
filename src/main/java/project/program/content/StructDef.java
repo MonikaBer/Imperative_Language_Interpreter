@@ -1,10 +1,8 @@
 package project.program.content;
 
 import project.interpreter.INodeVisitor;
-import project.program.INode;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
-import project.program.content.types.Type;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,6 @@
 package project.program.content;
 
 import project.interpreter.INodeVisitor;
-import project.program.INode;
 import project.program.content.statements.Block;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;

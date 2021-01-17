@@ -3,8 +3,8 @@ package project.interpreter.definitions;
 import project.program.content.statements.declarations.Initialisation;
 import project.program.content.statements.declarations.OnlyDeclaration;
 import project.program.content.statements.expressions.Expression;
-import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
-import project.program.content.types.Type;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
+import project.program.content.types.*;
 
 public class Variable extends Definition {
 

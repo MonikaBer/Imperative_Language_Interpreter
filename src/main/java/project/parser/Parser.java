@@ -574,8 +574,9 @@ public class Parser {
         if ((type = tryToParseNonVoidType()) != null)
             return type;
 
-        if (expectToken(Token.TokenType.VOID) != null)
-            return new VoidType();
+        Token token;
+        if ((token = expectToken(Token.TokenType.VOID)) != null)
+            return new VoidType(token.getLineNr(), token.getPositionAtLine());
 
         return null;
     }
@@ -822,7 +823,7 @@ public class Parser {
             desc = "No simple expression (after '!' in 'not' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
-        else if (expectToken(Token.TokenType.MINUS) != null) {
+        else if ((token = expectToken(Token.TokenType.MINUS)) != null) {
             if ((simpleExpression = tryToParseSimpleExpression()) != null)
                 return new NegativeExpression(simpleExpression, token.getLineNr(), token.getPositionAtLine());
 

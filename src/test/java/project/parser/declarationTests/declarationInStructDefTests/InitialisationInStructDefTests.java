@@ -9,7 +9,10 @@ import project.program.content.StructDef;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.declarations.Initialisation;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.*;
-import project.program.content.types.*;
+import project.program.content.types.BoolType;
+import project.program.content.types.DoubleType;
+import project.program.content.types.IntType;
+import project.program.content.types.StringType;
 import project.source.Source;
 import project.source.StringSource;
 
