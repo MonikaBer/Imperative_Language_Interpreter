@@ -6,7 +6,8 @@ public class DoubleValue extends SimpleExpression {
 
     private BigDecimal value;
 
-    public DoubleValue(BigDecimal value) {
+    public DoubleValue(BigDecimal value, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.value = value;
     }
 

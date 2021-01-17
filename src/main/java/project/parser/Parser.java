@@ -68,15 +68,18 @@ public class Parser {
             if ((type = tryToParseType()) != null) {
 
                 String desc = "Unknown language construction";
-                String id = ((StringToken)consumeToken(Token.TokenType.ID, desc)).getValue();
+                StringToken token = (StringToken)consumeToken(Token.TokenType.ID, desc);
+                String id = token.getValue();
+                int lineNr = token.getLineNr();
+                int posAtLine = token.getPositionAtLine();
 
-                if ((funcDef = tryToParseFuncDef(type, id)) != null) {
+                if ((funcDef = tryToParseFuncDef(type, id, lineNr, posAtLine)) != null) {
                     funcDefs.add(funcDef);
                     programContents.add(funcDef);
                     continue;
                 }
 
-                if ((declarationsStatement = tryToParseDeclarationsList(type, id)) == null)
+                if ((declarationsStatement = tryToParseDeclarationsList(type, id, lineNr, posAtLine)) == null)
                     throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
 
                 for (Statement declaration : declarationsStatement) {
@@ -89,7 +92,7 @@ public class Parser {
         return new Program(declarations, funcDefs, structDefs, programContents);
     }
 
-    private FuncDef tryToParseFuncDef(Type retType, String funcName) {
+    private FuncDef tryToParseFuncDef(Type retType, String funcName, int lineNr, int posAtLine) {
         if (expectToken(Token.TokenType.L_PARENTH) == null)
             return null;
 
@@ -98,7 +101,8 @@ public class Parser {
 
         Statement block;
         if ((block = tryToParseBlockStatement()) != null) {
-            return new FuncDef(retType, new Identifier(funcName), args, (Block)block);
+            Identifier id = new Identifier(funcName, lineNr, posAtLine);
+            return new FuncDef(retType, id, args, (Block)block);
         }
 
         String desc = "No block statement (after args in function definition)";
@@ -111,6 +115,8 @@ public class Parser {
 
         Token token = consumeToken(Token.TokenType.ID, "No name of struct type (in struct definition)");
         String structTypeName = ((StringToken) token).getValue();
+        int lineNr = token.getLineNr();
+        int posAtLine = token.getPositionAtLine();
 
         consumeToken(Token.TokenType.L_BRACE, "No '{' (after name of struct type in struct definition)");
 
@@ -118,7 +124,8 @@ public class Parser {
         if ((structTypeBody = tryToParseStructTypeBody()) != null) {
 
             consumeToken(Token.TokenType.R_BRACE, "No '}' (at the end of struct definition)");
-            return new StructDef(new Identifier(structTypeName), structTypeBody);
+            Identifier id = new Identifier(structTypeName, lineNr, posAtLine);
+            return new StructDef(id, structTypeBody);
         }
 
         String desc = "No fields (in struct definition)";
@@ -388,7 +395,9 @@ public class Parser {
             }
 
             if (expression instanceof Identifier) {
-                if ((stmts = tryToParseDeclarationsList(new StructType((Identifier)expression), null)) != null)
+                if ((stmts = tryToParseDeclarationsList(
+                                            new StructType((Identifier)expression), null, -1, -1)
+                                            ) != null)
                     return stmts;
             }
 
@@ -430,14 +439,17 @@ public class Parser {
         if ((type = tryToParseNonVoidType()) != null) {
 
             String desc = "No identifier (after type in declaration)";
-            String id = ((StringToken) consumeToken(Token.TokenType.ID, desc)).getValue();
+            StringToken idToken = (StringToken)consumeToken(Token.TokenType.ID, desc);
+            String id = idToken.getValue();
+            int lineNr = idToken.getLineNr();
+            int posAtLine = idToken.getPositionAtLine();
 
             if (expectToken(Token.TokenType.ASSIGN) == null)
-                return new OnlyDeclaration(type, new Identifier(id));
+                return new OnlyDeclaration(type, new Identifier(id, lineNr, posAtLine));
 
             Expression expression;
             if ((expression = tryToParseExpression()) != null)
-                return new Initialisation(type, new Identifier(id), expression);
+                return new Initialisation(type, new Identifier(id, lineNr, posAtLine), expression);
 
             desc = "No expression (after '=' in initialisation)";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
@@ -455,7 +467,7 @@ public class Parser {
             declarations.add(declaration);
 
             while (expectToken(Token.TokenType.COMMA) != null) {
-                if ((declaration = tryToParseDeclaration(declaration.getType(), null)) != null) {
+                if ((declaration = tryToParseDeclaration(declaration.getType(), null, -1, -1)) != null) {
                     declarations.add(declaration);
                 } else {
                     desc = "No variable name (after ',' in list of declarations)";
@@ -471,16 +483,16 @@ public class Parser {
         return null;
     }
 
-    private ArrayList<Statement> tryToParseDeclarationsList(Type type, String id) {
+    private ArrayList<Statement> tryToParseDeclarationsList(Type type, String id, int lineNr, int posAtLine) {
         ArrayList<Statement> declarations = new ArrayList<>();
 
         String desc;
         Declaration declaration;
-        if ((declaration = tryToParseDeclaration(type, id)) != null) {
+        if ((declaration = tryToParseDeclaration(type, id, lineNr, posAtLine)) != null) {
             declarations.add(declaration);
 
             while (expectToken(Token.TokenType.COMMA) != null) {
-                if ((declaration = tryToParseDeclaration(type, null)) != null) {
+                if ((declaration = tryToParseDeclaration(type, null, -1, -1)) != null) {
                     declarations.add(declaration);
                 } else {
                     desc = "No variable name (after ',' in list of declarations)";
@@ -496,20 +508,23 @@ public class Parser {
         return null;
     }
 
-    private Declaration tryToParseDeclaration(Type type, String id) {
+    private Declaration tryToParseDeclaration(Type type, String id, int lineNr, int posAtLine) {
         if (id == null) {
             if (lexer.getToken().getType() != Token.TokenType.ID)
                 return null;
 
-            id = ((StringToken) consumeToken(Token.TokenType.ID, null)).getValue();
+            StringToken idToken = (StringToken) consumeToken(Token.TokenType.ID, null);
+            id = idToken.getValue();
+            lineNr = idToken.getLineNr();
+            posAtLine = idToken.getPositionAtLine();
         }
 
         if (expectToken(Token.TokenType.ASSIGN) == null)
-            return new OnlyDeclaration(type, new Identifier(id));
+            return new OnlyDeclaration(type, new Identifier(id, lineNr, posAtLine));
 
         Expression expression;
         if ((expression = tryToParseExpression()) != null)
-            return new Initialisation(type, new Identifier(id), expression);
+            return new Initialisation(type, new Identifier(id, lineNr, posAtLine), expression);
 
         String desc = "No expression (after '=' in initialisation)";
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
@@ -531,7 +546,7 @@ public class Parser {
         Token id;
         if ((id = expectToken(Token.TokenType.ID)) != null) {
             String typeName = ((StringToken) id).getValue();
-            return new StructType(new Identifier(typeName));
+            return new StructType(new Identifier(typeName, id.getLineNr(), id.getPositionAtLine()));
         }
 
         return null;
@@ -821,30 +836,31 @@ public class Parser {
         Token token;
 
         if (lexer.getToken().getType() == Token.TokenType.TEXT) {
-            String text = ((StringToken) consumeToken(Token.TokenType.TEXT, null)).getValue();
-            return new StringValue(text);
+            token = consumeToken(Token.TokenType.TEXT, null);
+            String text = ((StringToken)token).getValue();
+            return new StringValue(text, token.getLineNr(), token.getPositionAtLine());
         }
-        else if (expectToken(Token.TokenType.FALSE) != null) {
-            return new FalseExpression();
+        else if ((token = expectToken(Token.TokenType.FALSE)) != null) {
+            return new FalseExpression(token.getLineNr(), token.getPositionAtLine());
         }
-        else if (expectToken(Token.TokenType.TRUE) != null) {
-            return new TrueExpression();
+        else if ((token = expectToken(Token.TokenType.TRUE)) != null) {
+            return new TrueExpression(token.getLineNr(), token.getPositionAtLine());
         }
         else if ((token = expectToken(Token.TokenType.INT_NUMBER)) != null) {
             BigInteger intValue = ((IntToken) token).getValue();
-            return new IntValue(intValue);
+            return new IntValue(intValue, token.getLineNr(), token.getPositionAtLine());
         }
         else if ((token = expectToken(Token.TokenType.DOUBLE_NUMBER)) != null) {
             BigDecimal doubleValue = ((DoubleToken) token).getValue();
-            return new DoubleValue(doubleValue);
+            return new DoubleValue(doubleValue, token.getLineNr(), token.getPositionAtLine());
         }
-        else if (expectToken(Token.TokenType.L_PARENTH) != null) {
+        else if ((token = expectToken(Token.TokenType.L_PARENTH)) != null) {
             Expression expression;
             if ((expression = tryToParseExpression()) != null) {
                 desc = "No ')' (after expression in simple 'parenth' expression";
                 consumeToken(Token.TokenType.R_PARENTH, desc);
 
-                return new ParenthExpression(expression);
+                return new ParenthExpression(expression, token.getLineNr(), token.getPositionAtLine());
             }
 
             desc = "No expression (after '(' in simple 'parenth' expression";
@@ -852,16 +868,18 @@ public class Parser {
         }
         else if ((token = expectToken(Token.TokenType.ID)) != null) {
             String id = ((StringToken) token).getValue();
+            int lineNr = token.getLineNr();
+            int posAtLine = token.getPositionAtLine();
 
             FuncCall funcCall;
-            if ((funcCall = tryToParseFuncCall(new Identifier(id))) != null)
+            if ((funcCall = tryToParseFuncCall(new Identifier(id, lineNr, posAtLine))) != null)
                 return funcCall;
 
             StructFieldExpression structFieldExpression;
-            if ((structFieldExpression = tryToParseStructFieldExpression(new Identifier(id))) != null)
+            if ((structFieldExpression = tryToParseStructFieldExpression(new Identifier(id, lineNr, posAtLine))) != null)
                 return structFieldExpression;
 
-            return new Identifier(id);
+            return new Identifier(id, lineNr, posAtLine);
         }
 
         return null;
@@ -874,7 +892,7 @@ public class Parser {
         ArrayList<Expression> params = tryToParseParams();
         consumeToken(Token.TokenType.R_PARENTH, "No ')' (after list of params in function calling)");
 
-        return new FuncCall(id, params);
+        return new FuncCall(id, params, id.getLineNr(), id.getPositionAtLine());
  }
 
     private StructFieldExpression tryToParseStructFieldExpression(Identifier structVarName) {
@@ -882,13 +900,18 @@ public class Parser {
             return null;
 
         String desc = "No field name (after '.' in struct type variable";
-        String id = ((StringToken)consumeToken(Token.TokenType.ID, desc)).getValue();
+        StringToken token = (StringToken)consumeToken(Token.TokenType.ID, desc);
+        String id = token.getValue();
+        int lineNr = token.getLineNr();
+        int posAtLine = token.getPositionAtLine();
 
         StructFieldExpression structFieldExpression;
-        if ((structFieldExpression = tryToParseStructFieldExpression(new Identifier(id))) != null)
-            return new StructFieldExpression(structVarName, structFieldExpression);
+        if ((structFieldExpression = tryToParseStructFieldExpression(new Identifier(id, lineNr, posAtLine))) != null)
+            return new StructFieldExpression(structVarName, structFieldExpression,
+                                            structVarName.getLineNr(), structVarName.getPositionAtLine());
 
-        return new StructFieldExpression(structVarName, new Identifier(id));
+        return new StructFieldExpression(structVarName, new Identifier(id, lineNr, posAtLine),
+                                        structVarName.getLineNr(), structVarName.getPositionAtLine());
     }
 
 

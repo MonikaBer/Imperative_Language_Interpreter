@@ -2,5 +2,7 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 public class FalseExpression extends SimpleExpression {
 
-    public FalseExpression() {}
+    public FalseExpression(int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
+    }
 }

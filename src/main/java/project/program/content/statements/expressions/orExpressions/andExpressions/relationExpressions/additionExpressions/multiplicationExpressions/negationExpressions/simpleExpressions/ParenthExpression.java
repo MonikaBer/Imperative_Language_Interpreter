@@ -6,7 +6,8 @@ public class ParenthExpression extends SimpleExpression {
 
     private Expression expression;
 
-    public ParenthExpression(Expression expression) {
+    public ParenthExpression(Expression expression, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.expression = expression;
     }
 

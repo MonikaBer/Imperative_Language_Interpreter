@@ -10,7 +10,8 @@ public class FuncCall extends SimpleExpression {
     private final ArrayList<Expression> params;
     private Expression result;
 
-    public FuncCall(Identifier funcName, ArrayList<Expression> params) {
+    public FuncCall(Identifier funcName, ArrayList<Expression> params, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.funcName = funcName;
         this.params = params;
     }

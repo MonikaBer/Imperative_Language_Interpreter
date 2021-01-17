@@ -4,7 +4,8 @@ public class Identifier extends SimpleExpression {
 
     private String name;
 
-    public Identifier(String name) {
+    public Identifier(String name, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.name = name;
     }
 

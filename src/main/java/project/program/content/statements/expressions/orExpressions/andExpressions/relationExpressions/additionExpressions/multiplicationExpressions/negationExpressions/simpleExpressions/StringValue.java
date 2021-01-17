@@ -4,7 +4,8 @@ public class StringValue extends SimpleExpression {
 
     private String value;
 
-    public StringValue(String value) {
+    public StringValue(String value, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.value = value;
     }
 

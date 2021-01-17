@@ -2,5 +2,7 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 public class TrueExpression extends SimpleExpression {
 
-    public TrueExpression() {}
+    public TrueExpression(int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
+    }
 }

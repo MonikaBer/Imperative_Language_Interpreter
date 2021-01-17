@@ -1,26 +1,35 @@
 package project.interpreter.declaredObjects;
 
+import project.program.content.statements.declarations.Initialisation;
+import project.program.content.statements.declarations.OnlyDeclaration;
 import project.program.content.statements.expressions.Expression;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 import project.program.content.types.Type;
 
-public class Variable {
+public class Variable extends DeclaredObject {
 
     private Type type;
-    private String name;
+    private Identifier id;
     private Expression value;
 
-    public Variable(Type type, String name, Expression value) {
-        this.type = type;
-        this.name = name;
-        this.value = value;
+    public Variable(OnlyDeclaration onlyDeclaration) {
+        this.type = onlyDeclaration.getType();
+        this.id = onlyDeclaration.getId();
+        this.value = null;
+    }
+
+    public Variable(Initialisation initialisation) {
+        this.type = initialisation.getType();
+        this.id = initialisation.getId();
+        this.value = initialisation.getExpression();
     }
 
     public Type getType() {
         return type;
     }
 
-    public String getName() {
-        return name;
+    public Identifier getId() {
+        return id;
     }
 
     public Expression getValue() {

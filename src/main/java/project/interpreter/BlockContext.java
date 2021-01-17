@@ -14,7 +14,7 @@ public class BlockContext {
     }
 
     public void addLocalVar(Variable var) {
-        localsVars.put(var.getName(), var);
+        localsVars.put(var.getId().getName(), var);
     }
 
     public Variable getVar(String name) {

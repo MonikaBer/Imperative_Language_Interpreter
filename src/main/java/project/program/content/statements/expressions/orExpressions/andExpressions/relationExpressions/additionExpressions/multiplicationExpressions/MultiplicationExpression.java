@@ -2,5 +2,6 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
 
+
 public abstract class MultiplicationExpression extends AdditionExpression {
 }

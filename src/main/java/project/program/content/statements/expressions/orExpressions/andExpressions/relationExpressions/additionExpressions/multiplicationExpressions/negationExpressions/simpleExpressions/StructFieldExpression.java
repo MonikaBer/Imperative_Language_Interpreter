@@ -5,7 +5,8 @@ public class StructFieldExpression extends SimpleExpression {
     private Identifier structVarName;
     private SimpleExpression fieldName;
 
-    public StructFieldExpression(Identifier structVarName, SimpleExpression fieldName) {
+    public StructFieldExpression(Identifier structVarName, SimpleExpression fieldName, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.structVarName = structVarName;
         this.fieldName = fieldName;
     }

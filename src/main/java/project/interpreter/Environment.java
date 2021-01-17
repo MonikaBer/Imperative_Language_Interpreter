@@ -42,24 +42,30 @@ public class Environment {
     }
 
     public void makeVar(Variable var) {
-        if (((HashMap)globals.get("variables")).containsKey(var.getName()))
-            throw new SemanticError("Declaration of variable named '" + var.getName() + "' already exists");
+        if (((HashMap)globals.get("variables")).containsKey(var.getId().getName())) {
+            String desc = "Declaration of variable named '" + var.getId().getName() + "' already exists";
+            throw new SemanticError(var.getId().getLineNr(), var.getId().getPositionAtLine(), desc);
+        }
 
-        ((HashMap)globals.get("variables")).put(var.getName(), var);
+        ((HashMap)globals.get("variables")).put(var.getId().getName(), var);
     }
 
     public void makeFuncDefinition(FuncDefinition funcDefinition) {
-        if (((HashMap)globals.get("funcDefinitions")).containsKey(funcDefinition.getName()))
-            throw new SemanticError("Definition of function named '" + funcDefinition.getName() + "' already exists");
+        if (((HashMap)globals.get("funcDefinitions")).containsKey(funcDefinition.getId().getName())) {
+            String desc = "Definition of function named '" + funcDefinition.getId().getName() + "' already exists";
+            throw new SemanticError(funcDefinition.getId().getLineNr(), funcDefinition.getId().getPositionAtLine(), desc);
+        }
 
-        ((HashMap)globals.get("funcDefinitions")).put(funcDefinition.getName(), funcDefinition);
+        ((HashMap)globals.get("funcDefinitions")).put(funcDefinition.getId().getName(), funcDefinition);
     }
 
     public void makeStructDefinition(StructDefinition structDefinition) {
-        if (((HashMap)globals.get("structDefinitions")).containsKey(structDefinition.getName()))
-            throw new SemanticError("Definition of struct named '" + structDefinition.getName() + "' already exists");
+        if (((HashMap)globals.get("structDefinitions")).containsKey(structDefinition.getId().getName())) {
+            String desc = "Definition of struct named '" + structDefinition.getId().getName() + "' already exists";
+            throw new SemanticError(structDefinition.getId().getLineNr(), structDefinition.getId().getPositionAtLine(), desc);
+        }
 
-        ((HashMap)globals.get("structDefinitions")).put(structDefinition.getName(), structDefinition);
+        ((HashMap)globals.get("structDefinitions")).put(structDefinition.getId().getName(), structDefinition);
     }
 
     public Map getGlobals() {

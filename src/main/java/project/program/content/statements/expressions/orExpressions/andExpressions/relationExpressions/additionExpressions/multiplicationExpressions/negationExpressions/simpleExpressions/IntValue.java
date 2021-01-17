@@ -6,7 +6,8 @@ public class IntValue extends SimpleExpression {
 
     private BigInteger value;
 
-    public IntValue(BigInteger value) {
+    public IntValue(BigInteger value, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.value = value;
     }
 

@@ -1,22 +1,23 @@
 package project.interpreter.declaredObjects;
 
+import project.program.content.StructDef;
 import project.program.content.statements.declarations.Declaration;
+import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 
 import java.util.ArrayList;
 
-public class StructDefinition {
+public class StructDefinition extends DeclaredObject {
 
-    private final String name;
+    private final Identifier id;
     private final ArrayList<Declaration> body;
 
-    public StructDefinition(String name, ArrayList<Declaration> body) {
-        this.name = name;
-        this.body = body;
+    public StructDefinition(StructDef structDef) {
+        this.id = structDef.getId();
+        this.body = structDef.getBody();
     }
 
-
-    public String getName() {
-        return name;
+    public Identifier getId() {
+        return id;
     }
 
     public ArrayList<Declaration> getBody() {
