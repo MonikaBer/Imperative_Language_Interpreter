@@ -1,6 +1,7 @@
 package project.interpreter;
 
 import project.interpreter.definitions.Variable;
+import project.program.content.statements.Block;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,15 @@ public class CallContext {
                 return var;
         }
         return null;
+    }
+
+    public BlockContext getLastBlockContext() {
+        return (BlockContext)blockContexts.get(blockContexts.size()-1);
+    }
+
+    public void removeLastBlockContext() {
+        if (!blockContexts.isEmpty())
+            blockContexts.remove(blockContexts.size()-1);
     }
 
     public List getBlockContexts() {

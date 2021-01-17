@@ -36,16 +36,27 @@ public class Environment {
     }
 
     public void makeBlockContext(BlockContext blockContext) {
-        callContexts.lastElement().makeBlockContext(blockContext);
+        this.getLastCallContext().makeBlockContext(blockContext);
     }
 
     public void makeVar(Variable var) {
-        if (globals.containsKey("var:" + var.getId().getName())) {
-            String desc = "Declaration of variable named '" + var.getId().getName() + "' already exists";
+        if (callContexts.isEmpty()) {
+            //try to put var to globals
+            if (globals.containsKey("var:" + var.getId().getName())) {
+                String desc = "Declaration of variable named '" + var.getId().getName() + "' already exists in globals";
+                throw new SemanticError(var.getId().getLineNr(), var.getId().getPositionAtLine(), desc);
+            }
+            globals.put("var:" + var.getId().getName(), var);
+            return;
+        }
+
+        //put var to locals of recent block context of recent call context
+        if (this.getLastCallContext().getLastBlockContext().getLocalsVars().containsKey(var.getId().getName())) {
+            String desc = "Variable named '" + var.getId().getName() + "' already exists in locals of block context";
             throw new SemanticError(var.getId().getLineNr(), var.getId().getPositionAtLine(), desc);
         }
 
-        globals.put("var:" + var.getId().getName(), var);
+        this.getLastCallContext().getLastBlockContext().addLocalVar(var);
     }
 
     public void makeFuncDefinition(FuncDefinition funcDefinition) {
@@ -64,6 +75,20 @@ public class Environment {
         }
 
         globals.put("struct:" + structDefinition.getId().getName(), structDefinition);
+    }
+
+    public void deleteBlockContext() {
+        if (!callContexts.isEmpty())
+            this.getLastCallContext().removeLastBlockContext();
+    }
+
+    public void deleteCallContext() {
+        if (!callContexts.isEmpty())
+            callContexts.pop();
+    }
+
+    public CallContext getLastCallContext() {
+        return callContexts.lastElement();
     }
 
     public Map getGlobals() {
