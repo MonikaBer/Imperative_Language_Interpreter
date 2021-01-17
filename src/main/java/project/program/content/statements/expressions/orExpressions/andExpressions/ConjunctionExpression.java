@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.RelationExpression;
 
 public class ConjunctionExpression extends AndExpression {
@@ -18,5 +19,10 @@ public class ConjunctionExpression extends AndExpression {
 
     public AndExpression getRightOperand() {
         return rightOperand;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

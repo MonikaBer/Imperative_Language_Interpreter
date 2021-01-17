@@ -1,5 +1,7 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions;
 
+import project.interpreter.INodeVisitor;
+
 import java.math.BigInteger;
 
 public class IntValue extends SimpleExpression {
@@ -17,5 +19,10 @@ public class IntValue extends SimpleExpression {
 
     public void setValue(BigInteger value) {
         this.value = value;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

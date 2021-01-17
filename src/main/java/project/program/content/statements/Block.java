@@ -1,5 +1,7 @@
 package project.program.content.statements;
 
+import project.interpreter.INodeVisitor;
+
 import java.util.ArrayList;
 
 public class Block extends Statement {
@@ -12,5 +14,10 @@ public class Block extends Statement {
 
     public ArrayList<Statement> getStmts() {
         return stmts;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

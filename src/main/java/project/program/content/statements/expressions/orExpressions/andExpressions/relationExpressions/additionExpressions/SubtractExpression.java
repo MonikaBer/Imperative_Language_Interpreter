@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultiplicationExpression;
 
 public class SubtractExpression extends AdditionExpression {
@@ -18,5 +19,10 @@ public class SubtractExpression extends AdditionExpression {
 
     public AdditionExpression getRightOperand() {
         return rightOperand;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

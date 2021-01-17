@@ -1,5 +1,6 @@
 package project.program.content.statements;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
 public class IfElse extends If {
@@ -13,5 +14,10 @@ public class IfElse extends If {
 
     public Statement getElseStmt() {
         return elseStmt;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

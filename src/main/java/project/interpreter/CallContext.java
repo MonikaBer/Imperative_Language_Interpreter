@@ -14,12 +14,14 @@ public class CallContext {
         this.blockContexts = new ArrayList<BlockContext>();
     }
 
-    public void makeBlockContext(BlockContext blockContext) {
+    public void makeBlockContext() {
+        BlockContext blockContext = new BlockContext();
         blockContexts.add(blockContext);
     }
 
     public void deleteBlockContext() {
-        blockContexts.remove(blockContexts.size()-1);
+        if(!blockContexts.isEmpty())
+            blockContexts.remove(blockContexts.size()-1);
     }
 
     public Variable getVar(String name) {

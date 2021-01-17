@@ -1,5 +1,6 @@
 package project.program;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.FuncDef;
 import project.program.content.ProgramContent;
 import project.program.content.StructDef;
@@ -7,7 +8,7 @@ import project.program.content.statements.declarations.Declaration;
 
 import java.util.ArrayList;
 
-public class Program {
+public class Program implements INode {
 
     private ArrayList<Declaration> declarations;
     private ArrayList<FuncDef> funcDefs;
@@ -37,4 +38,9 @@ public class Program {
     }
 
     public ArrayList<ProgramContent> getProgramContents() { return programContents; }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
+    }
 }

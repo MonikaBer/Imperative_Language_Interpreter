@@ -1,5 +1,6 @@
 package project.program.content.statements;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
 public class If extends Statement {
@@ -18,5 +19,10 @@ public class If extends Statement {
 
     public Statement getIfStmt() {
         return ifStmt;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

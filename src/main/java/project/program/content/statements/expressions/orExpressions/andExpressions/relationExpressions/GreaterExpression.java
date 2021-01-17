@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
 
 public class GreaterExpression extends RelationExpression {
@@ -18,5 +19,10 @@ public class GreaterExpression extends RelationExpression {
 
     public RelationExpression getRightOperand() {
         return rightOperand;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,5 +1,7 @@
 package project.program.content;
 
+import project.interpreter.INodeVisitor;
+import project.program.INode;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 import project.program.content.types.Type;
@@ -22,5 +24,10 @@ public class StructDef extends ProgramContent {
 
     public ArrayList<Declaration> getBody() {
         return body;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

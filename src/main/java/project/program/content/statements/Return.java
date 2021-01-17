@@ -1,5 +1,6 @@
 package project.program.content.statements;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
 public class Return extends Statement {
@@ -12,5 +13,10 @@ public class Return extends Statement {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

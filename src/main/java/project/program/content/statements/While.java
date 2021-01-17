@@ -1,5 +1,6 @@
 package project.program.content.statements;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
 public class While extends Statement {
@@ -18,5 +19,10 @@ public class While extends Statement {
 
     public Statement getStmt() {
         return stmt;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

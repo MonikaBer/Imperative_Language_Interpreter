@@ -31,12 +31,13 @@ public class Environment {
         return null;
     }
 
-    public void makeCallContext(CallContext callContext) {
+    public void makeCallContext() {
+        CallContext callContext = new CallContext();
         callContexts.push(callContext);
     }
 
-    public void makeBlockContext(BlockContext blockContext) {
-        this.getLastCallContext().makeBlockContext(blockContext);
+    public void makeBlockContext() {
+        this.getLastCallContext().makeBlockContext();
     }
 
     public void makeVar(Variable var) {

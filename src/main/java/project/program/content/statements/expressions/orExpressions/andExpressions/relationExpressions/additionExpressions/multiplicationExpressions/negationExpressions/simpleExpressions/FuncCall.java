@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
 import java.util.ArrayList;
@@ -30,5 +31,10 @@ public class FuncCall extends SimpleExpression {
 
     public void setResult(Expression result) {
         this.result = result;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

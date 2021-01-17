@@ -1,5 +1,7 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions;
 
+import project.interpreter.INodeVisitor;
+
 public class StructFieldExpression extends SimpleExpression {
 
     private Identifier structVarName;
@@ -17,5 +19,10 @@ public class StructFieldExpression extends SimpleExpression {
 
     public SimpleExpression getFieldName() {
         return fieldName;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

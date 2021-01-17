@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.AndExpression;
 
 public class AlternativeExpression extends OrExpression {
@@ -18,5 +19,10 @@ public class AlternativeExpression extends OrExpression {
 
     public OrExpression getRightOperand() {
         return rightOperand;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

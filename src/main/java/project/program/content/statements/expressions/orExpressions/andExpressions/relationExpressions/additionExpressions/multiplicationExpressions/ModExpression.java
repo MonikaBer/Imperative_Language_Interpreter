@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegationExpression;
 
 public class ModExpression extends MultiplicationExpression {
@@ -18,5 +19,10 @@ public class ModExpression extends MultiplicationExpression {
 
     public MultiplicationExpression getRightOperand() {
         return rightOperand;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

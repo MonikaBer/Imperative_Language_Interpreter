@@ -1,5 +1,6 @@
 package project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions;
 
+import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
 public class ParenthExpression extends SimpleExpression {
@@ -13,5 +14,10 @@ public class ParenthExpression extends SimpleExpression {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }

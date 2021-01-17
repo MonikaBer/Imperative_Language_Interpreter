@@ -1,5 +1,7 @@
 package project.program.content;
 
+import project.interpreter.INodeVisitor;
+import project.program.INode;
 import project.program.content.statements.Block;
 import project.program.content.statements.declarations.Declaration;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
@@ -35,5 +37,10 @@ public class FuncDef extends ProgramContent {
 
     public Block getBlock() {
         return block;
+    }
+
+    @Override
+    public void accept(INodeVisitor visitor) {
+        visitor.visit(this);
     }
 }
