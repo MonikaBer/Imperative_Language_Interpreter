@@ -5,6 +5,7 @@ import project.interpreter.definitions.Definition;
 import project.interpreter.definitions.FuncDefinition;
 import project.interpreter.definitions.StructDefinition;
 import project.interpreter.definitions.Variable;
+import project.program.content.statements.expressions.Expression;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ public class Environment {
 
     private Map globals;
     private Stack<CallContext> callContexts;
+    private Expression lastResult;
 
     public Environment() {
         this.globals = new HashMap<String, Definition>();
@@ -98,5 +100,13 @@ public class Environment {
 
     public Stack<CallContext> getCallContexts() {
         return callContexts;
+    }
+
+    public Expression getLastResult() {
+        return lastResult;
+    }
+
+    public void setLastResult(Expression lastResult) {
+        this.lastResult = lastResult;
     }
 }

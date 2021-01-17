@@ -1,5 +1,6 @@
 package project.interpreter;
 
+import project.exceptions.SemanticError;
 import project.program.Program;
 import project.program.content.FuncDef;
 import project.program.content.ProgramContent;
@@ -117,17 +118,34 @@ public class Interpreter implements INodeVisitor {
     @Override
     public void visit(If ifStmt) {
         ifStmt.getCondition().accept(this);
-        if (env.getLastResult())
+        if (env.getLastResult() instanceof  TrueExpression) {
             ifStmt.getIfStmt().accept(this);
+            return;
+        }
+
+        if (env.getLastResult() instanceof FalseExpression)
+            return;
+
+        String desc = "Condition in if statement is not a type of bool expression";
+        throw new SemanticError(env.getLastResult().getLineNr(), env.getLastResult().getPositionAtLine(), desc);
     }
 
     @Override
     public void visit(IfElse ifElseStmt) {
         ifElseStmt.getCondition().accept(this);
-        if (env.getLastResult())
+
+        if (env.getLastResult() instanceof  TrueExpression) {
             ifElseStmt.getIfStmt().accept(this);
-        else
+            return;
+        }
+
+        if (env.getLastResult() instanceof  FalseExpression) {
             ifElseStmt.getElseStmt().accept(this);
+            return;
+        }
+
+        String desc = "Condition in if statement is not a type of bool expression";
+        throw new SemanticError(env.getLastResult().getLineNr(), env.getLastResult().getPositionAtLine(), desc);
     }
 
     @Override

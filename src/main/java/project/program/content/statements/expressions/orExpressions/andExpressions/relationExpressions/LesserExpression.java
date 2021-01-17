@@ -8,7 +8,8 @@ public class LesserExpression extends RelationExpression {
     private AdditionExpression leftOperand;
     private RelationExpression rightOperand;
 
-    public LesserExpression(AdditionExpression leftOperand, RelationExpression rightOperand) {
+    public LesserExpression(AdditionExpression leftOperand, RelationExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

@@ -6,6 +6,10 @@ import project.program.content.statements.expressions.orExpressions.andExpressio
 
 public abstract class AdditionExpression extends RelationExpression {
 
+    public AdditionExpression(int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
+    }
+
     @Override
     public void accept(INodeVisitor visitor) {
         visitor.visit(this);

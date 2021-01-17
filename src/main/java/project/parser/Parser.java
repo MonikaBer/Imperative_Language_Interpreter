@@ -640,7 +640,7 @@ public class Parser {
 
         OrExpression rightOperand;
         if ((rightOperand = tryToParseOrExpression()) != null)
-            return new AlternativeExpression(leftOperand, rightOperand);
+            return new AlternativeExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
         String desc = "No right operand (after '||' in alternative expression";
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
@@ -668,7 +668,7 @@ public class Parser {
 
         AndExpression rightOperand;
         if ((rightOperand = tryToParseAndExpression()) != null) {
-            return new ConjunctionExpression(leftOperand, rightOperand);
+            return new ConjunctionExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
         }
 
         String desc = "No right operand (after '&&' in conjunction expression";
@@ -697,42 +697,42 @@ public class Parser {
         String desc;
         if (expectToken(Token.TokenType.EQ) != null) {
             if ((rightOperand = tryToParseRelationExpression()) != null)
-                return new EqualExpression(leftOperand, rightOperand);
+                return new EqualExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
             desc = "No right operand (after '==' in 'equal' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
         else if (expectToken(Token.TokenType.NEQ) != null) {
             if ((rightOperand = tryToParseRelationExpression()) != null)
-                return new NotEqualExpression(leftOperand, rightOperand);
+                return new NotEqualExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
             desc = "No right operand (after '!=' in 'not equal' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
         else if (expectToken(Token.TokenType.GEQT) != null) {
             if ((rightOperand = tryToParseRelationExpression()) != null)
-                return new GreaterEqualExpression(leftOperand, rightOperand);
+                return new GreaterEqualExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
             desc = "No right operand (after '>=' in 'greater equal' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
         else if (expectToken(Token.TokenType.GT) != null) {
             if ((rightOperand = tryToParseRelationExpression()) != null)
-                return new GreaterExpression(leftOperand, rightOperand);
+                return new GreaterExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
             desc = "No right operand (after '>' in 'greater' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
         else if (expectToken(Token.TokenType.LEQT) != null) {
             if ((rightOperand = tryToParseRelationExpression()) != null)
-                return new LesserEqualExpression(leftOperand, rightOperand);
+                return new LesserEqualExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
             desc = "No right operand (after '<=' in 'lesser equal' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
         else if (expectToken(Token.TokenType.LT) != null) {
             if ((rightOperand = tryToParseRelationExpression()) != null)
-                return new LesserExpression(leftOperand, rightOperand);
+                return new LesserExpression(leftOperand, rightOperand, leftOperand.getLineNr(), leftOperand.getPositionAtLine());
 
             desc = "No right operand (after '<' in 'lesser' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
@@ -745,19 +745,22 @@ public class Parser {
     private AdditionExpression tryToParseAdditionExpression() {
         MultiplicationExpression multiplicationExpression;
         if ((multiplicationExpression = tryToParseMultiplicationExpression()) != null) {
+            int lineNr = multiplicationExpression.getLineNr();
+            int posAtLine = multiplicationExpression.getPositionAtLine();
 
             String desc;
             AdditionExpression rightOperand;
             if (expectToken(Token.TokenType.PLUS) != null) {
-                if ((rightOperand = tryToParseAdditionExpression()) != null)
-                    return new AddExpression(multiplicationExpression, rightOperand);
+                if ((rightOperand = tryToParseAdditionExpression()) != null) {
+                    return new AddExpression(multiplicationExpression, rightOperand, lineNr, posAtLine);
+                }
 
                 desc = "No right operand (after '+' in 'add' expression";
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
             }
             else if (expectToken(Token.TokenType.MINUS) != null) {
                 if ((rightOperand = tryToParseAdditionExpression()) != null)
-                    return new SubtractExpression(multiplicationExpression, rightOperand);
+                    return new SubtractExpression(multiplicationExpression, rightOperand, lineNr, posAtLine);
 
                 desc = "No right operand (after '-' in 'subtract' expression";
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
@@ -773,26 +776,28 @@ public class Parser {
     private MultiplicationExpression tryToParseMultiplicationExpression() {
         NegationExpression negationExpression;
         if ((negationExpression = tryToParseNegationExpression()) != null) {
+            int lineNr = negationExpression.getLineNr();
+            int posAtLine = negationExpression.getPositionAtLine();
 
             String desc;
             MultiplicationExpression rightOperand;
             if (expectToken(Token.TokenType.MUL) != null) {
                 if ((rightOperand = tryToParseMultiplicationExpression()) != null)
-                    return new MultExpression(negationExpression, rightOperand);
+                    return new MultExpression(negationExpression, rightOperand, lineNr, posAtLine);
 
                 desc = "No right operand (after '*' in 'mult' expression";
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
             }
             else if (expectToken(Token.TokenType.DIV) != null) {
                 if ((rightOperand = tryToParseMultiplicationExpression()) != null)
-                    return new DivExpression(negationExpression, rightOperand);
+                    return new DivExpression(negationExpression, rightOperand, lineNr, posAtLine);
 
                 desc = "No right operand (after '/' in 'div' expression";
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
             }
             else if (expectToken(Token.TokenType.MOD) != null) {
                 if ((rightOperand = tryToParseMultiplicationExpression()) != null)
-                    return new ModExpression(negationExpression, rightOperand);
+                    return new ModExpression(negationExpression, rightOperand, lineNr, posAtLine);
 
                 desc = "No right operand (after '%' in 'mod' expression";
                 throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
@@ -809,16 +814,17 @@ public class Parser {
         SimpleExpression simpleExpression;
         String desc;
 
-        if (expectToken(Token.TokenType.NEGATION) != null) {
+        Token token;
+        if ((token = expectToken(Token.TokenType.NEGATION)) != null) {
             if ((simpleExpression = tryToParseSimpleExpression()) != null)
-                return new NotExpression(simpleExpression);
+                return new NotExpression(simpleExpression, token.getLineNr(), token.getPositionAtLine());
 
             desc = "No simple expression (after '!' in 'not' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
         else if (expectToken(Token.TokenType.MINUS) != null) {
             if ((simpleExpression = tryToParseSimpleExpression()) != null)
-                return new NegativeExpression(simpleExpression);
+                return new NegativeExpression(simpleExpression, token.getLineNr(), token.getPositionAtLine());
 
             desc = "No simple expression (after '-' in 'negative' expression";
             throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);

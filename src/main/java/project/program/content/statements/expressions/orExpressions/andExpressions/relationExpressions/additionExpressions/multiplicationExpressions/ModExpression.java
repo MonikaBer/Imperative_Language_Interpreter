@@ -8,7 +8,8 @@ public class ModExpression extends MultiplicationExpression {
     private NegationExpression leftOperand;
     private MultiplicationExpression rightOperand;
 
-    public ModExpression(NegationExpression leftOperand, MultiplicationExpression rightOperand) {
+    public ModExpression(NegationExpression leftOperand, MultiplicationExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

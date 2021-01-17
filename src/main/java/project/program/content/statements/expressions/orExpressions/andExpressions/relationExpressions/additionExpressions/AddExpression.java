@@ -8,7 +8,8 @@ public class AddExpression extends AdditionExpression {
     private MultiplicationExpression leftOperand;
     private AdditionExpression rightOperand;
 
-    public AddExpression(MultiplicationExpression leftOperand, AdditionExpression rightOperand) {
+    public AddExpression(MultiplicationExpression leftOperand, AdditionExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

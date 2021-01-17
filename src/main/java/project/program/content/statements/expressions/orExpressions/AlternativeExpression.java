@@ -8,7 +8,8 @@ public class AlternativeExpression extends OrExpression {
     private AndExpression leftOperand;
     private OrExpression rightOperand;
 
-    public AlternativeExpression(AndExpression leftOperand, OrExpression rightOperand) {
+    public AlternativeExpression(AndExpression leftOperand, OrExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

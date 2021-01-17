@@ -7,7 +7,8 @@ public class NotExpression extends NegationExpression {
 
     private SimpleExpression expression;
 
-    public NotExpression(SimpleExpression expression) {
+    public NotExpression(SimpleExpression expression, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.expression = expression;
     }
 

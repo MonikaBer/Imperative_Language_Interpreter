@@ -8,7 +8,8 @@ public class ConjunctionExpression extends AndExpression {
     private RelationExpression leftOperand;
     private AndExpression rightOperand;
 
-    public ConjunctionExpression(RelationExpression leftOperand, AndExpression rightOperand) {
+    public ConjunctionExpression(RelationExpression leftOperand, AndExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

@@ -8,7 +8,8 @@ public class DivExpression extends MultiplicationExpression {
     private NegationExpression leftOperand;
     private MultiplicationExpression rightOperand;
 
-    public DivExpression(NegationExpression leftOperand, MultiplicationExpression rightOperand) {
+    public DivExpression(NegationExpression leftOperand, MultiplicationExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

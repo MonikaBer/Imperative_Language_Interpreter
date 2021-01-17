@@ -7,7 +7,8 @@ public class NegativeExpression extends NegationExpression {
 
     private SimpleExpression expression;
 
-    public NegativeExpression(SimpleExpression expression) {
+    public NegativeExpression(SimpleExpression expression, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.expression = expression;
     }
 

@@ -8,7 +8,8 @@ public class GreaterEqualExpression extends RelationExpression {
     private AdditionExpression leftOperand;
     private RelationExpression rightOperand;
 
-    public GreaterEqualExpression(AdditionExpression leftOperand, RelationExpression rightOperand) {
+    public GreaterEqualExpression(AdditionExpression leftOperand, RelationExpression rightOperand, int lineNr, int positionAtLine) {
+        super(lineNr, positionAtLine);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }

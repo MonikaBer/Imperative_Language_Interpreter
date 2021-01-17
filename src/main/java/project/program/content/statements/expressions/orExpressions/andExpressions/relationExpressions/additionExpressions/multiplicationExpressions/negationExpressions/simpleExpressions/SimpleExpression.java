@@ -6,12 +6,8 @@ import project.program.content.statements.expressions.orExpressions.andExpressio
 
 public abstract class SimpleExpression extends NegationExpression {
 
-    protected final int lineNr;
-    protected final int positionAtLine;
-
     public SimpleExpression(int lineNr, int positionAtLine) {
-        this.lineNr = lineNr;
-        this.positionAtLine = positionAtLine;
+        super(lineNr, positionAtLine);
     }
 
     public int getLineNr() {
