@@ -4,7 +4,7 @@ import project.program.content.statements.declarations.Declaration;
 
 import java.util.ArrayList;
 
-public class StructDefinition extends DeclaredObject {
+public class StructDefinition {
 
     private final String name;
     private final ArrayList<Declaration> body;

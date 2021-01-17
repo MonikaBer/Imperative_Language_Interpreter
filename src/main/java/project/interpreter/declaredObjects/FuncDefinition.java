@@ -7,7 +7,7 @@ import project.program.content.types.Type;
 
 import java.util.ArrayList;
 
-public class FuncDefinition extends DeclaredObject {
+public class FuncDefinition {
 
     private final Type retType;
     private final String name;

@@ -1,6 +1,6 @@
 package project.interpreter;
 
-import project.interpreter.declaredObjects.DeclaredObject;
+import project.exceptions.SemanticError;
 import project.interpreter.declaredObjects.FuncDefinition;
 import project.interpreter.declaredObjects.StructDefinition;
 import project.interpreter.declaredObjects.Variable;
@@ -15,7 +15,10 @@ public class Environment {
     private Stack<CallContext> callContexts;
 
     public Environment() {
-        this.globals = new HashMap<String, DeclaredObject>();
+        this.globals = new HashMap<String, Map>();
+        this.globals.put("variables", new HashMap<String, Variable>());
+        this.globals.put("funcDefinitions", new HashMap<String, FuncDefinition>());
+        this.globals.put("structDefinitions", new HashMap<String, StructDefinition>());
         this.callContexts = new Stack<>();
     }
 
@@ -24,8 +27,8 @@ public class Environment {
         if ((var = callContexts.lastElement().getVar(name)) != null)
             return var;
 
-        if (globals.containsKey(name))
-            return (Variable) globals.get(name);
+        if (((HashMap)globals.get("variables")).containsKey(name))
+            return (Variable) ((HashMap)globals.get("variables")).get(name);
 
         return null;
     }
@@ -37,19 +40,27 @@ public class Environment {
     public void makeBlockContext(BlockContext blockContext) {
         callContexts.lastElement().makeBlockContext(blockContext);
     }
-//
-//    public void makeVar(Variable var) {
-//
-//    }
-//
-//    public void makeFuncDefinition(FuncDefinition funcDefinition) {
-//
-//
-//    }
-//
-//    public void makeStructDefinition(StructDefinition structDefinition) {
-//
-//    }
+
+    public void makeVar(Variable var) {
+        if (((HashMap)globals.get("variables")).containsKey(var.getName()))
+            throw new SemanticError("Declaration of variable named '" + var.getName() + "' already exists");
+
+        ((HashMap)globals.get("variables")).put(var.getName(), var);
+    }
+
+    public void makeFuncDefinition(FuncDefinition funcDefinition) {
+        if (((HashMap)globals.get("funcDefinitions")).containsKey(funcDefinition.getName()))
+            throw new SemanticError("Definition of function named '" + funcDefinition.getName() + "' already exists");
+
+        ((HashMap)globals.get("funcDefinitions")).put(funcDefinition.getName(), funcDefinition);
+    }
+
+    public void makeStructDefinition(StructDefinition structDefinition) {
+        if (((HashMap)globals.get("structDefinitions")).containsKey(structDefinition.getName()))
+            throw new SemanticError("Definition of struct named '" + structDefinition.getName() + "' already exists");
+
+        ((HashMap)globals.get("structDefinitions")).put(structDefinition.getName(), structDefinition);
+    }
 
     public Map getGlobals() {
         return globals;

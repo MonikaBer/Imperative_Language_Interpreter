@@ -3,7 +3,7 @@ package project.interpreter.declaredObjects;
 import project.program.content.statements.expressions.Expression;
 import project.program.content.types.Type;
 
-public class Variable extends DeclaredObject {
+public class Variable {
 
     private Type type;
     private String name;
