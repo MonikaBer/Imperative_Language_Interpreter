@@ -1,4 +1,4 @@
-package project.interpreter.declaredObjects;
+package project.interpreter.definitions;
 
 import project.program.content.StructDef;
 import project.program.content.statements.declarations.Declaration;
@@ -6,7 +6,7 @@ import project.program.content.statements.expressions.orExpressions.andExpressio
 
 import java.util.ArrayList;
 
-public class StructDefinition extends DeclaredObject {
+public class StructDefinition extends Definition {
 
     private final Identifier id;
     private final ArrayList<Declaration> body;

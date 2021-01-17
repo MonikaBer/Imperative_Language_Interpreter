@@ -1,4 +1,4 @@
-package project.interpreter.declaredObjects;
+package project.interpreter.definitions;
 
 import project.program.content.FuncDef;
 import project.program.content.statements.Block;
@@ -8,7 +8,7 @@ import project.program.content.types.Type;
 
 import java.util.ArrayList;
 
-public class FuncDefinition extends DeclaredObject {
+public class FuncDefinition extends Definition {
 
     private final Type retType;
     private final Identifier id;

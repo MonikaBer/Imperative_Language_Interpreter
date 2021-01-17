@@ -1,4 +1,4 @@
-package project.interpreter.declaredObjects;
+package project.interpreter.definitions;
 
 import project.program.content.statements.declarations.Initialisation;
 import project.program.content.statements.declarations.OnlyDeclaration;
@@ -6,7 +6,7 @@ import project.program.content.statements.expressions.Expression;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
 import project.program.content.types.Type;
 
-public class Variable extends DeclaredObject {
+public class Variable extends Definition {
 
     private Type type;
     private Identifier id;

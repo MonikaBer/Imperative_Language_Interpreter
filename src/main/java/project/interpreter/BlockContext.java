@@ -1,6 +1,6 @@
 package project.interpreter;
 
-import project.interpreter.declaredObjects.Variable;
+import project.interpreter.definitions.Variable;
 
 import java.util.HashMap;
 import java.util.Map;
