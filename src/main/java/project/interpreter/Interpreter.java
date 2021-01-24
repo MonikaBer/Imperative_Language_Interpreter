@@ -49,13 +49,22 @@ public class Interpreter implements INodeVisitor {
     private final Program program;
     private final Environment env;
 
-    public Interpreter(Program program, Environment env) {
+    public Interpreter(Program program) {
         this.program = program;
-        this.env = env;
+        this.env = new Environment();
     }
 
     public void execute() {
         program.accept(this);
+    }
+
+    public void start() {
+        FuncCall mainFuncCall = new FuncCall(
+                                        new Identifier("main", -1, -1),
+                                        null,
+                                        -1,
+                                        -1);
+        mainFuncCall.accept(this);
     }
 
     public Environment getEnv() {
@@ -1123,9 +1132,10 @@ public class Interpreter implements INodeVisitor {
         String name = funcCall.getFuncName().getName();
 
         if (env.getEmbeddedFunctions().containsKey(name)) {
-            env.getEmbeddedFunctions().get(name).run();
+            runEmbeddedFunction(funcCall);
             return;
         }
+
 
         if (!env.getFuncDefs().containsKey(name)) {
             String desc = "Unknown name of function";
@@ -1136,29 +1146,32 @@ public class Interpreter implements INodeVisitor {
 
         FuncDefinition funcDefinition = env.getFuncDefs().get(name);
 
-        if (funcCall.getParams().size() > funcDefinition.getArgs().size()) {
-            String desc = "Too much params in func call - " + funcDefinition.getArgs().size() + " params are permitted";
-            int lineNr = funcCall.getParams().get(funcCall.getParams().size()-1).getLineNr();
-            int posAtLine = funcCall.getParams().get(funcCall.getParams().size()-1).getPositionAtLine();
-            throw new SemanticError(lineNr, posAtLine, desc);
-        }
-
         ArrayList<Arg> args = new ArrayList<>();
-        for (int i = 0; i < funcCall.getParams().size(); ++i) {
-            funcCall.getParams().get(i).accept(this);  //accept param as expression
-            Value evalParam = env.getLastValue();
 
-            String inf = "param of func call";
-            String desc = checkTypeAndValueCorrectness(inf, funcDefinition.getArgs().get(i).getType(), evalParam);
-            if (desc != null) {
-                int lineNr = funcCall.getParams().get(i).getLineNr();
-                int posAtLine = funcCall.getParams().get(i).getPositionAtLine();
+        if (funcCall.getParams() != null) {
+            if (funcCall.getParams().size() > funcDefinition.getArgs().size()) {
+                String desc = "Too much params in func call - " + funcDefinition.getArgs().size() + " params are permitted";
+                int lineNr = funcCall.getParams().get(funcCall.getParams().size()-1).getLineNr();
+                int posAtLine = funcCall.getParams().get(funcCall.getParams().size()-1).getPositionAtLine();
                 throw new SemanticError(lineNr, posAtLine, desc);
             }
 
-            Type argType = funcDefinition.getArgs().get(i).getType();
-            String argName = funcDefinition.getArgs().get(i).getName();
-            args.add(new Arg(argType, argName, evalParam));
+            for (int i = 0; i < funcCall.getParams().size(); ++i) {
+                funcCall.getParams().get(i).accept(this);  //accept param as expression
+                Value evalParam = env.getLastValue();
+
+                String inf = "param of func call";
+                String desc = checkTypeAndValueCorrectness(inf, funcDefinition.getArgs().get(i).getType(), evalParam);
+                if (desc != null) {
+                    int lineNr = funcCall.getParams().get(i).getLineNr();
+                    int posAtLine = funcCall.getParams().get(i).getPositionAtLine();
+                    throw new SemanticError(lineNr, posAtLine, desc);
+                }
+
+                Type argType = funcDefinition.getArgs().get(i).getType();
+                String argName = funcDefinition.getArgs().get(i).getName();
+                args.add(new Arg(argType, argName, evalParam));
+            }
         }
 
         //complete other params by defult values of args in function definition
@@ -1381,5 +1394,197 @@ public class Interpreter implements INodeVisitor {
 
         //field instanceof StructFieldExpression
         return unwrapStructFieldExp((StructFieldExpression)field, name);
+    }
+
+
+
+    //embedded functions
+
+    private void runEmbeddedFunction(FuncCall funcCall) {
+        String name = funcCall.getFuncName().getName();
+        int lineNr = funcCall.getFuncName().getLineNr();
+        int posAtLine = funcCall.getFuncName().getPositionAtLine();
+
+        if (name.equals("readInt") || name.equals("readDouble") || name.equals("readStr")) {
+            runRead(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("printInt")) {
+            runPrintInt(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("printDouble")) {
+            runPrintDouble(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("printStr")) {
+            runPrintStr(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("error")) {
+            runError(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("convertIntToDouble")) {
+            runConvertIntToDouble(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("convertDoubleToInt")) {
+            runConvertDoubleToInt(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("convertStrToInt")) {
+            runConvertStrToInt(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("convertStrToDouble")) {
+            runConvertStrToDouble(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else if (name.equals("convertIntToStr")) {
+            runConvertIntToStr(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+        else {
+            runConvertDoubleToStr(name, funcCall.getParams(), lineNr, posAtLine);
+        }
+    }
+
+    private void runPrintInt(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalIntValue)) {
+            String desc = "Incorrect type of param in printInt() call - int is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runPrintDouble(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalDoubleValue)) {
+            String desc = "Incorrect type of param in printDouble() call - double is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runPrintStr(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalStringValue)) {
+            String desc = "Incorrect type of param in printStr() call - string is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runRead(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 0, lineNr, posAtLine);
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runError(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalStringValue)) {
+            String desc = "Incorrect type of param in error() call - string is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runConvertIntToDouble(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalIntValue)) {
+            String desc = "Incorrect type of param in convertIntToDouble() call - int is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runConvertDoubleToInt(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalDoubleValue)) {
+            String desc = "Incorrect type of param in convertDoubleToInt() call - double is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runConvertStrToInt(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalStringValue)) {
+            String desc = "Incorrect type of param in convertStrToInt() call - string is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runConvertStrToDouble(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalStringValue)) {
+            String desc = "Incorrect type of param in convertStrToDouble() call - string is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runConvertIntToStr(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalIntValue)) {
+            String desc = "Incorrect type of param in convertIntToStr() call - int is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+    private void runConvertDoubleToStr(String funcName, ArrayList<Expression> params, int lineNr, int posAtLine) {
+        checkNumberOfParams(funcName, params, 1, lineNr, posAtLine);
+
+        params.get(0).accept(this);
+
+        if (!(env.getLastValue() instanceof EvalDoubleValue)) {
+            String desc = "Incorrect type of param in convertDoubleToStr() call - double is required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        env.getEmbeddedFunctions().get(funcName).run();
+    }
+
+
+    private void checkNumberOfParams(String funcName, ArrayList<Expression> params, int nrOfParamsRequired,
+                                     int lineNr, int posAtLine) {
+
+        if (params == null && nrOfParamsRequired == 0)
+            return;  //OK
+
+        if ((params == null) || (params.size() != nrOfParamsRequired)) {
+            String desc = "Incorrect number of params in " + funcName + "() call - " + nrOfParamsRequired + " required";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
     }
 }

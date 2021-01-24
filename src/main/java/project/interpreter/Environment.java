@@ -33,10 +33,10 @@ public class Environment {
         this.embeddedFunctions = new HashMap<>();
         this.embeddedFunctions.put("readInt", this.readInt());
         this.embeddedFunctions.put("readDouble", this.readDouble());
-        this.embeddedFunctions.put("readString", this.readString());
+        this.embeddedFunctions.put("readStr", this.readStr());
         this.embeddedFunctions.put("printInt", this.printInt());
         this.embeddedFunctions.put("printDouble", this.printDouble());
-        this.embeddedFunctions.put("printString", this.printString());
+        this.embeddedFunctions.put("printStr", this.printStr());
         this.embeddedFunctions.put("error", this.error());
         this.embeddedFunctions.put("convertIntToDouble", this.convertIntToDouble());
         this.embeddedFunctions.put("convertDoubleToInt", this.convertDoubleToInt());
@@ -178,7 +178,7 @@ public class Environment {
         };
     }
 
-    private Runnable readString() {
+    private Runnable readStr() {
         return () -> {
             String userInput = new Scanner(System.in).nextLine();
             lastValue = new EvalStringValue(userInput);
@@ -201,7 +201,7 @@ public class Environment {
         };
     }
 
-    private Runnable printString() {
+    private Runnable printStr() {
         return () -> {
             Value value = lastValue;
             if (value instanceof EvalStringValue)

@@ -1,7 +1,10 @@
 package project.app;
 
 import project.exceptions.FileSourceReadException;
+import project.interpreter.Interpreter;
 import project.lexer.Lexer;
+import project.parser.Parser;
+import project.program.Program;
 import project.source.FileSource;
 import project.source.Source;
 import project.source.StringSource;
@@ -13,13 +16,27 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		try {
-			fileSourceTest();
-		} catch (FileSourceReadException ex) {
-			System.out.println(ex.getMessage());
-		}
+		Source source = new StringSource("int main() { " +
+										"printStr(\"Hello world!\");" +
+										"return 0; " +
+										"}");
 
-		stringSourceTest();
+		Lexer lexer = new Lexer(source);
+		lexer.nextToken();
+		Parser parser = new Parser(lexer);
+		Program program = parser.parseProgram();
+
+		Interpreter interpreter = new Interpreter(program);
+		interpreter.execute();
+		interpreter.start();
+
+//		try {
+//			fileSourceTest();
+//		} catch (FileSourceReadException ex) {
+//			System.out.println(ex.getMessage());
+//		}
+//
+//		stringSourceTest();
 	}
 
 	private static void fileSourceTest() {
