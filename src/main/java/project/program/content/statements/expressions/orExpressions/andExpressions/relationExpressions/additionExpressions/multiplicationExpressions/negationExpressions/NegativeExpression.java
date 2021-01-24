@@ -3,9 +3,9 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.SimpleExpression;
 
-public class NegativeExpression extends NegationExpression {
+public final class NegativeExpression extends NegationExpression {
 
-    private SimpleExpression expression;
+    private final SimpleExpression expression;
 
     public NegativeExpression(SimpleExpression expression, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

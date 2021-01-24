@@ -3,10 +3,10 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.MultiplicationExpression;
 
-public class AddExpression extends AdditionExpression {
+public final class AddExpression extends AdditionExpression {
 
-    private MultiplicationExpression leftOperand;
-    private AdditionExpression rightOperand;
+    private final MultiplicationExpression leftOperand;
+    private final AdditionExpression rightOperand;
 
     public AddExpression(MultiplicationExpression leftOperand, AdditionExpression rightOperand, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

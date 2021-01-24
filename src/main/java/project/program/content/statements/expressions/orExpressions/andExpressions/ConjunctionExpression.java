@@ -3,10 +3,10 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.RelationExpression;
 
-public class ConjunctionExpression extends AndExpression {
+public final class ConjunctionExpression extends AndExpression {
 
-    private RelationExpression leftOperand;
-    private AndExpression rightOperand;
+    private final RelationExpression leftOperand;
+    private final AndExpression rightOperand;
 
     public ConjunctionExpression(RelationExpression leftOperand, AndExpression rightOperand, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

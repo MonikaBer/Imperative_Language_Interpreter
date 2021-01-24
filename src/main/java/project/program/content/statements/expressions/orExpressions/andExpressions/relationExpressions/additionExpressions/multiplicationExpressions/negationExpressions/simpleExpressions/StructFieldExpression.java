@@ -2,10 +2,10 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 import project.interpreter.INodeVisitor;
 
-public class StructFieldExpression extends SimpleExpression {
+public final class StructFieldExpression extends SimpleExpression {
 
-    private Identifier structVarName;
-    private SimpleExpression fieldName;
+    private final Identifier structVarName;
+    private final SimpleExpression fieldName;
 
     public StructFieldExpression(Identifier structVarName, SimpleExpression fieldName, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

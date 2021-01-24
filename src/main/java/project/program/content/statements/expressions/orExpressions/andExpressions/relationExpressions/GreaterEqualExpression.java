@@ -3,10 +3,10 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.AdditionExpression;
 
-public class GreaterEqualExpression extends RelationExpression {
+public final class GreaterEqualExpression extends RelationExpression {
 
-    private AdditionExpression leftOperand;
-    private RelationExpression rightOperand;
+    private final AdditionExpression leftOperand;
+    private final RelationExpression rightOperand;
 
     public GreaterEqualExpression(AdditionExpression leftOperand, RelationExpression rightOperand, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

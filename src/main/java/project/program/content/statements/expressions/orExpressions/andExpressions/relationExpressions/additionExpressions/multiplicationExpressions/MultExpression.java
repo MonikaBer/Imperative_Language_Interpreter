@@ -3,10 +3,10 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.NegationExpression;
 
-public class MultExpression extends MultiplicationExpression {
+public final class MultExpression extends MultiplicationExpression {
 
-    private NegationExpression leftOperand;
-    private MultiplicationExpression rightOperand;
+    private final NegationExpression leftOperand;
+    private final MultiplicationExpression rightOperand;
 
     public MultExpression(NegationExpression leftOperand, MultiplicationExpression rightOperand, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

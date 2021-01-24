@@ -2,7 +2,7 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 import project.interpreter.INodeVisitor;
 
-public class FalseExpression extends SimpleExpression {
+public final class FalseExpression extends SimpleExpression {
 
     public FalseExpression(int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

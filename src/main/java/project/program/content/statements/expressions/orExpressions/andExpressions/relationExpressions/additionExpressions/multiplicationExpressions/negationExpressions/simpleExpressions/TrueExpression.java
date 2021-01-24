@@ -2,7 +2,7 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 import project.interpreter.INodeVisitor;
 
-public class TrueExpression extends SimpleExpression {
+public final class TrueExpression extends SimpleExpression {
 
     public TrueExpression(int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

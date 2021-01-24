@@ -51,7 +51,6 @@ public interface INodeVisitor {
     void visit(VoidReturn voidReturnStmt);
     void visit(Empty emptyStmt);
     void visit(Switch switchStmt);
-    void visit(Case caseStmt);
 
     void visit(Expression expression);
     void visit(OrExpression orExpression);
@@ -91,14 +90,4 @@ public interface INodeVisitor {
     void visit(StructFieldExpression structFieldExpression);
     void visit(ParenthExpression parenthExpression);
     void visit(FuncCall funcCall);
-
-    void visit(Type type);
-    void visit(NonVoidType nonVoidType);
-    void visit(NumericalType numericalType);
-    void visit(BoolType boolType);
-    void visit(IntType intType);
-    void visit(DoubleType doubleType);
-    void visit(StringType stringType);
-    void visit(StructType structType);
-    void visit(VoidType voidType);
 }

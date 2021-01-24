@@ -3,9 +3,9 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.Expression;
 
-public class ParenthExpression extends SimpleExpression {
+public final class ParenthExpression extends SimpleExpression {
 
-    private Expression expression;
+    private final Expression expression;
 
     public ParenthExpression(Expression expression, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

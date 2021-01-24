@@ -3,10 +3,10 @@ package project.program.content.statements.expressions.orExpressions;
 import project.interpreter.INodeVisitor;
 import project.program.content.statements.expressions.orExpressions.andExpressions.AndExpression;
 
-public class AlternativeExpression extends OrExpression {
+public final class AlternativeExpression extends OrExpression {
 
-    private AndExpression leftOperand;
-    private OrExpression rightOperand;
+    private final AndExpression leftOperand;
+    private final OrExpression rightOperand;
 
     public AlternativeExpression(AndExpression leftOperand, OrExpression rightOperand, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

@@ -1,11 +1,9 @@
 package project.program.content.statements.switchStmt;
 
-import project.interpreter.INodeVisitor;
-import project.program.INode;
 import project.program.content.statements.Statement;
 import project.program.content.statements.expressions.Expression;
 
-public class Case implements INode {
+public class Case {
 
     private final Expression expression;
     private final Statement stmt;
@@ -21,10 +19,5 @@ public class Case implements INode {
 
     public Statement getStmt() {
         return stmt;
-    }
-
-    @Override
-    public void accept(INodeVisitor visitor) {
-        visitor.visit(this);
     }
 }

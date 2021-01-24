@@ -2,9 +2,9 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 import project.interpreter.INodeVisitor;
 
-public class Identifier extends SimpleExpression {
+public final class Identifier extends SimpleExpression {
 
-    private String name;
+    private final String name;
 
     public Identifier(String name, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

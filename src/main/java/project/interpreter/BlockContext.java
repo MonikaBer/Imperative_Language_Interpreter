@@ -1,29 +1,35 @@
 package project.interpreter;
 
-import project.interpreter.definitions.Variable;
+import project.exceptions.SemanticError;
+import project.interpreter.evaluatedExpr.Box;
+import project.interpreter.evaluatedExpr.Value;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class BlockContext {
 
-    private Map localsVars;
+    private final HashMap<String, Box> locals;
 
     public BlockContext() {
-        this.localsVars = new HashMap<String, Variable>();
+        this.locals = new HashMap<>();
     }
 
-    public void addLocalVar(Variable var) {
-        localsVars.put(var.getId().getName(), var);
+    public void addLocal(String name, Value value, int lineNr, int posAtLine) {
+        if (locals.containsKey(name)) {
+            String desc = "Var '" + name + "' already exists in locals of block context";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+        locals.put(name, new Box(value));
     }
 
-    public Variable getVar(String name) {
-        if (localsVars.containsKey(name))
-            return (Variable)localsVars.get(name);
-        return null;
+    public Box getBox(ArrayList<String> name) {
+        return Lib.pullBox(locals, name);
     }
 
-    public Map getLocalsVars() {
-        return localsVars;
+    public HashMap<String, Box> getLocals() {
+        return locals;
     }
 }
+
+

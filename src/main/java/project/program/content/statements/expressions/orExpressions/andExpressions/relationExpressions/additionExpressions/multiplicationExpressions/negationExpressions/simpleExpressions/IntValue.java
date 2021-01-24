@@ -4,7 +4,7 @@ import project.interpreter.INodeVisitor;
 
 import java.math.BigInteger;
 
-public class IntValue extends SimpleExpression {
+public final class IntValue extends SimpleExpression {
 
     private BigInteger value;
 

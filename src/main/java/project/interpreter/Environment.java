@@ -1,36 +1,73 @@
 package project.interpreter;
 
 import project.exceptions.SemanticError;
-import project.interpreter.definitions.Definition;
 import project.interpreter.definitions.FuncDefinition;
 import project.interpreter.definitions.StructDefinition;
-import project.interpreter.definitions.Variable;
-import project.program.content.statements.expressions.Expression;
+import project.interpreter.evaluatedExpr.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Scanner;
 import java.util.Stack;
 
 public class Environment {
 
-    private Map globals;
-    private Stack<CallContext> callContexts;
-    private Expression lastResult;
+    private final HashMap<String, Box> globals;
+    private final HashMap<String, FuncDefinition> funcDefs;
+    private final HashMap<String, StructDefinition> structDefs;
+    private final HashMap<String, Runnable> embeddedFunctions;
+    private final Stack<CallContext> callContexts;
+    private Box lastBox;
+    private Value lastValue;
 
     public Environment() {
-        this.globals = new HashMap<String, Definition>();
+        this.globals = new HashMap<>();
+        this.funcDefs = new HashMap<>();
+        this.structDefs = new HashMap<>();
         this.callContexts = new Stack<>();
+        this.lastBox = null;
+        this.lastValue = null;
+
+        this.embeddedFunctions = new HashMap<>();
+        this.embeddedFunctions.put("readInt", this.readInt());
+        this.embeddedFunctions.put("readDouble", this.readDouble());
+        this.embeddedFunctions.put("readString", this.readString());
+        this.embeddedFunctions.put("printInt", this.printInt());
+        this.embeddedFunctions.put("printDouble", this.printDouble());
+        this.embeddedFunctions.put("printString", this.printString());
+        this.embeddedFunctions.put("error", this.error());
+        this.embeddedFunctions.put("convertIntToDouble", this.convertIntToDouble());
+        this.embeddedFunctions.put("convertDoubleToInt", this.convertDoubleToInt());
+        this.embeddedFunctions.put("convertStrToInt", this.convertStrToInt());
+        this.embeddedFunctions.put("convertStrToDouble", this.convertStrToDouble());
+        this.embeddedFunctions.put("convertIntToStr", this.convertIntToStr());
+        this.embeddedFunctions.put("convertDoubleToStr", this.convertDoubleToStr());
     }
 
-    public Variable getVar(String name) {
-        Variable var;
-        if ((var = callContexts.lastElement().getVar(name)) != null)
-            return var;
+    public void setLastBoxAndValue(ArrayList<String> name, int lineNr, int posAtLine) {
+        StringBuilder fullNameBuilder = new StringBuilder();
+        for (int i = 0; i < name.size(); ++i) {
+            fullNameBuilder.append(name.get(i));
+            if (i != name.size()-1)
+                fullNameBuilder.append('.');
+        }
 
-        if (globals.containsKey("var:" + name))
-            return (Variable) globals.get("var:" + name);
+        Box box;
+        if ((box = this.getBox(name)) == null) {
+            String desc = "Identifier '" + fullNameBuilder.toString() + "' doesn't exist in this context";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
 
-        return null;
+        Value value = box.getValue();
+        if (value == null) {
+            String desc = "Identifier '" + fullNameBuilder.toString() + "' equals to null";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        lastBox = box;
+        this.setLastValue(value);
     }
 
     public void makeCallContext() {
@@ -42,47 +79,31 @@ public class Environment {
         this.getLastCallContext().makeBlockContext();
     }
 
-    public void makeVar(Variable var) {
-        if (callContexts.isEmpty()) {
-            //try to put var to globals
-            if (globals.containsKey("var:" + var.getId().getName())) {
-                String desc = "Declaration of variable named '" + var.getId().getName() + "' already exists in globals";
-                throw new SemanticError(var.getId().getLineNr(), var.getId().getPositionAtLine(), desc);
-            }
-            globals.put("var:" + var.getId().getName(), var);
+    public void makeVar(String name, Value value, int lineNr, int posAtLine) {
+        if (!callContexts.isEmpty()) {    //put var to locals of recent block context of recent call context
+            this.getLastCallContext().getLastBlockContext().addLocal(name, value, lineNr, posAtLine);
             return;
         }
 
-        //put var to locals of recent block context of recent call context
-        if (this.getLastCallContext().getLastBlockContext().getLocalsVars().containsKey(var.getId().getName())) {
-            String desc = "Variable named '" + var.getId().getName() + "' already exists in locals of block context";
-            throw new SemanticError(var.getId().getLineNr(), var.getId().getPositionAtLine(), desc);
+        if (globals.containsKey(name)) {
+            String desc = "Declaration of var '" + name + "' already exists in globals";
+            throw new SemanticError(lineNr, posAtLine, desc);
         }
 
-        this.getLastCallContext().getLastBlockContext().addLocalVar(var);
+        globals.put(name, new Box(value));      //add var to globals
     }
 
     public void makeFuncDefinition(FuncDefinition funcDefinition) {
-        if (globals.containsKey("func:" + funcDefinition.getId().getName())) {
-            String desc = "Definition of function named '" + funcDefinition.getId().getName() + "' already exists";
-            throw new SemanticError(funcDefinition.getId().getLineNr(), funcDefinition.getId().getPositionAtLine(), desc);
-        }
-
-        globals.put("func:" + funcDefinition.getId().getName(), funcDefinition);
+        funcDefs.put(funcDefinition.getName(), funcDefinition);
     }
 
     public void makeStructDefinition(StructDefinition structDefinition) {
-        if (globals.containsKey("struct:" + structDefinition.getId().getName())) {
-            String desc = "Definition of struct named '" + structDefinition.getId().getName() + "' already exists";
-            throw new SemanticError(structDefinition.getId().getLineNr(), structDefinition.getId().getPositionAtLine(), desc);
-        }
-
-        globals.put("struct:" + structDefinition.getId().getName(), structDefinition);
+        structDefs.put(structDefinition.getName(), structDefinition);
     }
 
     public void deleteBlockContext() {
         if (!callContexts.isEmpty())
-            this.getLastCallContext().removeLastBlockContext();
+            this.getLastCallContext().deleteBlockContext();
     }
 
     public void deleteCallContext() {
@@ -90,23 +111,165 @@ public class Environment {
             callContexts.pop();
     }
 
-    public CallContext getLastCallContext() {
+    public void assignVar(Box box, Value value) {
+        box.setValue(value);
+    }
+
+    public HashMap<String, FuncDefinition> getFuncDefs() {
+        return funcDefs;
+    }
+
+    public HashMap<String, StructDefinition> getStructDefs() {
+        return structDefs;
+    }
+
+    public HashMap<String, Runnable> getEmbeddedFunctions() {
+        return embeddedFunctions;
+    }
+
+    public Value getLastValue() {
+        return lastValue;
+    }
+
+    public Box getLastBox() {
+        return lastBox;
+    }
+
+    public void setLastValue(Value lastValue) {
+        this.lastValue = lastValue;
+    }
+
+    public void setLastBox(Box box) {
+        lastBox = box;
+    }
+
+    public HashMap<String, Box> getDefStructMap(String name) {
+        if (!structDefs.containsKey(name))
+            return null;
+
+        return structDefs.get(name).getMap();
+    }
+
+
+    private CallContext getLastCallContext() {
         return callContexts.lastElement();
     }
 
-    public Map getGlobals() {
-        return globals;
+    private Box getBox(ArrayList<String> name) {
+        Box box;
+        if ((box = this.getLastCallContext().getBox(name)) != null)
+            return box;
+
+        return Lib.pullBox(globals, name);
     }
 
-    public Stack<CallContext> getCallContexts() {
-        return callContexts;
+
+    private Runnable readInt() {
+        return () -> {
+            String userInput = new Scanner(System.in).nextLine();
+            lastValue = new EvalIntValue(new BigInteger(userInput));
+        };
     }
 
-    public Expression getLastResult() {
-        return lastResult;
+    private Runnable readDouble() {
+        return () -> {
+            String userInput = new Scanner(System.in).nextLine();
+            lastValue = new EvalDoubleValue(new BigDecimal(userInput));
+        };
     }
 
-    public void setLastResult(Expression lastResult) {
-        this.lastResult = lastResult;
+    private Runnable readString() {
+        return () -> {
+            String userInput = new Scanner(System.in).nextLine();
+            lastValue = new EvalStringValue(userInput);
+        };
     }
+
+    private Runnable printInt() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalIntValue)
+                System.out.println(((EvalIntValue)value).getValue().toString());
+        };
+    }
+
+    private Runnable printDouble() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalDoubleValue)
+                System.out.println(((EvalDoubleValue)value).getValue().toString());
+        };
+    }
+
+    private Runnable printString() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalStringValue)
+                System.out.println(((EvalStringValue)value).getValue());
+        };
+    }
+
+    private Runnable error() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalStringValue)
+                System.err.println(((EvalStringValue)value).getValue());
+        };
+    }
+
+    private Runnable convertIntToDouble() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalIntValue)
+                lastValue = new EvalDoubleValue(new BigDecimal(((EvalIntValue)value).getValue().toString()));
+        };
+    }
+
+    private Runnable convertDoubleToInt() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalDoubleValue)
+                lastValue = new EvalIntValue(new BigInteger(((EvalDoubleValue)value).getValue().toString()));
+        };
+    }
+
+    private Runnable convertStrToInt() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalStringValue)
+                lastValue = new EvalIntValue(new BigInteger(((EvalStringValue)value).getValue()));
+        };
+    }
+
+    private Runnable convertStrToDouble() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalStringValue)
+                lastValue = new EvalDoubleValue(new BigDecimal(((EvalStringValue)value).getValue()));
+        };
+    }
+
+    private Runnable convertIntToStr() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalIntValue)
+                lastValue = new EvalStringValue(((EvalIntValue)value).getValue().toString());
+        };
+    }
+
+    private Runnable convertDoubleToStr() {
+        return () -> {
+            Value value = lastValue;
+            if (value instanceof EvalDoubleValue)
+                lastValue = new EvalStringValue(((EvalDoubleValue)value).getValue().toString());
+        };
+    }
+
+//
+//    private Value getValue(ArrayList<String> name) {
+//        Box box;
+//        if ((box = this.getBox(name)) != null)
+//            return box.getValue();
+//        return null;
+//    }
 }

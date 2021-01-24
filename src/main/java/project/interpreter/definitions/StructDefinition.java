@@ -1,26 +1,24 @@
 package project.interpreter.definitions;
 
-import project.program.content.StructDef;
-import project.program.content.statements.declarations.Declaration;
-import project.program.content.statements.expressions.orExpressions.andExpressions.relationExpressions.additionExpressions.multiplicationExpressions.negationExpressions.simpleExpressions.Identifier;
+import project.interpreter.evaluatedExpr.Box;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-public class StructDefinition extends Definition {
+public class StructDefinition {
 
-    private final Identifier id;
-    private final ArrayList<Declaration> body;
+    private final String name;
+    private final HashMap<String, Box> map;
 
-    public StructDefinition(StructDef structDef) {
-        this.id = structDef.getId();
-        this.body = structDef.getBody();
+    public StructDefinition(String name, HashMap<String, Box> map) {
+        this.name = name;
+        this.map = map;
     }
 
-    public Identifier getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public ArrayList<Declaration> getBody() {
-        return body;
+    public HashMap<String, Box> getMap() {
+        return map;
     }
 }

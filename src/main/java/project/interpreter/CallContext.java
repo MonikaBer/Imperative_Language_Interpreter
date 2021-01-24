@@ -1,17 +1,15 @@
 package project.interpreter;
 
-import project.interpreter.definitions.Variable;
-import project.program.content.statements.Block;
+import project.interpreter.evaluatedExpr.Box;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CallContext {
 
-    private List blockContexts;
+    private final ArrayList<BlockContext> blockContexts;
 
     public CallContext() {
-        this.blockContexts = new ArrayList<BlockContext>();
+        this.blockContexts = new ArrayList<>();
     }
 
     public void makeBlockContext() {
@@ -24,25 +22,20 @@ public class CallContext {
             blockContexts.remove(blockContexts.size()-1);
     }
 
-    public Variable getVar(String name) {
-        Variable var;
+    public Box getBox(ArrayList<String> name) {
+        Box box;
         for (int i = blockContexts.size()-1; i > -1; --i) {
-            if ((var =  ((BlockContext)blockContexts.get(i)).getVar(name)) != null)
-                return var;
+            if ((box =  ((BlockContext)blockContexts.get(i)).getBox(name)) != null)
+                return box;
         }
         return null;
     }
 
     public BlockContext getLastBlockContext() {
-        return (BlockContext)blockContexts.get(blockContexts.size()-1);
+        return blockContexts.get(blockContexts.size()-1);
     }
 
-    public void removeLastBlockContext() {
-        if (!blockContexts.isEmpty())
-            blockContexts.remove(blockContexts.size()-1);
-    }
-
-    public List getBlockContexts() {
+    public ArrayList<BlockContext> getBlockContexts() {
         return blockContexts;
     }
 }

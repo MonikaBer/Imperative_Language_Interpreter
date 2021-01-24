@@ -2,9 +2,9 @@ package project.program.content.statements.expressions.orExpressions.andExpressi
 
 import project.interpreter.INodeVisitor;
 
-public class StringValue extends SimpleExpression {
+public final class StringValue extends SimpleExpression {
 
-    private String value;
+    private final String value;
 
     public StringValue(String value, int lineNr, int positionAtLine) {
         super(lineNr, positionAtLine);

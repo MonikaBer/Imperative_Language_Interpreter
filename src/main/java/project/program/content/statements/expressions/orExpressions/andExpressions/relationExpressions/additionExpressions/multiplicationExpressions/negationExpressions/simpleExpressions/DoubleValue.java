@@ -4,7 +4,7 @@ import project.interpreter.INodeVisitor;
 
 import java.math.BigDecimal;
 
-public class DoubleValue extends SimpleExpression {
+public final class DoubleValue extends SimpleExpression {
 
     private BigDecimal value;
 
