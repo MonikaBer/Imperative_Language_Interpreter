@@ -1,10 +1,7 @@
 package project.program.content.types;
 
 
-import project.interpreter.INodeVisitor;
-import project.program.INode;
-
-public class VoidType extends Type implements INode {
+public class VoidType extends Type {
 
     private final int lineNr;
     private final int positionAtLine;
@@ -20,10 +17,5 @@ public class VoidType extends Type implements INode {
 
     public int getPositionAtLine() {
         return positionAtLine;
-    }
-
-    @Override
-    public void accept(INodeVisitor visitor) {
-        visitor.visit(this);
     }
 }
