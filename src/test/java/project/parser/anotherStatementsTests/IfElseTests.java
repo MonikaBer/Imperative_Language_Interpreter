@@ -27,7 +27,6 @@ public class IfElseTests {
     void shouldParseSimpleIfElseStatement() {
         Source source = new StringSource("void function() { if (a) ; else ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -64,7 +63,6 @@ public class IfElseTests {
     void shouldParseSimpleTrueIfElseStatement() {
         Source source = new StringSource("void function() { if (true) ;  else ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -100,7 +98,6 @@ public class IfElseTests {
     void shouldParseIfElseStatement() {
         Source source = new StringSource("void function() { if (a <= 10) { ++a; --b; } else { --a; ++b; } }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

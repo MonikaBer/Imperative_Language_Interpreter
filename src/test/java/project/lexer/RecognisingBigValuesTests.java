@@ -19,7 +19,6 @@ public class RecognisingBigValuesTests {
         Source source = new StringSource("214748364733355");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
         BigInteger bigInteger = new BigInteger("214748364733355");
@@ -40,7 +39,6 @@ public class RecognisingBigValuesTests {
         Source source = new StringSource("111111111100000000002222222223333333333444444444455.00000000001111111111222222222233333333334444444444");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         DoubleToken doubleToken = (DoubleToken) lexer.getToken();
         BigDecimal bigDouble = new BigDecimal("111111111100000000002222222223333333333444444444455.00000000001111111111222222222233333333334444444444");

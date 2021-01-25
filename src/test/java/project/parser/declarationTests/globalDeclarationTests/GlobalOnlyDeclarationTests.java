@@ -23,7 +23,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfInt() {
         Source source = new StringSource("int a;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -45,7 +44,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfInts() {
         Source source = new StringSource("int a, b, c;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -77,7 +75,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfDouble() {
         Source source = new StringSource("double a;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -99,7 +96,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfDoubles() {
         Source source = new StringSource("double a, b, c;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -131,7 +127,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfBool() {
         Source source = new StringSource("bool a;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -153,7 +148,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfBools() {
         Source source = new StringSource("bool a, b, c;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -185,7 +179,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfString() {
         Source source = new StringSource("string a;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -207,7 +200,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfStrings() {
         Source source = new StringSource("string a, b, c;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -240,7 +232,6 @@ public class GlobalOnlyDeclarationTests {
     void shouldParseOnlyDeclarationOfStructVar() {
         Source source = new StringSource("Student a, b, c;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

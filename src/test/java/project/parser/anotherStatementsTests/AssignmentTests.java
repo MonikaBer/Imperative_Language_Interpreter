@@ -29,7 +29,6 @@ public class AssignmentTests {
     void shouldParseAssignmentToInt() {
         Source source = new StringSource("void function(int a) { int b; b = 1; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -77,7 +76,6 @@ public class AssignmentTests {
     void shouldParseAssignmentToDouble() {
         Source source = new StringSource("void function(int a) { double b; b = 10.01; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -125,7 +123,6 @@ public class AssignmentTests {
     void shouldParseTrueBoolAssignment() {
         Source source = new StringSource("void function(int a) { bool b; b = true; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -170,7 +167,6 @@ public class AssignmentTests {
     void shouldParseFalseBoolAssignment() {
         Source source = new StringSource("void function(int a) { bool b; b = false; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -215,7 +211,6 @@ public class AssignmentTests {
     void shouldParseApostropheStringAssignment() {
         Source source = new StringSource("void function(int a) { string b; b = 'Ala ma kota'; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -261,7 +256,6 @@ public class AssignmentTests {
     void shouldParseDoubleQuoteStringAssignment() {
         Source source = new StringSource("void function(int a) { string b; b = \"Ala ma kota\"; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -307,7 +301,6 @@ public class AssignmentTests {
     void shouldParseStructVarToStructVarAssignment() {
         Source source = new StringSource("void function(int a) { Student student1; Student student2; student1 = student2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -360,7 +353,6 @@ public class AssignmentTests {
     void shouldParseAssignmentToSimpleStructField() {
         Source source = new StringSource("void function(int a) { Student student; student.name = 'Ala'; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -408,7 +400,6 @@ public class AssignmentTests {
     void shouldParseAssignmentToComplexStructField() {
         Source source = new StringSource("void function(int a) { Student student; student.address.street = 'Akacjowa'; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

@@ -29,7 +29,6 @@ public class InitialisationInFuncDefTests {
     void shouldParseInitialisationOfInts() {
         Source source = new StringSource("void function(int a) { int b = 2, c = 3, d = 4; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -97,7 +96,6 @@ public class InitialisationInFuncDefTests {
     void shouldParseInitialisationOfDoubles() {
         Source source = new StringSource("void function(int a) { double b = 0.02, c = 0.03, d = 0.04; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -165,7 +163,6 @@ public class InitialisationInFuncDefTests {
     void shouldParseInitialisationOfBools() {
         Source source = new StringSource("void function(int a) { bool b = true, c = false, d = true; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -222,7 +219,6 @@ public class InitialisationInFuncDefTests {
         Source source = new StringSource("void function(int a) { string b = 'Ala ma kota', c = 'Alek ma psa', " +
                                             "d = 'Ola ma rybki'; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -282,7 +278,6 @@ public class InitialisationInFuncDefTests {
         Source source = new StringSource("void function(int a) { string b = \"Ala ma kota\", c = \"Alek ma psa\", " +
                 "d = \"Ola ma rybki\"; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

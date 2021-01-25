@@ -24,7 +24,6 @@ public class EmptyTests {
     void shouldParseSimpleEmptyStatement() {
         Source source = new StringSource("void function() { ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

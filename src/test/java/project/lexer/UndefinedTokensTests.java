@@ -14,7 +14,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("\n\n @ \n\n");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(3, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
@@ -26,7 +25,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("$");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -36,7 +34,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("^");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -46,7 +43,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("&");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -56,7 +52,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("|");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -66,7 +61,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("[");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -76,7 +70,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("]");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -86,7 +79,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("\\");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
@@ -96,7 +88,6 @@ public class UndefinedTokensTests {
         Source source = new StringSource("?");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }

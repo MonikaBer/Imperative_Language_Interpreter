@@ -40,7 +40,6 @@ public class ExpressionTests {
     void shouldParseSimpleAddExpression() {
         Source source = new StringSource("void function() { int a = 1 + 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -87,7 +86,6 @@ public class ExpressionTests {
     void shouldParseAddExpression() {
         Source source = new StringSource("void function() { int a = 1 + 2 + 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -144,7 +142,6 @@ public class ExpressionTests {
     void shouldParseSimpleSubtractExpression() {
         Source source = new StringSource("void function() { int a = 1 - 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -191,7 +188,6 @@ public class ExpressionTests {
     void shouldParseSubtractExpression() {
         Source source = new StringSource("void function() { int a = 1 - 2 - 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -250,7 +246,6 @@ public class ExpressionTests {
     void shouldParseMixAddSubtractExpression() {
         Source source = new StringSource("void function() { int a = 1 + 2 - 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -307,7 +302,6 @@ public class ExpressionTests {
     void shouldParseMixSubtractAddExpression() {
         Source source = new StringSource("void function() { int a = 1 - 2 + 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -366,7 +360,6 @@ public class ExpressionTests {
     void shouldParseSimpleMultExpression() {
         Source source = new StringSource("void function() { int a = 1 * 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -413,7 +406,6 @@ public class ExpressionTests {
     void shouldParseMultExpression() {
         Source source = new StringSource("void function() { int a = 1 * 2 * 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -470,7 +462,6 @@ public class ExpressionTests {
     void shouldParseSimpleDivExpression() {
         Source source = new StringSource("void function() { int a = 1 / 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -517,7 +508,6 @@ public class ExpressionTests {
     void shouldParseDivExpression() {
         Source source = new StringSource("void function() { int a = 1 / 2 / 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -574,7 +564,6 @@ public class ExpressionTests {
     void shouldParseSimpleModExpression() {
         Source source = new StringSource("void function() { int a = 1 % 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -621,7 +610,6 @@ public class ExpressionTests {
     void shouldParseModExpression() {
         Source source = new StringSource("void function() { int a = 1 % 2 % 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -679,7 +667,6 @@ public class ExpressionTests {
     void shouldParseMixMultDivExpression() {
         Source source = new StringSource("void function() { int a = 1 * 2 / 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -736,7 +723,6 @@ public class ExpressionTests {
     void shouldParseMixDivMultExpression() {
         Source source = new StringSource("void function() { int a = 1 / 2 * 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -793,7 +779,6 @@ public class ExpressionTests {
     void shouldParseMixMultModExpression() {
         Source source = new StringSource("void function() { int a = 1 * 2 % 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -850,7 +835,6 @@ public class ExpressionTests {
     void shouldParseMixModMultExpression() {
         Source source = new StringSource("void function() { int a = 1 % 2 * 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -907,7 +891,6 @@ public class ExpressionTests {
     void shouldParseMixDivModExpression() {
         Source source = new StringSource("void function() { int a = 1 / 2 % 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -964,7 +947,6 @@ public class ExpressionTests {
     void shouldParseMixModDivExpression() {
         Source source = new StringSource("void function() { int a = 1 % 2 / 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1023,7 +1005,6 @@ public class ExpressionTests {
     void shouldParseMixAddMultExpression() {
         Source source = new StringSource("void function() { int a = 1 + 2 * 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1081,7 +1062,6 @@ public class ExpressionTests {
     void shouldParseMixMultAddExpression() {
         Source source = new StringSource("void function() { int a = 1 * 2 + 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1139,7 +1119,6 @@ public class ExpressionTests {
     void shouldParseSimpleEqualExpression() {
         Source source = new StringSource("void function() { bool a = 1 == 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1186,7 +1165,6 @@ public class ExpressionTests {
     void shouldParseSimpleNotEqualExpression() {
         Source source = new StringSource("void function() { bool a = 1 != 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1233,7 +1211,6 @@ public class ExpressionTests {
     void shouldParseSimpleGreaterEqualExpression() {
         Source source = new StringSource("void function() { bool a = 1 >= 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1280,7 +1257,6 @@ public class ExpressionTests {
     void shouldParseSimpleGreaterEqualExpression1() {
         Source source = new StringSource("void function() { bool a = a + b > c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1328,7 +1304,6 @@ public class ExpressionTests {
     void shouldParseSimpleGreaterExpression() {
         Source source = new StringSource("void function() { bool a = 1 > 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1375,7 +1350,6 @@ public class ExpressionTests {
     void shouldParseSimpleLesserEqualExpression() {
         Source source = new StringSource("void function() { bool a = 1 <= 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1422,7 +1396,6 @@ public class ExpressionTests {
     void shouldParseSimpleLesserExpression() {
         Source source = new StringSource("void function() { bool a = 1 < 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1470,7 +1443,6 @@ public class ExpressionTests {
     void shouldParseMixGreaterExpression() {
         Source source = new StringSource("void function() { bool a = 1 > 2 > 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1527,7 +1499,6 @@ public class ExpressionTests {
     void shouldParseSimpleAlternativeExpression() {
         Source source = new StringSource("void function() { bool cond = a || b; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1570,7 +1541,6 @@ public class ExpressionTests {
     void shouldParseAlternativeExpression() {
         Source source = new StringSource("void function() { bool cond = a || b || c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1619,7 +1589,6 @@ public class ExpressionTests {
     void shouldParseSimpleConjunctionExpression() {
         Source source = new StringSource("void function() { bool cond = a && b; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1662,7 +1631,6 @@ public class ExpressionTests {
     void shouldParseConjunctionExpression() {
         Source source = new StringSource("void function() { bool cond = a && b && c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1712,7 +1680,6 @@ public class ExpressionTests {
     void shouldParseMixAlternativeConjunctionExpression() {
         Source source = new StringSource("void function() { bool cond = a || b && c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1761,7 +1728,6 @@ public class ExpressionTests {
     void shouldParseConjunctionAlternativeExpression() {
         Source source = new StringSource("void function() { bool cond = a && b || c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1813,7 +1779,6 @@ public class ExpressionTests {
     void shouldParseSimpleNegativeExpression() {
         Source source = new StringSource("void function() { int a = -1; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1854,7 +1819,6 @@ public class ExpressionTests {
     void shouldParseSimpleNotExpression() {
         Source source = new StringSource("void function() { bool cond = !a; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1894,7 +1858,6 @@ public class ExpressionTests {
     void shouldParseMixNegativeAddExpression() {
         Source source = new StringSource("void function() { int a = -1 + 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1942,7 +1905,6 @@ public class ExpressionTests {
     void shouldParseMixNegativeSubtractExpression() {
         Source source = new StringSource("void function() { int a = -1 - 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -1991,7 +1953,6 @@ public class ExpressionTests {
     void shouldParseMixNotConjunctionExpression() {
         Source source = new StringSource("void function() { bool cond = !a && !b; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2036,7 +1997,6 @@ public class ExpressionTests {
     void shouldParseMixParenthAddMultExpression() {
         Source source = new StringSource("void function() { int a = (1 + 2) * 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2094,7 +2054,6 @@ public class ExpressionTests {
     void shouldParseMixMultParenthAddExpression() {
         Source source = new StringSource("void function() { int a = 1 * (2 + 3); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2150,7 +2109,6 @@ public class ExpressionTests {
     void shouldParseMixParenthAlternativeConjunctionExpression() {
         Source source = new StringSource("void function() { bool cond = (a || b) && c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2198,7 +2156,6 @@ public class ExpressionTests {
     void shouldParseMixConjunctionParenthAlternativeExpression() {
         Source source = new StringSource("void function() { bool cond = a && (b || c); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2247,7 +2204,6 @@ public class ExpressionTests {
     void shouldParseMixNegativeParenthAddExpression() {
         Source source = new StringSource("void function() { int a = -(1 + 2); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2299,7 +2255,6 @@ public class ExpressionTests {
     void shouldParseMixNotParenthConjunctionExpression() {
         Source source = new StringSource("void function() { bool cond = !(a && b); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2349,7 +2304,6 @@ public class ExpressionTests {
     void shouldParseMixParenthAddMultWithStructsExpression() {
         Source source = new StringSource("void function() { int var = (student.a + student.b) / 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2409,7 +2363,6 @@ public class ExpressionTests {
     void shouldParseSimpleFuncCallWithoutParamsExpression() {
         Source source = new StringSource("void function() { int a = func(); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2448,7 +2401,6 @@ public class ExpressionTests {
     void shouldParseSimpleFuncCallWithTwoParamsExpression() {
         Source source = new StringSource("void function() { int a = func(b, c); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2493,7 +2445,6 @@ public class ExpressionTests {
     void shouldParseFuncCallWithAnotherFuncCallAsFirstParamExpression() {
         Source source = new StringSource("void function() { int a = func( func2(b, c), d ); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -2544,7 +2495,6 @@ public class ExpressionTests {
     void shouldParseFuncCallWithTwoMixParamsExpression() {
         Source source = new StringSource("void function() { int a = func( (1+2)*3, b&&(c||d) ); }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

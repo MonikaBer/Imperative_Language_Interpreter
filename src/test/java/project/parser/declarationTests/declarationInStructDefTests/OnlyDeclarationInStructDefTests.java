@@ -22,7 +22,6 @@ public class OnlyDeclarationInStructDefTests {
     void shouldParseOnlyDeclarationOfInts() {
         Source source = new StringSource("struct Student { int a; int b; int c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -60,7 +59,6 @@ public class OnlyDeclarationInStructDefTests {
     void shouldParseOnlyDeclarationOfDoubles() {
         Source source = new StringSource("struct Student { double a; double b; double c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -98,7 +96,6 @@ public class OnlyDeclarationInStructDefTests {
     void shouldParseOnlyDeclarationOfBools() {
         Source source = new StringSource("struct Student { bool a; bool b; bool c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -136,7 +133,6 @@ public class OnlyDeclarationInStructDefTests {
     void shouldParseOnlyDeclarationOfStrings() {
         Source source = new StringSource("struct Student { string a; string b; string c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -174,7 +170,6 @@ public class OnlyDeclarationInStructDefTests {
     void shouldParseOnlyDeclarationOfStructVars() {
         Source source = new StringSource("struct Student { Address a; Address b; Address c; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

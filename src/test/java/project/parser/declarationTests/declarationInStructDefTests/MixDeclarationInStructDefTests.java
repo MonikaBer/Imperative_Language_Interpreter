@@ -26,7 +26,6 @@ public class MixDeclarationInStructDefTests {
     void shouldParseMixDeclarationOfInts() {
         Source source = new StringSource("struct Student { int a = 1; int b; int c = 3; int d; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

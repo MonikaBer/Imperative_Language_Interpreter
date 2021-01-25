@@ -25,7 +25,6 @@ public class OnlyDeclarationInFuncDefTests {
     void shouldParseOnlyDeclarationOfInts() {
         Source source = new StringSource("void function(int a) { int b, c, d; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -78,7 +77,6 @@ public class OnlyDeclarationInFuncDefTests {
     void shouldParseOnlyDeclarationOfDoubles() {
         Source source = new StringSource("void function(int a) { double b, c, d; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -131,7 +129,6 @@ public class OnlyDeclarationInFuncDefTests {
     void shouldParseOnlyDeclarationOfBools() {
         Source source = new StringSource("void function(int a) { bool b, c, d; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -184,7 +181,6 @@ public class OnlyDeclarationInFuncDefTests {
     void shouldParseOnlyDeclarationOfStrings() {
         Source source = new StringSource("void function(int a) { string b, c, d; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -237,7 +233,6 @@ public class OnlyDeclarationInFuncDefTests {
     void shouldParseOnlyDeclarationOfStructVars() {
         Source source = new StringSource("void function(int a) { Student b, c, d; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

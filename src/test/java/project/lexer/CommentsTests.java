@@ -18,7 +18,6 @@ public class CommentsTests {
         Source source = new StringSource(" #aaa \n ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(8, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
@@ -30,7 +29,6 @@ public class CommentsTests {
         Source source = new StringSource(" #aaa ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(6, lexer.getToken().getPosition());
         assertEquals(6, lexer.getToken().getPositionAtLine());
@@ -42,7 +40,6 @@ public class CommentsTests {
         Source source = new StringSource(" //aaa\n ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(8, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
@@ -54,7 +51,6 @@ public class CommentsTests {
         Source source = new StringSource(" //aaa ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(7, lexer.getToken().getPosition());
         assertEquals(7, lexer.getToken().getPositionAtLine());
@@ -66,7 +62,6 @@ public class CommentsTests {
         Source source = new StringSource(" //*aaa\n bb ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("bb", stringToken.getValue());
@@ -86,7 +81,6 @@ public class CommentsTests {
         Source source = new StringSource(" // /*aaa*/ bb\n    cc ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("cc", stringToken.getValue());
@@ -106,7 +100,6 @@ public class CommentsTests {
         Source source = new StringSource(" // #/*aaa*/ bb\n   cc ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("cc", stringToken.getValue());
@@ -126,7 +119,6 @@ public class CommentsTests {
         Source source = new StringSource("  /*aaa*/  ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(11, lexer.getToken().getPosition());
         assertEquals(11, lexer.getToken().getPositionAtLine());
@@ -138,7 +130,6 @@ public class CommentsTests {
         Source source = new StringSource("  /**aaa**/ aa ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("aa", stringToken.getValue());
@@ -158,7 +149,6 @@ public class CommentsTests {
         Source source = new StringSource(" #aaa\n /*aaa*/ //aaa\n  1  #aaa\n /*aaa*/ //aaa\n  2  #aaa\n /*aaa*/ //aaa\n ");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
         BigInteger bigInteger = new BigInteger("1");
@@ -188,7 +178,6 @@ public class CommentsTests {
         Source source = new StringSource("/* a");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());

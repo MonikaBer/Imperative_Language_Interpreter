@@ -1,10 +1,13 @@
 package project.interpreter;
 
+import project.exceptions.InterpreterError;
 import project.exceptions.SemanticError;
 import project.interpreter.definitions.FuncDefinition;
 import project.interpreter.definitions.StructDefinition;
 import project.interpreter.evaluatedExpr.*;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -22,8 +25,11 @@ public class Environment {
     private Box lastBox;
     private Value lastValue;
     private boolean ifFuncEnd;
+    private final Writer writer;
+    private final Scanner reader;
+    private final Writer errWriter;
 
-    public Environment() {
+    public Environment(Writer writer, Scanner reader, Writer errWriter) {
         this.globals = new HashMap<>();
         this.funcDefs = new HashMap<>();
         this.structDefs = new HashMap<>();
@@ -31,6 +37,13 @@ public class Environment {
         this.lastBox = null;
         this.lastValue = null;
         this.ifFuncEnd = false;
+        if (writer != null && reader != null && errWriter != null) {
+            this.writer = writer;
+            this.reader = reader;
+            this.errWriter = errWriter;
+        } else {
+            throw new InterpreterError("Writer, reader or errWriter isn't defined!");
+        }
 
         this.embeddedFunctions = new HashMap<>();
         this.embeddedFunctions.put("readInt", this.readInt());
@@ -178,22 +191,35 @@ public class Environment {
 
     private Runnable readInt() {
         return () -> {
-            String userInput = new Scanner(System.in).nextLine();
-            lastValue = new EvalIntValue(new BigInteger(userInput));
+            String userInput = readNewLine();
+            try {
+                lastValue = new EvalIntValue(new BigInteger(userInput));
+            } catch (Exception ex) {
+                throw new InterpreterError("You wrote something which isn't int!");
+            }
         };
     }
 
     private Runnable readDouble() {
         return () -> {
-            String userInput = new Scanner(System.in).nextLine();
-            lastValue = new EvalDoubleValue(new BigDecimal(userInput));
+            String userInput = readNewLine();
+            try {
+                lastValue = new EvalDoubleValue(new BigDecimal(userInput));
+            } catch (Exception ex) {
+                throw new InterpreterError("You wrote something which isn't double!");
+            }
+
         };
     }
 
     private Runnable readStr() {
         return () -> {
-            String userInput = new Scanner(System.in).nextLine();
-            lastValue = new EvalStringValue(userInput);
+            String userInput = readNewLine();
+            try {
+                lastValue = new EvalStringValue(userInput);
+            } catch (Exception ex) {
+                throw new InterpreterError("You wrote something which isn't string!");
+            }
         };
     }
 
@@ -201,7 +227,7 @@ public class Environment {
         return () -> {
             Value value = lastValue;
             if (value instanceof EvalIntValue)
-                System.out.println(((EvalIntValue)value).getValue().toString());
+                writeWithNewLine(((EvalIntValue)value).getValue().toString());
         };
     }
 
@@ -209,7 +235,7 @@ public class Environment {
         return () -> {
             Value value = lastValue;
             if (value instanceof EvalDoubleValue)
-                System.out.println(((EvalDoubleValue)value).getValue().toString());
+                writeWithNewLine(((EvalDoubleValue)value).getValue().toString());
         };
     }
 
@@ -217,7 +243,7 @@ public class Environment {
         return () -> {
             Value value = lastValue;
             if (value instanceof EvalStringValue)
-                System.out.println(((EvalStringValue)value).getValue());
+                writeWithNewLine(((EvalStringValue)value).getValue());
         };
     }
 
@@ -225,7 +251,7 @@ public class Environment {
         return () -> {
             Value value = lastValue;
             if (value instanceof EvalStringValue)
-                System.err.println(((EvalStringValue)value).getValue());
+                writeErrWithNewLine(((EvalStringValue)value).getValue());
         };
     }
 
@@ -275,6 +301,28 @@ public class Environment {
             if (value instanceof EvalDoubleValue)
                 lastValue = new EvalStringValue(((EvalDoubleValue)value).getValue().toString());
         };
+    }
+
+    private void writeWithNewLine(String text) {
+        try {
+            writer.append(text).append(String.valueOf('\n'));
+            writer.flush();
+        } catch (IOException ex) {
+            throw new InterpreterError("Cannot print!");
+        }
+    }
+
+    private String readNewLine() {
+        return reader.nextLine();
+    }
+
+    private void writeErrWithNewLine(String text) {
+        try {
+            errWriter.append(text).append(String.valueOf('\n'));
+            errWriter.flush();
+        } catch (IOException ex) {
+            throw new InterpreterError("Cannot print!");
+        }
     }
 
 //

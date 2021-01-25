@@ -22,7 +22,6 @@ public class VoidReturnTests {
     void shouldParseSimpleVoidReturn() {
         Source source = new StringSource("void function() { return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

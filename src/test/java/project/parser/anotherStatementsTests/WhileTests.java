@@ -27,7 +27,6 @@ public class WhileTests {
     void shouldParseSimpleWhileStatement() {
         Source source = new StringSource("void function() { while (a) ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -61,7 +60,6 @@ public class WhileTests {
     void shouldParseSimpleTrueWhileStatement() {
         Source source = new StringSource("void function() { while (true) ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -94,7 +92,6 @@ public class WhileTests {
     void shouldParseWhileStatement() {
         Source source = new StringSource("void function() { while (a <= 10) { ++a; --b; } }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

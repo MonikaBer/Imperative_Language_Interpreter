@@ -37,11 +37,13 @@ import project.program.content.statements.switchStmt.Case;
 import project.program.content.statements.switchStmt.Switch;
 import project.program.content.types.*;
 
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 
 public class Interpreter implements INodeVisitor {
@@ -49,9 +51,9 @@ public class Interpreter implements INodeVisitor {
     private final Program program;
     private final Environment env;
 
-    public Interpreter(Program program) {
+    public Interpreter(Program program, Writer writer, Scanner reader, Writer errWriter) {
         this.program = program;
-        this.env = new Environment();
+        this.env = new Environment(writer, reader, errWriter);
     }
 
     public void execute() {

@@ -27,7 +27,6 @@ public class SwitchStmtTests {
     void shouldParseSimpleSwitchStatement() {
         Source source = new StringSource("void function() { switch (a) { case 1: ; case 2: ; default: ; } }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -77,7 +76,6 @@ public class SwitchStmtTests {
     void shouldParseSwitchStatement() {
         Source source = new StringSource("void function() { switch (a) { case 1: {++b;} case 2: {++c;} default: {++d;} } }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

@@ -16,7 +16,6 @@ public class AssignmentErrorTests {
     void shouldRecogniseIncorrectStatementInBlock() {
         Source source = new StringSource("void function() { 1 = ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
 
         try {

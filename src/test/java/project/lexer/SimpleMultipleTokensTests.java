@@ -20,7 +20,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("\n\t var1 \n\t var2 \n\t var3 \t\n\n\t");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("var1", stringToken.getValue());
@@ -56,7 +55,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("var1           var2 \n \t \r var3");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("var1", stringToken.getValue());
@@ -92,7 +90,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("#aaa\n  \t \n 'txt1' \n\r 'txt2' \r\r\r 'txt3'   \n \r\r \t\t");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("txt1", stringToken.getValue());
@@ -128,7 +125,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("\"txt1\" \"txt2\" \"txt3\"");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("txt1", stringToken.getValue());
@@ -156,7 +152,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("\n 10 0 12 01");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.INT_NUMBER, lexer.getToken().getType());
         IntToken intToken = (IntToken) lexer.getToken();
         BigInteger bigInteger = new BigInteger("10");
@@ -213,7 +208,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("\n\n34.17 \n\n 34.0 \n\n 34.05 \n\n 38.07080\n\n\n");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         DoubleToken doubleToken = (DoubleToken) lexer.getToken();
         BigDecimal bigDouble = new BigDecimal("34.17");
@@ -261,7 +255,6 @@ public class SimpleMultipleTokensTests {
         Source source = new StringSource("0.0  0.10  0.01  0.00100");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE_NUMBER, lexer.getToken().getType());
         DoubleToken doubleToken = (DoubleToken) lexer.getToken();
         BigDecimal bigDouble = new BigDecimal("0.0");
@@ -303,14 +296,13 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 1, j= 1; i < 16; i += 5, ++j) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.TRUE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
             assertEquals(0, lexer.getToken().getPositionAtLine());
             assertEquals(j, lexer.getToken().getLineNr());
+            lexer.nextToken();
         }
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(16, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -323,9 +315,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 18; i += 6) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.FALSE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -335,14 +327,13 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 2, j = 1; i < 17; i += 5, ++j) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.IF, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
             assertEquals(1, lexer.getToken().getPositionAtLine());
             assertEquals(j, lexer.getToken().getLineNr());
+            lexer.nextToken();
         }
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(17, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
@@ -355,9 +346,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 15; i += 5) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.ELSE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -367,9 +358,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 21; i += 7) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.SWITCH, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -379,9 +370,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 15; i += 5) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.CASE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -391,9 +382,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 24; i += 8) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.DEFAULT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -403,9 +394,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 18; i += 6) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.WHILE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -415,15 +406,13 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 2, j = 1; i < 14; i += 4, ++j) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.ASSIGN, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
             assertEquals(1, lexer.getToken().getPositionAtLine());
             assertEquals(j, lexer.getToken().getLineNr());
-
+            lexer.nextToken();
         }
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
         assertEquals(14, lexer.getToken().getPosition());
         assertEquals(1, lexer.getToken().getPositionAtLine());
@@ -436,9 +425,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 21; i += 7) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.RETURN, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -448,9 +437,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.L_PARENTH, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -460,9 +449,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.R_PARENTH, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -472,9 +461,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.L_BRACE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -484,9 +473,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.R_BRACE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -496,9 +485,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 12; i += 4) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.INT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -508,9 +497,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 21; i += 7) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -520,9 +509,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 15; i += 5) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.BOOL, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -532,9 +521,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 21; i += 7) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -544,9 +533,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 15; i += 5) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.VOID, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -556,9 +545,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 21; i += 7) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.STRUCT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -568,9 +557,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.EQ, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -580,9 +569,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.NEQ, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -592,9 +581,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.GEQT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -604,9 +593,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.GT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -616,9 +605,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.LEQT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -628,9 +617,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.LT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -640,9 +629,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.PLUS, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -652,9 +641,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.MINUS, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -664,9 +653,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.INC, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -676,9 +665,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.DEC, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -688,9 +677,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.MUL, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -700,9 +689,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.DIV, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -712,9 +701,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.MOD, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -724,9 +713,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.ALTERNATIVE, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -736,9 +725,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 9; i += 3) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.CONJUNCTION, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -748,9 +737,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.NEGATION, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -760,9 +749,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.SEMICOLON, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -772,9 +761,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.DOT, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -784,9 +773,9 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.COLON, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
 
@@ -796,11 +785,10 @@ public class SimpleMultipleTokensTests {
         Lexer lexer = new Lexer(source);
 
         for (int i = 0; i < 6; i += 2) {
-            lexer.nextToken();
             assertEquals(Token.TokenType.COMMA, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
+            lexer.nextToken();
         }
     }
-
 
 }

@@ -28,7 +28,6 @@ public class ReturnTests {
     void shouldParseSimpleReturnExpression() {
         Source source = new StringSource("void function() { return 1; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -64,7 +63,6 @@ public class ReturnTests {
     void shouldParseReturnExpression() {
         Source source = new StringSource("void function() { return 1 + 2; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

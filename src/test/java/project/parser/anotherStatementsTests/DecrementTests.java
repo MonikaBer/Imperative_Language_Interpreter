@@ -26,7 +26,6 @@ public class DecrementTests {
     void shouldParseSimpleDecrementStatement() {
         Source source = new StringSource("void function() { --a; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -58,7 +57,6 @@ public class DecrementTests {
     void shouldParseIncrementStatement() {
         Source source = new StringSource("void function() { --student.a; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

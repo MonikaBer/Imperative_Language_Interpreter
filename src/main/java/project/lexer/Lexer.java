@@ -36,6 +36,8 @@ public class Lexer {
         keywordsMap.put("string", Token.TokenType.STRING);
         keywordsMap.put("void", Token.TokenType.VOID);
         keywordsMap.put("struct", Token.TokenType.STRUCT);
+
+        this.nextToken();
     }
 
     public void nextToken() {

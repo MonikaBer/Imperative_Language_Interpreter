@@ -30,7 +30,6 @@ public class FunctionDefinitionTests {
     void shouldParseVoidFuncDefWithoutArgs() {
         Source source = new StringSource("void function() { int b; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -65,7 +64,6 @@ public class FunctionDefinitionTests {
     void shouldParseVoidFuncDefWithOneArg() {
         Source source = new StringSource("void function(int a) { int b; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -105,7 +103,6 @@ public class FunctionDefinitionTests {
     void shouldParseVoidFuncDefWithOneDefaultArg() {
         Source source = new StringSource("void function(int a = 1) { double b; b = 10.01; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

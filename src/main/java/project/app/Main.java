@@ -10,7 +10,8 @@ import project.source.Source;
 import project.source.StringSource;
 import project.token.Token;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.Scanner;
 
 public class Main {
 
@@ -23,16 +24,21 @@ public class Main {
 		stringSourceTest();
 
 		Source source = new StringSource("int main() { " +
-										"printStr(\"Hello world!\");" +
+										"printStr(\"Podaj imię:\\n\");" +
+										"string name = readStr();" +
+										"printStr(\"\\n\" + name);" +
 										"return 0; " +
 										"}");
 
 		Lexer lexer = new Lexer(source);
-		lexer.nextToken();
 		Parser parser = new Parser(lexer);
 		Program program = parser.parseProgram();
 
-		Interpreter interpreter = new Interpreter(program);
+		Writer writer = new OutputStreamWriter(System.out);
+		Scanner reader = new Scanner(System.in);
+		Writer errWriter = new OutputStreamWriter(System.err);
+
+		Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
 		interpreter.execute();
 		interpreter.start();
 	}
@@ -46,7 +52,6 @@ public class Main {
 		}
 		Lexer lexer = new Lexer(source);
 
-		lexer.nextToken();
 		if (lexer.getToken().getType() != Token.TokenType.INT) {
 			System.out.println("error 1");
 			return;
@@ -149,7 +154,6 @@ public class Main {
 		Source source = new StringSource("int a = 1; if (a < 5) { return 0;}");
 		Lexer lexer = new Lexer(source);
 
-		lexer.nextToken();
 		if (lexer.getToken().getType() != Token.TokenType.INT) {
 			System.out.println("error 1");
 			return;

@@ -29,7 +29,6 @@ public class MixDeclarationInFuncDefTests {
     void shouldParseMixDeclarationOfInts() {
         Source source = new StringSource("void function(int a) { int b = 2, c, d = 4, e; return; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

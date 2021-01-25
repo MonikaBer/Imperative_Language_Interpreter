@@ -24,7 +24,6 @@ public class BlockTests {
     void shouldParseSimpleBlock() {
         Source source = new StringSource("void function() { { } }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -55,7 +54,6 @@ public class BlockTests {
     void shouldParseBlockWithEmptyStatement() {
         Source source = new StringSource("void function() { { ; } }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

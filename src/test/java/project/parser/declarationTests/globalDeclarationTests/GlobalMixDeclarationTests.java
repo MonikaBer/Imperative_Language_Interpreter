@@ -26,7 +26,6 @@ public class GlobalMixDeclarationTests {
     void shouldParseMixDeclarationOfInts() {
         Source source = new StringSource("int a = 1, b, c = 3, d;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

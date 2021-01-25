@@ -29,7 +29,6 @@ public class InitialisationInStructDefTests {
     void shouldParseInitialisationOfInts() {
         Source source = new StringSource("struct Student { int a = 1; int b = 2; int c = 3; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -84,7 +83,6 @@ public class InitialisationInStructDefTests {
     void shouldParseInitialisationOfDoubles() {
         Source source = new StringSource("struct Student { double a = 0.01; double b = 0.02; double c = 0.03; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -139,7 +137,6 @@ public class InitialisationInStructDefTests {
     void shouldParseInitialisationOfBools() {
         Source source = new StringSource("struct Student { bool a = true; bool b = false; bool c = true; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -181,7 +178,6 @@ public class InitialisationInStructDefTests {
         Source source = new StringSource("struct Student { string a = 'Ala ma kota'; string b = 'Alek ma psa'; " +
                                             "string c = 'Ola ma rybki'; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -221,7 +217,6 @@ public class InitialisationInStructDefTests {
         Source source = new StringSource("struct Student { string a = \"Ala ma kota\"; string b = \"Alek ma psa\"; " +
                 "string c = \"Ola ma rybki\"; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

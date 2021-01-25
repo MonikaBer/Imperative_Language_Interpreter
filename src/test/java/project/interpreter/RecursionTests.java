@@ -8,13 +8,16 @@ import project.source.FileSource;
 import project.source.Source;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Scanner;
 
 public class RecursionTests {
 
     @Test
     void shouldInterpretSimpleFunc() {
         String fileName = "shouldInterpretSimpleFunc";
-        Source source = null;
+        Source source;
         try {
             source = new FileSource("./src/test/java/project/interpreter/fileSources/" + fileName);
         } catch (IOException ex) {
@@ -23,11 +26,14 @@ public class RecursionTests {
         }
 
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
-        Interpreter interpreter = new Interpreter(program);
+        Writer writer = new OutputStreamWriter(System.out);
+        Scanner reader = new Scanner(System.in);
+        Writer errWriter = new OutputStreamWriter(System.err);
+
+        Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
         interpreter.execute();
         interpreter.start();
     }
@@ -44,11 +50,14 @@ public class RecursionTests {
         }
 
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
-        Interpreter interpreter = new Interpreter(program);
+        Writer writer = new OutputStreamWriter(System.out);
+        Scanner reader = new Scanner(System.in);
+        Writer errWriter = new OutputStreamWriter(System.err);
+
+        Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
         interpreter.execute();
         interpreter.start();
     }
@@ -65,11 +74,14 @@ public class RecursionTests {
         }
 
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
-        Interpreter interpreter = new Interpreter(program);
+        Writer writer = new OutputStreamWriter(System.out);
+        Scanner reader = new Scanner(System.in);
+        Writer errWriter = new OutputStreamWriter(System.err);
+
+        Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
         interpreter.execute();
         interpreter.start();
     }
@@ -86,11 +98,14 @@ public class RecursionTests {
         }
 
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
-        Interpreter interpreter = new Interpreter(program);
+        Writer writer = new OutputStreamWriter(System.out);
+        Scanner reader = new Scanner(System.in);
+        Writer errWriter = new OutputStreamWriter(System.err);
+
+        Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
         interpreter.execute();
         interpreter.start();
     }

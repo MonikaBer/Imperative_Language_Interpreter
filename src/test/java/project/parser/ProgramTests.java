@@ -33,7 +33,6 @@ public class ProgramTests {
                                          "struct Student { int a; double b; } " +
                                          "void function() { ; }");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 

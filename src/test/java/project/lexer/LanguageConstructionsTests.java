@@ -20,7 +20,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("int main() {\n\treturn 0;\n}\n");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.INT, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -92,7 +91,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("switch (a) {\n\tcase 1: \t\treturn 1;\n\tcase 2: \t\treturn 2;\n\tdefault: \t\treturn 0;\n}\n");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.SWITCH, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -260,7 +258,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("struct Address {\n\tint albumNr;\n\tstring name;\n\tAddress address;\n}");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.STRUCT, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -361,7 +358,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("double getDouble(double aa = 0.310, double bb = 0.020) {\n\treturn aa;\n}\n");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -467,7 +463,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("double abc;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -500,7 +495,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("Student student; \n student.name = \"Jan\"; \n student.albumNr = 100200;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("Student", stringToken.getValue());
@@ -595,7 +589,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("int abc = 12345;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.INT, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -643,7 +636,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("double abc = 0.570;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.DOUBLE, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -691,7 +683,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("bool abc = true;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.BOOL, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -736,7 +727,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("string abc = \"Hello\";");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -782,7 +772,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("\"Hello");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -794,7 +783,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("'Hello");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.UNDEFINED, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -806,7 +794,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("string abc = 'Hello';");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -853,7 +840,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("someFunc(aa, 11.24, bb, 22);");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.ID, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
         assertEquals("someFunc", stringToken.getValue());
@@ -944,7 +930,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("if (aa == 1.5010) return aa; else return -1.010;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.IF, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -1051,7 +1036,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("while (aa <= 50) aa++;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.WHILE, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -1125,7 +1109,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("if ((11 < 22 && 30 != -15) || aa == 0.010) aa--;");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.IF, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());
@@ -1277,7 +1260,6 @@ public class LanguageConstructionsTests {
         Source source = new StringSource("string str = \"Ala ma kota\";");
         Lexer lexer = new Lexer(source);
 
-        lexer.nextToken();
         assertEquals(Token.TokenType.STRING, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
         assertEquals(0, lexer.getToken().getPositionAtLine());

@@ -29,7 +29,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfInt() {
         Source source = new StringSource("int a = 1;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -56,7 +55,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfInts() {
         Source source = new StringSource("int a = 1, b = 2, c = 3;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -105,7 +103,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfDouble() {
         Source source = new StringSource("double a = 0.01;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -132,7 +129,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfDoubles() {
         Source source = new StringSource("double a = 0.01, b = 0.02, c = 0.03;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -181,7 +177,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfTrueBool() {
         Source source = new StringSource("bool a = true;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -204,7 +199,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfTrueBools() {
         Source source = new StringSource("bool a = true, b = true, c = true;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -241,7 +235,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfFalseBool() {
         Source source = new StringSource("bool a = false;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -264,7 +257,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfFalseBools() {
         Source source = new StringSource("bool a = false, b = false, c = false;");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -301,7 +293,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfApostropheString() {
         Source source = new StringSource("string a = 'Ala ma kota';");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -325,7 +316,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfApostropheStrings() {
         Source source = new StringSource("string a = 'Ala ma kota', b = 'Alek ma psa', c = 'Ola ma rybki';");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
@@ -365,7 +355,6 @@ public class GlobalInitialisationTests {
     void shouldParseInitialisationOfDoubleQuoteString() {
         Source source = new StringSource("string a = \"Ala ma kota\";");
         Lexer lexer = new Lexer(source);
-        lexer.nextToken();
         Parser parser = new Parser(lexer);
         Program program = parser.parseProgram();
 
