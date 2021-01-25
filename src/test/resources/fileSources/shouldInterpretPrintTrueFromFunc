@@ -1,0 +1,17 @@
+//simple function
+
+void func(bool b) {
+    if ( b )
+        printInt(1);
+    else
+        printInt(-1);
+}
+
+int main() {
+    int ret = 0;
+
+    func(true);
+
+    printInt(ret);
+    return 0;
+}

@@ -5,6 +5,10 @@ void func(int a) {
 }
 
 int main() {
+    int ret = 0;
+
     func(1);
+
+    printInt(ret);
     return 0;
 }

@@ -1,0 +1,14 @@
+//simple function
+
+void func(double a) {
+    printDouble(a);
+}
+
+int main() {
+    int ret = 0;
+
+    func(1.0);
+
+    printInt(ret);
+    return 0;
+}

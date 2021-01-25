@@ -1048,11 +1048,11 @@ public class Interpreter implements INodeVisitor {
         }
 
         if (value instanceof EvalIntValue) {
-            BigInteger result = BigInteger.ZERO.divide(((EvalIntValue)value).getValue());
+            BigInteger result = BigInteger.ZERO.subtract(((EvalIntValue)value).getValue());
             env.setLastValue(new EvalIntValue(result));
         }
         else {  //double value
-            BigDecimal result = BigDecimal.ZERO.divide(((EvalDoubleValue)value).getValue());
+            BigDecimal result = BigDecimal.ZERO.subtract(((EvalDoubleValue)value).getValue());
             env.setLastValue(new EvalDoubleValue(result));
         }
     }

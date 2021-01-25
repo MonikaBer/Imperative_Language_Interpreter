@@ -1,10 +1,16 @@
-//simple function
+/*
+    simple function
+*/
 
 int func() {
     return 1;
 }
 
 int main() {
+    int ret = 0;
+
     printInt( func() );
+
+    printInt(ret);
     return 0;
 }

@@ -1,0 +1,17 @@
+//simple function
+
+bool func() {
+    return false;
+}
+
+int main() {
+    int ret = 0;
+
+    if ( func() )
+        printInt(1);
+    else
+        printInt(-1);
+
+    printInt(ret);
+    return 0;
+}

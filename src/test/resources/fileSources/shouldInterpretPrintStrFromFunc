@@ -1,0 +1,15 @@
+//simple function
+
+void func(string str) {
+    printStr( str );
+}
+
+int main() {
+    int ret = 0;
+
+    string str = 'Ala ma kota';
+    func( str );
+
+    printInt(ret);
+    return 0;
+}

@@ -1,0 +1,20 @@
+//simple function
+
+struct Person {
+    string name = "Andrzej";
+    int age = 10;
+}
+
+void func(Person person) {
+    printStr( person.name );
+}
+
+int main() {
+    int ret = 0;
+
+    Person person;
+    func( person );
+
+    printInt(ret);
+    return 0;
+}

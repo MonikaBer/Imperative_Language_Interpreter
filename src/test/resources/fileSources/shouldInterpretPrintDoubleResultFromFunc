@@ -1,0 +1,15 @@
+//simple function
+
+double func(double a) {
+    return a;
+}
+
+int main() {
+    int ret = 0;
+
+    double a = 1.0;
+    printDouble( func(a) );
+
+    printInt(ret);
+    return 0;
+}
