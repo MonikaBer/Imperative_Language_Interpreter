@@ -1,0 +1,42 @@
+
+struct Address {
+    string street;
+    int nr;
+    string city;
+}
+
+struct Student {
+    int albumNr;
+    string name;
+    string surname;
+    Address address;
+}
+
+void showStudent(Student student) {
+    string ws = " ";
+    string result1 = convertIntToStr(student.albumNr) + ws + student.name + ws + student.surname + ws;
+    string result2 = student.address.street + ws + convertIntToStr(student.address.nr) + ws + student.address.city;
+
+    printStr( result1 + result2 );
+}
+
+
+int main() {
+    int ret = 0;
+
+    Student student;
+    student.albumNr = 100200;
+    student.name = "Jan";
+    student.surname = "Kowalski";
+
+    Address address;
+    address.street = "Spokojna";
+    address.nr = 25;
+    address.city = "Lublin";
+
+    student.address = address;
+    showStudent(student);
+
+    printInt(ret);
+    return ret;
+}

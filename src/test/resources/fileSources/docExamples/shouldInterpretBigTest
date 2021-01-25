@@ -1,0 +1,29 @@
+
+int main() {
+    int ret = 0;
+
+    int a = readInt();
+    if (a % 2 == 0 && true)
+        ;
+    else
+        a = a + 1;
+
+    printInt(a);
+
+    printStr("Podaj liczbe od 1 do 3");
+    a = readInt();
+
+    switch(a) {
+        case 1:
+            printStr("Twoja liczba to 1");
+        case 2:
+            printStr("Twoja liczba to 2");
+        case 3:
+            printStr("Twoja liczba to 3");
+        default:
+            printStr("Podales liczbe spoza zakresu 1-3");
+    }
+
+    printInt(ret);
+    return ret;
+}

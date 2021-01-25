@@ -1,0 +1,13 @@
+// Hello world
+/* Hello world */
+# Hello world
+
+int main() {
+    int ret = 0;
+
+    string hello = "Hello world!";
+    printStr(hello);
+
+    printInt(ret);
+    return ret;
+}

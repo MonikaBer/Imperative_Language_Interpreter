@@ -23,6 +23,11 @@ public class BlockContext {
         locals.put(name, new Box(value));
     }
 
+//    public void setBox(String name, Box box) {
+//        locals.remove(name);
+//        locals.put(name, box);
+//    }
+
     public Box getBox(ArrayList<String> name) {
         return Lib.pullBox(locals, name);
     }

@@ -1,0 +1,27 @@
+
+int main() {
+    int ret = 0;
+
+    int a = 0;
+
+    printInt(a);
+    printDouble( convertIntToDouble(a) );
+    printInt( convertDoubleToInt( convertIntToDouble(a) ) );
+
+    string str = "1";
+    printStr( str );
+    printInt( convertStrToInt(str) );
+
+    int b = convertStrToInt(str);
+    printStr( convertIntToStr(b) );
+
+    double c = 1.1;
+    printDouble( c );
+    printStr( convertDoubleToStr(c) );
+
+    printDouble( convertStrToDouble( convertDoubleToStr(c)) );
+
+
+    printInt(ret);
+    return ret;
+}

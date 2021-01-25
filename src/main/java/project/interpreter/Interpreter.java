@@ -208,18 +208,8 @@ public class Interpreter implements INodeVisitor {
             }
         }
 
-        Block block = funcDef.getBlock();
-        if (!(funcDef.getRetType() instanceof VoidType)) {
-            if (block.getStmts() == null || !(block.getStmts().get(block.getStmts().size()-1) instanceof Return)) {
-                String desc = "Lack of return statement at the end of block of non void function definition";
-                int lineNr = funcDef.getId().getLineNr();
-                int posAtLine = funcDef.getId().getPositionAtLine();
-                throw new SemanticError(lineNr, posAtLine, desc);
-            }
-        }
-
         FuncDefinition funcDefinition =
-                new FuncDefinition(funcDef.getRetType(), funcName, args, block);
+                new FuncDefinition(funcDef.getRetType(), funcName, args, funcDef.getBlock());
 
         env.makeFuncDefinition(funcDefinition);
     }
@@ -426,18 +416,24 @@ public class Interpreter implements INodeVisitor {
 
     @Override
     public void visit(While whileStmt) {
-        whileStmt.getCondition().accept(this);
+        boolean continueWhile = true;
 
-        if (!(env.getLastValue() instanceof EvalBoolValue)) {
-            String desc = "Condition in while statement is not a bool";
-            int lineNr = whileStmt.getCondition().getLineNr();
-            int posAtLine = whileStmt.getCondition().getPositionAtLine();
-            throw new SemanticError(lineNr, posAtLine, desc);
+        while (continueWhile) {
+            whileStmt.getCondition().accept(this);
+
+            if (!(env.getLastValue() instanceof EvalBoolValue)) {
+                String desc = "Condition in while statement is not a bool";
+                int lineNr = whileStmt.getCondition().getLineNr();
+                int posAtLine = whileStmt.getCondition().getPositionAtLine();
+                throw new SemanticError(lineNr, posAtLine, desc);
+            }
+
+            boolean ifConditionTrue = ((EvalBoolValue)env.getLastValue()).getValue();
+            if (ifConditionTrue)
+                whileStmt.getStmt().accept(this);
+            else
+                continueWhile = false;
         }
-
-        boolean ifConditionTrue = ((EvalBoolValue)env.getLastValue()).getValue();
-        if (ifConditionTrue)
-            whileStmt.getStmt().accept(this);
     }
 
     @Override
@@ -1184,8 +1180,8 @@ public class Interpreter implements INodeVisitor {
 
         if (args.size() != funcDefinition.getArgs().size()) {
             String desc = "Incorrect number or type of params in func call";
-            int lineNr = funcCall.getParams().get(funcCall.getParams().size()-1).getLineNr();
-            int posAtLine = funcCall.getParams().get(funcCall.getParams().size()-1).getPositionAtLine();
+            int lineNr = funcCall.getFuncName().getLineNr();
+            int posAtLine = funcCall.getFuncName().getPositionAtLine();
             throw new SemanticError(lineNr, posAtLine, desc);
         }
 
@@ -1193,8 +1189,8 @@ public class Interpreter implements INodeVisitor {
         env.makeBlockContext();
         //put args to call context
         for (int i = 0; i < args.size(); ++i) {
-            int lineNr = funcCall.getParams().get(i).getLineNr();
-            int posAtLine = funcCall.getParams().get(i).getPositionAtLine();
+            int lineNr = funcCall.getFuncName().getLineNr();
+            int posAtLine = funcCall.getFuncName().getPositionAtLine();
             env.makeVar(args.get(i).getName(), args.get(i).getDefValue(), lineNr, posAtLine);
         }
 

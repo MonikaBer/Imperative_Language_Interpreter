@@ -1,0 +1,21 @@
+
+int a = 5;
+
+void function(int a) {
+    printInt(a);
+}
+
+int main() {
+    int ret = 0;
+
+    if (a == 5 || false) {
+        int b = 20;
+        printInt(b);
+    }
+
+    function(100);
+    //printInt(b);
+
+    printInt(ret);
+    return ret;
+}

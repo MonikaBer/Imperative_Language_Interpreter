@@ -6,6 +6,7 @@ public class InterpreterError extends RuntimeException {
     private final int positionAtLine;
     private final String desc;
     private final String message;
+    private final int retCode = -4;
 
     public InterpreterError(String desc) {
         this.lineNr = -1;
@@ -36,5 +37,9 @@ public class InterpreterError extends RuntimeException {
     @Override
     public String getMessage() {
         return message;
+    }
+
+    public int getRetCode() {
+        return retCode;
     }
 }

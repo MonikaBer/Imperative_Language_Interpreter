@@ -96,6 +96,7 @@ public class Environment {
 
     public void makeVar(String name, Value value, int lineNr, int posAtLine) {
         if (!callContexts.isEmpty()) {    //put var to locals of recent block context of recent call context
+            //this.getLastCallContext().addLocal(name, value, lineNr, posAtLine);
             this.getLastCallContext().getLastBlockContext().addLocal(name, value, lineNr, posAtLine);
             return;
         }
@@ -172,7 +173,20 @@ public class Environment {
         if (!structDefs.containsKey(name))
             return null;
 
-        return structDefs.get(name).getMap();
+        HashMap<String, Box> map = new HashMap<>();
+        for (String key : structDefs.get(name).getMap().keySet()) {
+            Box box;
+            if (structDefs.get(name).getMap().get(key).getValue() instanceof EvalStructValue) {
+                HashMap<String, Box> nestedMap =
+                        this.getDefStructMap(((EvalStructValue) structDefs.get(name).getMap().get(key).getValue()).getStructType());
+                box = new Box(new EvalStructValue(((EvalStructValue) structDefs.get(name).getMap().get(key).getValue()).getStructType(), nestedMap));
+            } else {
+                box = new Box(structDefs.get(name).getMap().get(key).getValue());
+            }
+            map.put(key, box);
+        }
+
+        return map;
     }
 
 

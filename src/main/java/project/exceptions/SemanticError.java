@@ -6,6 +6,7 @@ public class SemanticError extends RuntimeException {
     private final int positionAtLine;
     private final String desc;
     private final String message;
+    private final int retCode = -3;
 
     public SemanticError(int lineNr, int positionAtLine, String desc) {
         this.lineNr = lineNr;
@@ -29,5 +30,9 @@ public class SemanticError extends RuntimeException {
     @Override
     public String getMessage() {
         return message;
+    }
+
+    public int getRetCode() {
+        return retCode;
     }
 }

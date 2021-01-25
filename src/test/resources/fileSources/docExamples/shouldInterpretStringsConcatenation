@@ -1,0 +1,15 @@
+
+int main() {
+    int ret = 0;
+
+    string str1 = "Ala ";
+    string str2 = "ma ";
+    string str3 = "kota";
+
+    string strSum = str1 + str2 + str3;
+
+    printStr( strSum );
+
+    printInt(ret);
+    return ret;
+}

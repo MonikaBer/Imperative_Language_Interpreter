@@ -1,0 +1,29 @@
+//Visibility of variables between function calls
+
+void func(int a) {
+    ++a;
+
+    if (a == 2)
+        printInt(1);
+}
+
+int main() {
+    int ret = 0;
+
+    int a = 1;
+    if (a == 1)
+        printInt(1);
+
+    func(a);
+
+    if (a == 1)
+        printInt(1);
+
+    func(a);
+
+    if (a == 1)
+        printInt(1);
+
+    printInt(ret);
+    return ret;
+}

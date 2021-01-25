@@ -29,7 +29,7 @@ public class Lib {
             if (!(struct.getMap().containsKey(name.get(i))))
                 return null;
 
-            box = (Box) struct.getMap().get(name.get(i));
+            box = struct.getMap().get(name.get(i));
             if (i == name.size() - 1)
                 return box;
 

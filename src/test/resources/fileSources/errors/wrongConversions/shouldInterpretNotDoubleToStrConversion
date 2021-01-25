@@ -1,0 +1,11 @@
+
+int main() {
+    int ret = 0;
+
+    int a = 0;
+    string b = convertDoubleToStr(a);
+
+
+    printInt(ret);
+    return ret;
+}

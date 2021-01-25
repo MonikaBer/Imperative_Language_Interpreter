@@ -1,0 +1,37 @@
+//nested struct
+
+struct Address {
+    string street = "Cicha";
+    int nr = 40;
+    string city = "Warszawa";
+}
+
+struct Student {
+    Address address;
+    int age = 22;
+    string firstName = "Jan";
+    string lastName = 'Kowalski';
+}
+
+void showStudent(Student student) {
+    string str1 = "\"Student:\n" + student.firstName + " " + student.lastName + ",\nWiek: " + convertIntToStr(student.age);
+    string str2 = "\n\'Adres: " + student.address.street + " " + convertIntToStr(student.address.nr) + ", " + student.address.city;
+    printStr( str1 + str2 );
+}
+
+int main() {
+    int ret = 0;
+
+    Student student;
+
+    Student student2 = student;
+    student2.address.street = "Topolowa";
+
+    Student student3;
+    student3.address = student.address;
+
+    showStudent(student3);
+
+    printInt(0);
+    return ret;
+}

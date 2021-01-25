@@ -1,6 +1,7 @@
-package project.interpreter.correctnessTests;
+package project.interpreter.IncorrectnessTests;
 
 import org.junit.jupiter.api.Test;
+import project.exceptions.SemanticError;
 import project.interpreter.Interpreter;
 import project.lexer.Lexer;
 import project.parser.Parser;
@@ -15,14 +16,15 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class RecursionTests {
+public class ByZeroDivingTests {
 
-    private String path = "fileSources/recursion/";
+    private String path = "fileSources/errors/byZeroDividing/";
 
     @Test
-    void shouldInterpretFibonacci() throws IOException, URISyntaxException {
-        String srcFile = "shouldInterpretFibonacci";
+    void shouldInterpretByZeroDividing() throws IOException, URISyntaxException {
+        String srcFile = "shouldInterpretByZeroDividingErr";
         URL res = getClass().getClassLoader().getResource(path + srcFile);
         Source source;
 
@@ -39,17 +41,19 @@ public class RecursionTests {
                 new Scanner(new InputStreamReader(InputStream.nullInputStream())),
                 new OutputStreamWriter(OutputStream.nullOutputStream()));
 
-        interpreter.execute();
-        interpreter.start();
-
-        Scanner checker = new Scanner(writer.toString());
-        assertEquals(34, Integer.parseInt(checker.nextLine()));
-        assertEquals(0, Integer.parseInt(checker.nextLine()));
+        try {
+            interpreter.execute();
+            interpreter.start();
+        } catch (SemanticError semanticError) {
+            assertEquals("Division by 0 is prohibited!", semanticError.getDesc());
+            assertEquals(2, semanticError.getLineNr());
+            assertEquals(16, semanticError.getPositionAtLine());
+        }
     }
 
     @Test
-    void shouldInterpretFactorial() throws IOException, URISyntaxException {
-        String srcFile = "shouldInterpretFactorial";
+    void shouldInterpretByZeroDotZeroDividing() throws IOException, URISyntaxException {
+        String srcFile = "shouldInterpretByZeroDotZeroDividingErr";
         URL res = getClass().getClassLoader().getResource(path + srcFile);
         Source source;
 
@@ -66,14 +70,13 @@ public class RecursionTests {
                 new Scanner(new InputStreamReader(InputStream.nullInputStream())),
                 new OutputStreamWriter(OutputStream.nullOutputStream()));
 
-        interpreter.execute();
-        interpreter.start();
-
-        System.out.println(writer.toString());
-
-        Scanner checker = new Scanner(writer.toString());
-        assertEquals(362880, Integer.parseInt(checker.nextLine()));
-        assertEquals(362880, Integer.parseInt(checker.nextLine()));
-        assertEquals(0, Integer.parseInt(checker.nextLine()));
+        try {
+            interpreter.execute();
+            interpreter.start();
+        } catch (SemanticError semanticError) {
+            assertEquals("Division by 0.0 is prohibited!", semanticError.getDesc());
+            assertEquals(2, semanticError.getLineNr());
+            assertEquals(21, semanticError.getPositionAtLine());
+        }
     }
 }

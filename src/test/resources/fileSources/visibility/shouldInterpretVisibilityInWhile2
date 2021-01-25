@@ -1,0 +1,28 @@
+//Visibility of variables in while
+
+int main() {
+    int ret = 0;
+
+    int a;
+
+    if (a == 0)
+        printInt(a);
+
+    int result = 7;
+    while (a < 2) {
+        ++a;
+        double result = 5.5;
+
+        if (result == 5.5)
+            printDouble(result);
+    }
+
+    if (result == 7)
+       printInt(result);
+
+    if (a == 2)
+        printInt(a);
+
+    printInt(ret);
+    return ret;
+}

@@ -1,0 +1,28 @@
+//Visibility of variables between blocks
+
+void func(int a = 1) {
+    if (a == 1)
+        printInt(1);
+
+    a = 2;
+    if (a == 2)
+        printInt(1);
+
+    {
+        int a = 3;
+        if (a == 3)
+            printInt(1);
+    }
+
+    if (a == 2)
+        printInt(1);
+}
+
+int main() {
+    int ret = 0;
+
+    func();
+
+    printInt(ret);
+    return ret;
+}
