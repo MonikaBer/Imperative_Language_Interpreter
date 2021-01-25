@@ -7,7 +7,11 @@ int fib(int a) {
 }
 
 int main() {
+    int ret = 0;
+
     int a = 9;
     printInt( fib(a) );
-    return 0;
+
+    printInt(ret);
+    return ret;
 }

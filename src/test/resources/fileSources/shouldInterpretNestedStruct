@@ -20,6 +20,8 @@ void showStudent(Student student) {
 }
 
 int main() {
+    int ret = 0;
+
     Student student;
     student.firstName = "Jan";
     student.lastName = "Kowalski";
@@ -34,5 +36,6 @@ int main() {
 
     showStudent(student);
 
-    return 0;
+    printInt(0);
+    return ret;
 }
