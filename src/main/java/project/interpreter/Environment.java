@@ -21,6 +21,7 @@ public class Environment {
     private final Stack<CallContext> callContexts;
     private Box lastBox;
     private Value lastValue;
+    private boolean ifFuncEnd;
 
     public Environment() {
         this.globals = new HashMap<>();
@@ -29,6 +30,7 @@ public class Environment {
         this.callContexts = new Stack<>();
         this.lastBox = null;
         this.lastValue = null;
+        this.ifFuncEnd = false;
 
         this.embeddedFunctions = new HashMap<>();
         this.embeddedFunctions.put("readInt", this.readInt());
@@ -101,6 +103,10 @@ public class Environment {
         structDefs.put(structDefinition.getName(), structDefinition);
     }
 
+    public void setStructDefinitionMap(String structName, HashMap<String, Box> map) {
+        structDefs.get(structName).setMap(map);
+    }
+
     public void deleteBlockContext() {
         if (!callContexts.isEmpty())
             this.getLastCallContext().deleteBlockContext();
@@ -135,6 +141,10 @@ public class Environment {
         return lastBox;
     }
 
+    public boolean getIfFuncEnd() {
+        return ifFuncEnd;
+    }
+
     public void setLastValue(Value lastValue) {
         this.lastValue = lastValue;
     }
@@ -142,6 +152,8 @@ public class Environment {
     public void setLastBox(Box box) {
         lastBox = box;
     }
+
+    public void setIfFuncEnd(boolean b) { ifFuncEnd = b; }
 
     public HashMap<String, Box> getDefStructMap(String name) {
         if (!structDefs.containsKey(name))

@@ -1,0 +1,13 @@
+//Fibonacci using recursion
+
+int fib(int a) {
+    if (a <= 1)
+        return a;
+    return fib(a-1) + fib(a-2);
+}
+
+int main() {
+    int a = 9;
+    printInt( fib(a) );
+    return 0;
+}

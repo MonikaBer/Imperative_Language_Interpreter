@@ -160,9 +160,9 @@ public class FileSourceTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("aaa\\n", stringToken.getValue());
-        assertEquals(0, lexer.getToken().getPosition());
-        assertEquals(0, lexer.getToken().getPositionAtLine());
+        assertEquals("aaa\n", stringToken.getValue());
+        assertEquals(1, lexer.getToken().getPosition());
+        assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
     }
 
@@ -188,9 +188,9 @@ public class FileSourceTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("aaa\\n", stringToken.getValue());
-        assertEquals(0, lexer.getToken().getPosition());
-        assertEquals(0, lexer.getToken().getPositionAtLine());
+        assertEquals("aaa\n", stringToken.getValue());
+        assertEquals(1, lexer.getToken().getPosition());
+        assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
     }
 }

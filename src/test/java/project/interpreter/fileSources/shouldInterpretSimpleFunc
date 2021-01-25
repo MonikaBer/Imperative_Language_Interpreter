@@ -1,0 +1,10 @@
+//simple function
+
+void func(int a) {
+    printInt(a);
+}
+
+int main() {
+    func(1);
+    return 0;
+}

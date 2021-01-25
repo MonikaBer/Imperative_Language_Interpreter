@@ -75,21 +75,21 @@ public class SingleTokenTests {
 
     @Test
     void shouldRecogniseSingleDoubleQuoteTextToken() {
-        Source source = new StringSource("\n \t \"some\\n text\" \t \n \r");
+        Source source = new StringSource("\n \t \"some\\n text\" \t \n");
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("some\\n text", stringToken.getValue());
-        assertEquals(4, lexer.getToken().getPosition());
-        assertEquals(3, lexer.getToken().getPositionAtLine());
+        assertEquals("some\n text", stringToken.getValue());
+        assertEquals(5, lexer.getToken().getPosition());
+        assertEquals(4, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.EOT, lexer.getToken().getType());
-        assertEquals(23, lexer.getToken().getPosition());
-        assertEquals(2, lexer.getToken().getPositionAtLine());
+        assertEquals(21, lexer.getToken().getPosition());
+        assertEquals(0, lexer.getToken().getPositionAtLine());
         assertEquals(2, lexer.getToken().getLineNr());
     }
 
@@ -101,9 +101,9 @@ public class SingleTokenTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("some\\n text", stringToken.getValue());
-        assertEquals(4, lexer.getToken().getPosition());
-        assertEquals(3, lexer.getToken().getPositionAtLine());
+        assertEquals("some\n text", stringToken.getValue());
+        assertEquals(5, lexer.getToken().getPosition());
+        assertEquals(4, lexer.getToken().getPositionAtLine());
         assertEquals(1, lexer.getToken().getLineNr());
 
         lexer.nextToken();
@@ -121,25 +121,25 @@ public class SingleTokenTests {
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         StringToken stringToken = (StringToken) lexer.getToken();
-        assertEquals("txt1\\n", stringToken.getValue());
-        assertEquals(0, lexer.getToken().getPosition());
-        assertEquals(0, lexer.getToken().getPositionAtLine());
+        assertEquals("txt1\n", stringToken.getValue());
+        assertEquals(1, lexer.getToken().getPosition());
+        assertEquals(1, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         stringToken = (StringToken) lexer.getToken();
-        assertEquals("txt2\\n", stringToken.getValue());
-        assertEquals(9, lexer.getToken().getPosition());
-        assertEquals(9, lexer.getToken().getPositionAtLine());
+        assertEquals("txt2\n", stringToken.getValue());
+        assertEquals(10, lexer.getToken().getPosition());
+        assertEquals(10, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
         assertEquals(Token.TokenType.TEXT, lexer.getToken().getType());
         stringToken = (StringToken) lexer.getToken();
-        assertEquals("txt3\\n", stringToken.getValue());
-        assertEquals(18, lexer.getToken().getPosition());
-        assertEquals(18, lexer.getToken().getPositionAtLine());
+        assertEquals("txt3\n", stringToken.getValue());
+        assertEquals(19, lexer.getToken().getPosition());
+        assertEquals(19, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
@@ -517,7 +517,7 @@ public class SingleTokenTests {
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.PREINC, lexer.getToken().getType());
+        assertEquals(Token.TokenType.INC, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
 
@@ -527,7 +527,7 @@ public class SingleTokenTests {
         Lexer lexer = new Lexer(source);
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.PREDEC, lexer.getToken().getType());
+        assertEquals(Token.TokenType.DEC, lexer.getToken().getType());
         assertEquals(0, lexer.getToken().getPosition());
     }
 

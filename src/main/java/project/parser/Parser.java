@@ -347,7 +347,7 @@ public class Parser {
     }
 
     private Statement tryToParseIncrementStatement() {
-        if (expectToken(Token.TokenType.PREINC) == null)
+        if (expectToken(Token.TokenType.INC) == null)
             return null;
 
         if (lexer.getToken().getType() == Token.TokenType.ID) {
@@ -362,7 +362,7 @@ public class Parser {
     }
 
     private Statement tryToParseDecrementStatement() {
-        if (expectToken(Token.TokenType.PREDEC) == null)
+        if (expectToken(Token.TokenType.DEC) == null)
             return null;
 
         if (lexer.getToken().getType() == Token.TokenType.ID) {

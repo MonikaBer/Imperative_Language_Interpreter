@@ -268,7 +268,24 @@ public class Lexer {
                 advance();
                 return true;
             }
-            buffer.append(getChar());
+            if (getChar() == '\\') {
+                advance();
+                if (getChar() == 'n') {
+                    buffer.append('\n');
+                }
+                else if (getChar() == '\'') {
+                    buffer.append('\'');
+                }
+                else if (getChar() == '"') {
+                    buffer.append('"');
+                }
+                else {
+                    buffer.append('\\');
+                    buffer.append(getChar());
+                }
+            } else {
+                buffer.append(getChar());
+            }
             advance();
         }
 
@@ -329,7 +346,7 @@ public class Lexer {
                 if (getChar() == '+') {
                     buffer.append(getChar());
                     advance();
-                    token = new PrimitiveToken(Token.TokenType.PREINC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                    token = new PrimitiveToken(Token.TokenType.INC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
                     token = new PrimitiveToken(Token.TokenType.PLUS, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }
@@ -341,7 +358,7 @@ public class Lexer {
                 if (getChar() == '-') {
                     buffer.append(getChar());
                     advance();
-                    token = new PrimitiveToken(Token.TokenType.PREDEC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
+                    token = new PrimitiveToken(Token.TokenType.DEC, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 } else {
                     token = new PrimitiveToken(Token.TokenType.MINUS, source.getPosition() - buffer.getIdx(), source.getLineNr(), source.getPositionAtLine() - buffer.getIdx());
                 }

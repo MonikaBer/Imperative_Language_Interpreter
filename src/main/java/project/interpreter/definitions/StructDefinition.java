@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class StructDefinition {
 
     private final String name;
-    private final HashMap<String, Box> map;
+    private HashMap<String, Box> map;
 
     public StructDefinition(String name, HashMap<String, Box> map) {
         this.name = name;
@@ -20,5 +20,9 @@ public class StructDefinition {
 
     public HashMap<String, Box> getMap() {
         return map;
+    }
+
+    public void setMap(HashMap<String, Box> map) {
+        this.map = map;
     }
 }

@@ -665,7 +665,7 @@ public class SimpleMultipleTokensTests {
 
         for (int i = 0; i < 9; i += 3) {
             lexer.nextToken();
-            assertEquals(Token.TokenType.PREINC, lexer.getToken().getType());
+            assertEquals(Token.TokenType.INC, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
         }
     }
@@ -677,7 +677,7 @@ public class SimpleMultipleTokensTests {
 
         for (int i = 0; i < 9; i += 3) {
             lexer.nextToken();
-            assertEquals(Token.TokenType.PREDEC, lexer.getToken().getType());
+            assertEquals(Token.TokenType.DEC, lexer.getToken().getType());
             assertEquals(i, lexer.getToken().getPosition());
         }
     }

@@ -1101,7 +1101,7 @@ public class LanguageConstructionsTests {
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.PREINC, lexer.getToken().getType());
+        assertEquals(Token.TokenType.INC, lexer.getToken().getType());
         assertEquals(19, lexer.getToken().getPosition());
         assertEquals(19, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());
@@ -1253,7 +1253,7 @@ public class LanguageConstructionsTests {
         assertEquals(0, lexer.getToken().getLineNr());
 
         lexer.nextToken();
-        assertEquals(Token.TokenType.PREDEC, lexer.getToken().getType());
+        assertEquals(Token.TokenType.DEC, lexer.getToken().getType());
         assertEquals(45, lexer.getToken().getPosition());
         assertEquals(45, lexer.getToken().getPositionAtLine());
         assertEquals(0, lexer.getToken().getLineNr());

@@ -1,0 +1,10 @@
+//simple function
+
+int func() {
+    return 1;
+}
+
+int main() {
+    printInt( func() );
+    return 0;
+}

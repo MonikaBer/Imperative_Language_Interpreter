@@ -208,20 +208,10 @@ public class Interpreter implements INodeVisitor {
 
         Block block = funcDef.getBlock();
         if (!(funcDef.getRetType() instanceof VoidType)) {
-            Statement lastStmt = block.getStmts().get(block.getStmts().size()-1);
-            if (block.getStmts() == null || !(lastStmt instanceof Return)) {
+            if (block.getStmts() == null || !(block.getStmts().get(block.getStmts().size()-1) instanceof Return)) {
                 String desc = "Lack of return statement at the end of block of non void function definition";
                 int lineNr = funcDef.getId().getLineNr();
                 int posAtLine = funcDef.getId().getPositionAtLine();
-                throw new SemanticError(lineNr, posAtLine, desc);
-            }
-
-            ((Return) lastStmt).getExpression().accept(this);
-            Value retValue = env.getLastValue();
-            String desc;
-            if ((desc = checkTypeAndValueCorrectness("ret type of function", funcDef.getRetType(), retValue)) != null) {
-                int lineNr = ((Return) lastStmt).getExpression().getLineNr();
-                int posAtLine = ((Return) lastStmt).getExpression().getPositionAtLine();
                 throw new SemanticError(lineNr, posAtLine, desc);
             }
         }
@@ -248,6 +238,10 @@ public class Interpreter implements INodeVisitor {
         }
 
         HashMap<String, Box> map = new HashMap<>();
+
+        StructDefinition structDefinition = new StructDefinition(structName, map);
+        env.makeStructDefinition(structDefinition);
+
         for (Declaration declaration : structDef.getBody()) {
             Type type = declaration.getType();
             if (type instanceof VoidType) {
@@ -299,9 +293,7 @@ public class Interpreter implements INodeVisitor {
             map.put(declaration.getId().getName(), new Box(value));
         }
 
-        StructDefinition structDefinition = new StructDefinition(structName, map);
-
-        env.makeStructDefinition(structDefinition);
+        env.setStructDefinitionMap(structName, map);
     }
 
     @Override
@@ -352,7 +344,7 @@ public class Interpreter implements INodeVisitor {
 
         for (Statement stmt : blockStmt.getStmts()) {
             stmt.accept(this);
-            if (stmt instanceof VoidReturn || stmt instanceof Return) {
+            if (env.getIfFuncEnd()) {
                 break;
             }
         }
@@ -449,12 +441,14 @@ public class Interpreter implements INodeVisitor {
     @Override
     public void visit(Return returnStmt) {
         returnStmt.getExpression().accept(this);
+        env.setIfFuncEnd(true);
     }
 
     @Override
     public void visit(VoidReturn voidReturnStmt) {
         env.setLastValue(null);
         env.setLastBox(null);
+        env.setIfFuncEnd(true);
     }
 
     @Override
@@ -818,14 +812,14 @@ public class Interpreter implements INodeVisitor {
 
         int lineNr = addExpression.getLeftOperand().getLineNr();
         int posAtLine = addExpression.getLeftOperand().getPositionAtLine();
-        checkIfTypeIsNumerical(leftOperand, "Left operand of add expression", lineNr, posAtLine);
+        checkIfTypeIsNumericalOrString(leftOperand, "Left operand of add expression", lineNr, posAtLine);
 
         addExpression.getRightOperand().accept(this);
         Value rightOperand = env.getLastValue();
 
         lineNr = addExpression.getRightOperand().getLineNr();
         posAtLine = addExpression.getRightOperand().getPositionAtLine();
-        checkIfTypeIsNumerical(rightOperand, "Right operand of add expression", lineNr, posAtLine);
+        checkIfTypeIsNumericalOrString(rightOperand, "Right operand of add expression", lineNr, posAtLine);
 
         if (leftOperand instanceof EvalIntValue && rightOperand instanceof EvalIntValue) {
             BigInteger result = ((EvalIntValue)leftOperand).getValue().add(((EvalIntValue)rightOperand).getValue());
@@ -834,6 +828,10 @@ public class Interpreter implements INodeVisitor {
         else if (leftOperand instanceof EvalDoubleValue && rightOperand instanceof EvalDoubleValue) {
             BigDecimal result = ((EvalDoubleValue)leftOperand).getValue().add(((EvalDoubleValue)rightOperand).getValue());
             env.setLastValue(new EvalDoubleValue(result));
+        }
+        else if (leftOperand instanceof EvalStringValue && rightOperand instanceof EvalStringValue) {
+            String result = ((EvalStringValue)leftOperand).getValue() + ((EvalStringValue)rightOperand).getValue();
+            env.setLastValue(new EvalStringValue(result));
         }
         else {
             String desc = "Incorrectness of types of adding values - type of right operand is wrong";
@@ -1202,6 +1200,8 @@ public class Interpreter implements INodeVisitor {
 
         funcDefinition.getBlock().accept(this);
 
+        env.setIfFuncEnd(false);
+
         Value returnedValue = env.getLastValue();
         if (returnedValue == null && !(retType instanceof VoidType)) {
             String desc = "Non void function returned nothing";
@@ -1269,6 +1269,17 @@ public class Interpreter implements INodeVisitor {
         }
         else if (value instanceof EvalStringValue) {
             String desc = inf + " is string - it is prohibited";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+    }
+
+    private void checkIfTypeIsNumericalOrString(Value value, String inf, int lineNr, int posAtLine) {
+        if (value instanceof EvalStructValue) {
+            String desc = inf + " is struct - it is prohibited";
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+        else if (value instanceof EvalBoolValue) {
+            String desc = inf + " is bool - it is prohibited";
             throw new SemanticError(lineNr, posAtLine, desc);
         }
     }

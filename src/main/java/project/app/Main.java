@@ -15,6 +15,12 @@ import java.io.IOException;
 public class Main {
 
 	public static void main(String[] args) {
+		try {
+			fileSourceTest();
+		} catch (FileSourceReadException ex) {
+			System.out.println(ex.getMessage());
+		}
+		stringSourceTest();
 
 		Source source = new StringSource("int main() { " +
 										"printStr(\"Hello world!\");" +
@@ -29,14 +35,6 @@ public class Main {
 		Interpreter interpreter = new Interpreter(program);
 		interpreter.execute();
 		interpreter.start();
-
-//		try {
-//			fileSourceTest();
-//		} catch (FileSourceReadException ex) {
-//			System.out.println(ex.getMessage());
-//		}
-//
-//		stringSourceTest();
 	}
 
 	private static void fileSourceTest() {
