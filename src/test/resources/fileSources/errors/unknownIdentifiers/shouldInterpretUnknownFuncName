@@ -1,0 +1,10 @@
+
+
+int main() {
+    int ret = 0;
+
+    func();
+
+    printInt(ret);
+    return ret;
+}

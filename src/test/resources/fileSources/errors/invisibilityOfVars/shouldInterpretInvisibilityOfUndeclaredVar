@@ -1,0 +1,9 @@
+
+int main() {
+    int ret = 0;
+
+    a = 1;
+
+    printInt(ret);
+    return ret;
+}

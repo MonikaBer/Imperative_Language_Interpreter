@@ -1,0 +1,13 @@
+
+void func(int a, double b) {
+    int abc;
+}
+
+int main() {
+    int ret = 0;
+
+    func(1,1);
+
+    printInt(ret);
+    return 0;
+}

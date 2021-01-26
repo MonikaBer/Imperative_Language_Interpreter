@@ -1,0 +1,13 @@
+
+struct Student {
+    Address address;
+}
+
+int main() {
+    int ret = 0;
+
+    Student student;
+
+    printInt(ret);
+    return ret;
+}

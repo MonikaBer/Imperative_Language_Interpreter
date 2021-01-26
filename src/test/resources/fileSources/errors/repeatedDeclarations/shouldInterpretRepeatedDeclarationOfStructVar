@@ -1,0 +1,16 @@
+
+struct Student {
+    string name;
+    string surname;
+}
+
+int main() {
+    int ret = 0;
+
+    Student student;
+
+    Student student;
+
+    printInt(ret);
+    return ret;
+}

@@ -1,0 +1,15 @@
+
+int func() {
+    double b;
+}
+
+void func() {
+    int a;
+}
+
+int main() {
+    int ret = 0;
+
+    printInt(ret);
+    return ret;
+}

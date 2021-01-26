@@ -1,0 +1,9 @@
+
+int main() {
+    int ret = 0;
+
+    readDouble();
+
+    printInt(ret);
+    return 0;
+}

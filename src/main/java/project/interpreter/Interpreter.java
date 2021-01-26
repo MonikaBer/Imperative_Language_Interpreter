@@ -1175,6 +1175,12 @@ public class Interpreter implements INodeVisitor {
             Type argType = funcDefinition.getArgs().get(i).getType();
             String argName = funcDefinition.getArgs().get(i).getName();
             Value argDefValue = funcDefinition.getArgs().get(i).getDefValue();
+            if (argDefValue == null) {
+                String desc = "Incorrect order, number or type of params in func call";
+                int lineNr = funcCall.getFuncName().getLineNr();
+                int posAtLine = funcCall.getFuncName().getPositionAtLine();
+                throw new SemanticError(lineNr, posAtLine, desc);
+            }
             args.add(new Arg(argType, argName, argDefValue));
         }
 

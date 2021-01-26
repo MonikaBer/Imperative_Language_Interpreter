@@ -1,0 +1,56 @@
+
+int main() {
+    int ret = 0;
+
+    int exp1 = ( 2 + 5 ) * 2;
+    printInt(exp1);
+
+    bool exp2 = ( 2 + 5 ) * 2 == 2 * ( 2 + 5 );
+    if (exp2)
+        printInt(1);
+    else
+        printInt(-1);
+
+    bool exp3 = ( 2 + 5 ) * 2 == 14;
+    if (exp3)
+        printInt(1);
+    else
+        printInt(-1);
+
+    //------------------------------------------------
+
+    int exp4 = 2 + 5 * 2;
+    printInt(exp4);
+
+    bool exp5 = 2 + 5 * 2 == 5 * 2 + 2;
+    if (exp5)
+        printInt(1);
+    else
+        printInt(-1);
+
+    bool exp6 = 2 + 5 * 2 == 12;
+    if (exp6)
+        printInt(1);
+    else
+        printInt(-1);
+
+    //------------------------------------------------
+
+    int exp7 = 2 + 7 / 7;
+    printInt(exp7);
+
+    bool exp8 = 2 + 7 / 7 == 7 / 7 + 2;
+    if (exp8)
+        printInt(1);
+    else
+        printInt(-1);
+
+    bool exp9 = 2 + 7 / 7 == 3;
+    if (exp9)
+        printInt(1);
+    else
+        printInt(-1);
+
+    printInt(ret);
+    return 0;
+}
