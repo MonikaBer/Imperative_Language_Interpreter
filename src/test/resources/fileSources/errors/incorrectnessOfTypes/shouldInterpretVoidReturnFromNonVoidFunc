@@ -1,0 +1,13 @@
+
+int func() {
+    return ;
+}
+
+int main() {
+    int ret = 0;
+
+    int a = func();
+
+    printInt(ret);
+    return ret;
+}

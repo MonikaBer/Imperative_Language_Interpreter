@@ -25,6 +25,7 @@ public class Environment {
     private Box lastBox;
     private Value lastValue;
     private boolean ifFuncEnd;
+    private boolean ifReturnWas;
     private final Writer writer;
     private final Scanner reader;
     private final Writer errWriter;
@@ -37,6 +38,7 @@ public class Environment {
         this.lastBox = null;
         this.lastValue = null;
         this.ifFuncEnd = false;
+        this.ifReturnWas = false;
         if (writer != null && reader != null && errWriter != null) {
             this.writer = writer;
             this.reader = reader;
@@ -96,7 +98,6 @@ public class Environment {
 
     public void makeVar(String name, Value value, int lineNr, int posAtLine) {
         if (!callContexts.isEmpty()) {    //put var to locals of recent block context of recent call context
-            //this.getLastCallContext().addLocal(name, value, lineNr, posAtLine);
             this.getLastCallContext().getLastBlockContext().addLocal(name, value, lineNr, posAtLine);
             return;
         }
@@ -157,6 +158,14 @@ public class Environment {
 
     public boolean getIfFuncEnd() {
         return ifFuncEnd;
+    }
+
+    public boolean getIfReturnWas() {
+        return ifReturnWas;
+    }
+
+    public void setIfReturnWas(boolean ifReturnWas) {
+        this.ifReturnWas = ifReturnWas;
     }
 
     public void setLastValue(Value lastValue) {
@@ -338,12 +347,4 @@ public class Environment {
             throw new InterpreterError("Cannot print!");
         }
     }
-
-//
-//    private Value getValue(ArrayList<String> name) {
-//        Box box;
-//        if ((box = this.getBox(name)) != null)
-//            return box.getValue();
-//        return null;
-//    }
 }

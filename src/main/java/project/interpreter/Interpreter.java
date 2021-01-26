@@ -440,6 +440,7 @@ public class Interpreter implements INodeVisitor {
     public void visit(Return returnStmt) {
         returnStmt.getExpression().accept(this);
         env.setIfFuncEnd(true);
+        env.setIfReturnWas(true);
     }
 
     @Override
@@ -1207,8 +1208,15 @@ public class Interpreter implements INodeVisitor {
         env.setIfFuncEnd(false);
 
         Value returnedValue = env.getLastValue();
-        if (returnedValue == null && !(retType instanceof VoidType)) {
+        if (!env.getIfReturnWas() && !(retType instanceof VoidType)) {
             String desc = "Non void function returned nothing";
+            int lineNr = funcCall.getFuncName().getLineNr();
+            int posAtLine = funcCall.getFuncName().getPositionAtLine();
+            throw new SemanticError(lineNr, posAtLine, desc);
+        }
+
+        if (env.getIfReturnWas() && retType instanceof VoidType) {
+            String desc = "Void function returned value";
             int lineNr = funcCall.getFuncName().getLineNr();
             int posAtLine = funcCall.getFuncName().getPositionAtLine();
             throw new SemanticError(lineNr, posAtLine, desc);

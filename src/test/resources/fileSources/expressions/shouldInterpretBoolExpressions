@@ -1,0 +1,23 @@
+
+int main() {
+    int ret = 0;
+
+    bool exp1 = 1 <= 2 + 3;
+    if (exp1)
+        printInt(1);
+
+    bool exp2 = 1 > 2 + 3;
+    if (!exp2)
+        printInt(1);
+
+    bool exp3 = !(true) || true;
+    if (exp3)
+        printInt(1);
+
+    bool exp4 = 1 < -2 + 5;
+    if (exp4)
+        printInt(1);
+
+    printInt(ret);
+    return 0;
+}

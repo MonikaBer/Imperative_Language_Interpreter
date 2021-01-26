@@ -1,0 +1,11 @@
+
+int main() {
+    int ret = 0;
+
+
+
+    bool exp2 = 2-5 > true;
+
+    printInt(ret);
+    return ret;
+}

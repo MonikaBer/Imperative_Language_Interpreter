@@ -1,0 +1,9 @@
+
+int main() {
+    int ret = 0;
+
+    bool exp = 1 || true;
+
+    printInt(ret);
+    return ret;
+}

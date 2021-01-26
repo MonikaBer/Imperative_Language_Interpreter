@@ -1,0 +1,13 @@
+
+void func() {
+    return 1;
+}
+
+int main() {
+    int ret = 0;
+
+    func();
+
+    printInt(ret);
+    return ret;
+}

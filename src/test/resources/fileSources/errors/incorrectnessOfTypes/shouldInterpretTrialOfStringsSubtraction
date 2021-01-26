@@ -1,0 +1,13 @@
+
+int main() {
+    int ret = 0;
+
+    string str1 = "Ala";
+    string str2 = "kot";
+    string str3 = str1 - str2;
+
+    printStr(str3);
+
+    printInt(ret);
+    return ret;
+}

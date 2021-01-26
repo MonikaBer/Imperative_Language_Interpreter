@@ -1,4 +1,4 @@
-package project.interpreter.IncorrectnessTests;
+package project.interpreter.correctnessTests;
 
 import org.junit.jupiter.api.Test;
 import project.exceptions.SemanticError;
@@ -91,6 +91,43 @@ public class Expressions {
         assertEquals(1, Integer.parseInt(checker.nextLine()));
 
         assertEquals(-4, Integer.parseInt(checker.nextLine()));
+
+        assertEquals(1, Integer.parseInt(checker.nextLine()));
+
+        assertEquals(2, Integer.parseInt(checker.nextLine()));
+
+        assertEquals(0, Integer.parseInt(checker.nextLine()));
+
+        assertEquals(0, Integer.parseInt(checker.nextLine()));
+    }
+
+    @Test
+    void shouldInterpretBoolExpressions() throws IOException, URISyntaxException {
+        String srcFile = "shouldInterpretBoolExpressions";
+        URL res = getClass().getClassLoader().getResource(path + srcFile);
+        Source source;
+
+        assert res != null;
+        source = new FileSource(Paths.get(res.toURI()).toString());
+
+        Lexer lexer = new Lexer(source);
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+
+        StringWriter writer = new StringWriter();
+
+        Interpreter interpreter = new Interpreter(program, writer,
+                new Scanner(new InputStreamReader(InputStream.nullInputStream())),
+                new OutputStreamWriter(OutputStream.nullOutputStream()));
+
+        interpreter.execute();
+        interpreter.start();
+
+        Scanner checker = new Scanner(writer.toString());
+        assertEquals(1, Integer.parseInt(checker.nextLine()));
+        assertEquals(1, Integer.parseInt(checker.nextLine()));
+        assertEquals(1, Integer.parseInt(checker.nextLine()));
+        assertEquals(1, Integer.parseInt(checker.nextLine()));
 
         assertEquals(0, Integer.parseInt(checker.nextLine()));
     }

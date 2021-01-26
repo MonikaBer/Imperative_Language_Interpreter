@@ -1,0 +1,13 @@
+
+int func() {
+    return 0.0;
+}
+
+int main() {
+    int ret = 0;
+
+    double a = func();
+
+    printInt(ret);
+    return ret;
+}
