@@ -47,6 +47,12 @@ public class Parser {
         this.lexer = lexer;
     }
 
+
+    /*
+    program = program_content ;
+    program_content = content_elem, {content_elem} ;
+    content_elem = func_def | declaration_statement | struct_def ;
+     */
     public Program parseProgram() {
         ArrayList<Declaration> declarations = new ArrayList<>();
         ArrayList<FuncDef> funcDefs = new ArrayList<>();
@@ -96,6 +102,8 @@ public class Parser {
         return new Program(declarations, funcDefs, structDefs, programContents);
     }
 
+
+    /*  func_def = type , ws, identifier , ”(”, arg_list , ”)” , block ;  */
     private FuncDef tryToParseFuncDef(Type retType, String funcName, int lineNr, int posAtLine) {
         if (expectToken(Token.TokenType.L_PARENTH) == null)
             return null;
@@ -113,6 +121,11 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    struct_def = ”struct” , ws , identifier , struct_body ;
+    struct_body = ”{” , (type , ws , identifier ,  {”=”, exp}, ”;”) , { type , ws , identifier , {”=”, exp} , ”;” }, ”}”
+     */
     private StructDef tryToParseStructDef() {
         if (expectToken(Token.TokenType.STRUCT) == null)
             return null;
@@ -136,6 +149,21 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    statement = 	empty_stmt 			    |
+		            block_stmt 			    |
+		            declaration_statement 	|
+		            assignment 			    |
+		            increment 			    |
+		            decrement 			    |
+		            return	 			    |
+		            void_return 			|
+		            if 				        |
+		            if_else 				|
+		            switch 				    |
+		            while 				    ;
+     */
     private ArrayList<Statement> tryToParseStatement(String errorDesc) {
         ArrayList<Statement> statements = new ArrayList<>();
         Statement statement;
@@ -182,6 +210,11 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), errorDesc);
     }
 
+
+    /*
+    if = ”if” , ”(” , exp , ”)” , statement  ;
+    if_else = ”if” , ”(” , exp , ”)” , statement ,  ”else” , statement  ;
+     */
     private Statement tryToParseIfOrIfElseStatement() {
         if (expectToken(Token.TokenType.IF) == null)
             return null;
@@ -221,6 +254,13 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    switch = ”switch” , ”(” , exp , ”)” , switch_body  ;
+    switch_body = ”{” , (switch_case , {switch_case}) , switch_default , ”}”  ;
+    switch_case = ”case” , exp , ”:” , statement  ;
+    switch_default = ”default” , ”:” , statement  ;
+     */
     private Statement tryToParseSwitchStatement() {
         if (expectToken(Token.TokenType.SWITCH) == null)
             return null;
@@ -286,6 +326,10 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    while = ”while” , ”(” , exp , ”)” , statement  ;
+     */
     private Statement tryToParseWhileStatement() {
         if (expectToken(Token.TokenType.WHILE) == null)
             return null;
@@ -313,6 +357,11 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    ret = ”return” , ws , exp , ”;”  ;
+    void_ret = ”return” , ”;”  ;
+     */
     private Statement tryToParseReturnStatement() {
         if (expectToken(Token.TokenType.RETURN) == null)
             return null;
@@ -326,6 +375,11 @@ public class Parser {
         return new VoidReturn();
     }
 
+
+    /*
+    block = ”{” , statement_list , ”}” ;
+    statement_list = statement , {statement} ;
+     */
     private Statement tryToParseBlockStatement() {
         if (expectToken(Token.TokenType.L_BRACE)  == null)
             return null;
@@ -343,6 +397,8 @@ public class Parser {
         return new Block(statements);
     }
 
+
+    /*  empty_stmt = ”;”  ;  */
     private Statement tryToParseEmptyStatement() {
         if (expectToken((Token.TokenType.SEMICOLON)) == null)
             return null;
@@ -350,6 +406,8 @@ public class Parser {
         return new Empty();
     }
 
+
+    /*  increment = ”++”,  (identifier  |  struct_field_exp) , ”;”  ;  */
     private Statement tryToParseIncrementStatement() {
         if (expectToken(Token.TokenType.INC) == null)
             return null;
@@ -365,6 +423,8 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*  decrement = ”--”,  (identifier  |  struct_field_exp) , ”;”  ;  */
     private Statement tryToParseDecrementStatement() {
         if (expectToken(Token.TokenType.DEC) == null)
             return null;
@@ -380,6 +440,12 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    assignment = (identifier  |  struct_field_exp ) , ”=” ,  exp , ”;”  ;
+    func_call =  identifier , ”(”,  exp , { ”,” ,  exp },  ”)”  ;
+    declaration_statement  =  type, ws, identifier, {”=”, exp},  { ”,”, identifier,  {”=”, exp}  },  ”;”
+     */
     private ArrayList<Statement> tryToParseFuncCallOrAssignmentOrDeclarationStatement() {
         ArrayList<Statement> stmts = new ArrayList<>();
         Statement stmt;
@@ -412,6 +478,8 @@ public class Parser {
         return tryToParseDeclarationsList();
     }
 
+
+    /*  assignment = (identifier  |  struct_field_exp ) , ”=” ,  exp , ”;”  ;  */
     private Statement tryToParseAssignmentStatement(Expression id) {
         if (expectToken(Token.TokenType.ASSIGN) == null)
             return null;
@@ -427,6 +495,8 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*  declaration_statement  =  type, ws, identifier, {”=”, exp},  { ”,”, identifier,  {”=”, exp}  },  ”;”  */
     private Statement tryToParseDeclarationStatement() {
         Declaration declaration;
         if ((declaration = tryToParseDeclaration()) != null) {
@@ -534,6 +604,7 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
     private NonVoidType tryToParseNonVoidType() {
         if (expectToken(Token.TokenType.BOOL) != null)
             return new BoolType();
@@ -573,6 +644,15 @@ public class Parser {
         return params;
     }
 
+
+    /*
+    type =  ”int” 		|
+	        ”double” 	|
+	        ”string” 	|
+	        ”bool” 		|
+	        ”void” 		|
+	        identifier  ;
+     */
     private Type tryToParseType() {
         Type type;
         if ((type = tryToParseNonVoidType()) != null)
@@ -602,6 +682,10 @@ public class Parser {
         return args;
     }
 
+
+    /*
+    struct_body = ”{” , (type , ws , identifier ,  {”=”, exp}, ”;”) , { type , ws , identifier , {”=”, exp} , ”;” }, ”}”
+     */
     private ArrayList<Declaration> tryToParseStructTypeBody() {
         ArrayList<Declaration> fields = new ArrayList<>();
 
@@ -617,12 +701,16 @@ public class Parser {
     }
 
 
-
+    /*  exp = or_exp ;  */
     private Expression tryToParseExpression() {
         return tryToParseOrExpression();
     }
 
 
+    /*
+    or_exp =    alternative_exp 	|
+	            and_exp	            ;
+     */
     private OrExpression tryToParseOrExpression() {
         AndExpression andExpression;
         if ((andExpression = tryToParseAndExpression()) != null) {
@@ -639,6 +727,9 @@ public class Parser {
     }
 
 
+    /*
+    alternative_exp =  and_exp , ”||” , or_exp 	;
+     */
     private AlternativeExpression tryToParseAlternativeExpression(AndExpression leftOperand) {
         if (expectToken(Token.TokenType.ALTERNATIVE) == null)
            return null;
@@ -651,6 +742,11 @@ public class Parser {
         throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
     }
 
+
+    /*
+    and_exp = 	conjunction_exp 	|
+		        rel_exp		        ;
+     */
     private AndExpression tryToParseAndExpression() {
         RelationExpression relationExpression;
         if ((relationExpression = tryToParseRelationExpression()) != null) {
@@ -667,6 +763,9 @@ public class Parser {
     }
 
 
+    /*
+    conjunction_exp = rel_exp , ”&&” , and_exp 	;
+     */
     private ConjunctionExpression tryToParseConjunctionExpression(RelationExpression leftOperand) {
         if (expectToken(Token.TokenType.CONJUNCTION) == null)
             return null;
@@ -681,6 +780,10 @@ public class Parser {
     }
 
 
+    /*
+    rel_exp = 	(addition_exp , rel_op , rel_exp) 	|
+		        addition_exp 				        ;
+     */
     private RelationExpression tryToParseRelationExpression() {
         AdditionExpression additionExpression;
         if ((additionExpression = tryToParseAdditionExpression()) != null) {
@@ -695,6 +798,8 @@ public class Parser {
 
         return null;
     }
+
+
 
     private RelationExpression tryToParseRelation(AdditionExpression leftOperand) {
         RelationExpression rightOperand;
@@ -747,6 +852,13 @@ public class Parser {
     }
 
 
+    /*
+    addition_exp = 	add_exp 		    |
+			        subtract_exp 		|
+			        multiplication_exp 	;
+    add_exp = multiplication_exp , add_op , addition_exp 	        ;
+    subtract_exp = multiplication_exp , subtract_op , addition_exp 	;
+     */
     private AdditionExpression tryToParseAdditionExpression() {
         MultiplicationExpression multiplicationExpression;
         if ((multiplicationExpression = tryToParseMultiplicationExpression()) != null) {
@@ -778,6 +890,15 @@ public class Parser {
     }
 
 
+    /*
+    multiplication_exp = 	mult_exp 	    |
+			                div_exp 	    |
+			                mod_exp 	    |
+			                negation_exp 	;
+     mult_exp =  negation_exp , mult_op , multiplication_exp 	;
+     div_exp =  negation_exp , div_op , multiplication_exp 	    ;
+     mod_exp =  negation_exp , mod_op , multiplication_exp 	    ;
+     */
     private MultiplicationExpression tryToParseMultiplicationExpression() {
         NegationExpression negationExpression;
         if ((negationExpression = tryToParseNegationExpression()) != null) {
@@ -815,6 +936,13 @@ public class Parser {
     }
 
 
+    /*
+    negation_exp = 	not_exp 	    |
+			        negative_exp 	|
+			        simple_exp 	    ;
+    not_exp = 		”!” ,   simple_exp 	;
+    negative_exp = 	”-” ,   simple_exp 	;
+     */
     private NegationExpression tryToParseNegationExpression() {
         SimpleExpression simpleExpression;
         String desc;
@@ -842,6 +970,17 @@ public class Parser {
     }
 
 
+    /*
+    simple_exp = 	text 			    |
+		            false_exp 		    |
+		            true_exp 		    |
+ 		            integer 		    |
+		            double 		        |
+		            (”(” , exp , ”)”)  	|
+		            identifier 		    |
+		            func_call		    |
+		            struct_field_exp	;
+     */
     private SimpleExpression tryToParseSimpleExpression() {
         String desc;
         Token token;
@@ -896,6 +1035,8 @@ public class Parser {
         return null;
     }
 
+
+    /*  func_call =  identifier , ”(”,  exp , { ”,” ,  exp },  ”)”  ;  */
     private FuncCall tryToParseFuncCall(Identifier id) {
         if (expectToken(Token.TokenType.L_PARENTH) == null)
             return null;
@@ -904,8 +1045,14 @@ public class Parser {
         consumeToken(Token.TokenType.R_PARENTH, "No ')' (after list of params in function calling)");
 
         return new FuncCall(id, params, id.getLineNr(), id.getPositionAtLine());
- }
+    }
 
+
+    /*
+    struct_field_exp =  ( identifier ,  ”.” ,  identifier ) 		    |
+		                ( identifier ,  ” .” ,  struct_field_exp )  	;
+
+     */
     private StructFieldExpression tryToParseStructFieldExpression(Identifier structVarName) {
         if (expectToken(Token.TokenType.DOT) == null)
             return null;

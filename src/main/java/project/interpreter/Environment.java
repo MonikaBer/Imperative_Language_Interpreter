@@ -1,6 +1,7 @@
 package project.interpreter;
 
 import project.exceptions.InterpreterError;
+import project.exceptions.PanicError;
 import project.exceptions.SemanticError;
 import project.interpreter.definitions.FuncDefinition;
 import project.interpreter.definitions.StructDefinition;
@@ -275,6 +276,7 @@ public class Environment {
             Value value = lastValue;
             if (value instanceof EvalStringValue)
                 writeErrWithNewLine(((EvalStringValue)value).getValue());
+            throw new PanicError(((EvalStringValue)value).getValue());
         };
     }
 

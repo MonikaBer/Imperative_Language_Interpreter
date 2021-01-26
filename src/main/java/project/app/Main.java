@@ -1,9 +1,6 @@
 package project.app;
 
-import project.exceptions.FileSourceReadException;
-import project.exceptions.InterpreterError;
-import project.exceptions.SemanticError;
-import project.exceptions.SyntaxError;
+import project.exceptions.*;
 import project.interpreter.Interpreter;
 import project.lexer.Lexer;
 import project.parser.Parser;
@@ -57,6 +54,11 @@ public class Main {
 			return;
 		}
 		catch (InterpreterError err) {
+			System.err.println(err.getMessage());
+			System.err.println("Interpreter finished with exit code: " + err.getRetCode());
+			return;
+		}
+		catch (PanicError err) {
 			System.err.println(err.getMessage());
 			System.err.println("Interpreter finished with exit code: " + err.getRetCode());
 			return;
