@@ -1,14 +1,15 @@
 package project.app;
 
 import project.exceptions.FileSourceReadException;
+import project.exceptions.InterpreterError;
+import project.exceptions.SemanticError;
+import project.exceptions.SyntaxError;
 import project.interpreter.Interpreter;
 import project.lexer.Lexer;
 import project.parser.Parser;
 import project.program.Program;
 import project.source.FileSource;
 import project.source.Source;
-import project.source.StringSource;
-import project.token.Token;
 
 import java.io.*;
 import java.util.Scanner;
@@ -16,239 +17,51 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
+
+		if (args.length != 1) {
+			System.err.println("Usage: java -jar target/project-1.0.0.jar <path_to_file>");
+			return;
+		}
+
 		try {
-			fileSourceTest();
-		} catch (FileSourceReadException ex) {
-			System.out.println(ex.getMessage());
+			Source source = new FileSource(args[0]);
+			Lexer lexer = new Lexer(source);
+			Parser parser = new Parser(lexer);
+			Program program = parser.parseProgram();
+
+			Writer writer = new OutputStreamWriter(System.out);
+			Scanner reader = new Scanner(System.in);
+			Writer errWriter = new OutputStreamWriter(System.err);
+
+			Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
+			interpreter.execute();
+			interpreter.start();
 		}
-		stringSourceTest();
-
-		Source source = new StringSource("int main() { " +
-										"printStr(\"Podaj imię:\\n\");" +
-										"string name = readStr();" +
-										"printStr(\"\\n\" + name);" +
-										"return 0; " +
-										"}");
-
-		Lexer lexer = new Lexer(source);
-		Parser parser = new Parser(lexer);
-		Program program = parser.parseProgram();
-
-		Writer writer = new OutputStreamWriter(System.out);
-		Scanner reader = new Scanner(System.in);
-		Writer errWriter = new OutputStreamWriter(System.err);
-
-		Interpreter interpreter = new Interpreter(program, writer, reader, errWriter);
-		interpreter.execute();
-		interpreter.start();
-	}
-
-	private static void fileSourceTest() {
-		Source source = null;
-		try {
-			source = new FileSource("test_sources/mainTest");
-		} catch (IOException ex) {
-			System.out.println("Error: " + ex.getMessage());
+		catch (IOException ex) {
+			System.err.println(ex.getMessage());
+			return;
 		}
-		Lexer lexer = new Lexer(source);
-
-		if (lexer.getToken().getType() != Token.TokenType.INT) {
-			System.out.println("error 1");
+		catch (FileSourceReadException err) {
+			System.err.println(err.getMessage());
+			System.err.println("Interpreter finished with exit code: " + err.getRetCode());
+			return;
+		}
+		catch (SyntaxError err) {
+			System.err.println(err.getMessage());
+			System.err.println("Interpreter finished with exit code: " + err.getRetCode());
+			return;
+		}
+		catch (SemanticError err) {
+			System.err.println(err.getMessage());
+			System.err.println("Interpreter finished with exit code: " + err.getRetCode());
+			return;
+		}
+		catch (InterpreterError err) {
+			System.err.println(err.getMessage());
+			System.err.println("Interpreter finished with exit code: " + err.getRetCode());
 			return;
 		}
 
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.ID) {
-			System.out.println("error 2");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.ASSIGN) {
-			System.out.println("error 3");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.INT_NUMBER) {
-			System.out.println("error 4");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.SEMICOLON) {
-			System.out.println("error 5");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.IF) {
-			System.out.println("error 6");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.L_PARENTH) {
-			System.out.println("error 7");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.ID) {
-			System.out.println("error 8");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.LT) {
-			System.out.println("error 9");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.INT_NUMBER) {
-			System.out.println("error 10");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.R_PARENTH) {
-			System.out.println("error 11");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.L_BRACE) {
-			System.out.println("error 12");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.RETURN) {
-			System.out.println("error 13");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.INT_NUMBER) {
-			System.out.println("error 14");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.SEMICOLON) {
-			System.out.println("error 15");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.R_BRACE) {
-			System.out.println("error 16");
-			return;
-		}
-
-		System.out.println("Lexer is OK");
-	}
-
-	private static void stringSourceTest() {
-		Source source = new StringSource("int a = 1; if (a < 5) { return 0;}");
-		Lexer lexer = new Lexer(source);
-
-		if (lexer.getToken().getType() != Token.TokenType.INT) {
-			System.out.println("error 1");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.ID) {
-			System.out.println("error 2");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.ASSIGN) {
-			System.out.println("error 3");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.INT_NUMBER) {
-			System.out.println("error 4");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.SEMICOLON) {
-			System.out.println("error 5");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.IF) {
-			System.out.println("error 6");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.L_PARENTH) {
-			System.out.println("error 7");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.ID) {
-			System.out.println("error 8");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.LT) {
-			System.out.println("error 9");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.INT_NUMBER) {
-			System.out.println("error 10");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.R_PARENTH) {
-			System.out.println("error 11");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.L_BRACE) {
-			System.out.println("error 12");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.RETURN) {
-			System.out.println("error 13");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.INT_NUMBER) {
-			System.out.println("error 14");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.SEMICOLON) {
-			System.out.println("error 15");
-			return;
-		}
-
-		lexer.nextToken();
-		if (lexer.getToken().getType() != Token.TokenType.R_BRACE) {
-			System.out.println("error 16");
-			return;
-		}
-
-		System.out.println("Lexer is OK");
+		System.out.println("Interpreter finished with exit code: 0");
 	}
 }

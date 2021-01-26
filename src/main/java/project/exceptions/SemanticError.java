@@ -12,7 +12,10 @@ public class SemanticError extends RuntimeException {
         this.lineNr = lineNr;
         this.positionAtLine = positionAtLine;
         this.desc = desc;
-        this.message = "(" + lineNr + ":" + positionAtLine + ") " + desc;
+        if (this.lineNr == -1 && this.positionAtLine == -1)
+            this.message = "SemanticError: " + desc;
+        else
+            this.message = "SemanticError: (" + lineNr + ":" + positionAtLine + ") " + desc;
     }
 
     public int getLineNr() {

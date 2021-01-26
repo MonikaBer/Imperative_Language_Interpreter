@@ -12,7 +12,7 @@ public class SyntaxError extends RuntimeException {
         this.lineNr = lineNr;
         this.positionAtLine = positionAtLine;
         this.desc = desc;
-        this.message = "(" + lineNr + ":" + positionAtLine + ") " + desc;
+        this.message = "SyntaxError: (" + lineNr + ":" + positionAtLine + ") " + desc;
     }
 
     public int getLineNr() {

@@ -6,7 +6,8 @@ public class FileSourceReadException extends RuntimeException {
     private final int retCode = -1;
 
     public FileSourceReadException() {
-        message = "IOException occurred during reading from file source -> maybe you lost read permissions or meantime someone deleted the file";
+        message = "IOException occurred during reading from file source -> " +
+                "maybe you lost read permissions or meantime someone deleted the file";
     }
 
     @Override

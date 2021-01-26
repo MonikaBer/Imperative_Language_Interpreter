@@ -1,0 +1,11 @@
+
+int main() {
+
+    printStr("Podaj imie:\n");
+
+    string name = readStr();
+
+    printStr("\nTwoje imie to:\n\n" + name);
+
+    return 0;
+}

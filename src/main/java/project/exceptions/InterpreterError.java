@@ -19,7 +19,7 @@ public class InterpreterError extends RuntimeException {
         this.lineNr = lineNr;
         this.positionAtLine = positionAtLine;
         this.desc = desc;
-        this.message = "(" + lineNr + ":" + positionAtLine + ") " + desc;
+        this.message = "InterpreterError: (" + lineNr + ":" + positionAtLine + ") " + desc;
     }
 
     public int getLineNr() {

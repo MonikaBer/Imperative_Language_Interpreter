@@ -67,7 +67,7 @@ public class Parser {
             Type type;
             if ((type = tryToParseType()) != null) {
 
-                String desc = "Unknown language construction";
+                String desc = "Unknown construction";
                 StringToken token = (StringToken)consumeToken(Token.TokenType.ID, desc);
                 String id = token.getValue();
                 int lineNr = token.getLineNr();
@@ -86,7 +86,11 @@ public class Parser {
                     declarations.add((Declaration) declaration);
                     programContents.add(declaration);
                 }
+                continue;
             }
+
+            String desc = "Unknown construction";
+            throw new SyntaxError(lexer.getToken().getLineNr(), lexer.getToken().getPositionAtLine(), desc);
         }
 
         return new Program(declarations, funcDefs, structDefs, programContents);

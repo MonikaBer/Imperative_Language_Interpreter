@@ -1,0 +1,8 @@
+
+Student student {
+    string name;
+}
+
+void func() {
+    int a;
+}

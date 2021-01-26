@@ -1,5 +1,6 @@
 package project.interpreter;
 
+import project.exceptions.InterpreterError;
 import project.exceptions.SemanticError;
 import project.interpreter.definitions.Arg;
 import project.interpreter.definitions.FuncDefinition;
@@ -61,16 +62,25 @@ public class Interpreter implements INodeVisitor {
     }
 
     public void start() {
+        if (env.getFuncDefs().containsKey("main")) {
+            FuncDefinition funcDefinition = env.getFuncDefs().get("main");
+
+            if (!(funcDefinition.getRetType() instanceof IntType)) {
+                String desc = "Main function hasn't int as returned type";
+                throw new InterpreterError(desc);
+            }
+        }
+        else {
+            String desc = "Program without main!";
+            throw new InterpreterError(desc);
+        }
+
         FuncCall mainFuncCall = new FuncCall(
                                         new Identifier("main", -1, -1),
                                         null,
                                         -1,
                                         -1);
         mainFuncCall.accept(this);
-    }
-
-    public Environment getEnv() {
-        return env;
     }
 
 
@@ -1209,14 +1219,14 @@ public class Interpreter implements INodeVisitor {
 
         Value returnedValue = env.getLastValue();
         if (!env.getIfReturnWas() && !(retType instanceof VoidType)) {
-            String desc = "Non void function returned nothing";
+            String desc = "Non void function '" + funcDefinition.getName() + "' returned nothing";
             int lineNr = funcCall.getFuncName().getLineNr();
             int posAtLine = funcCall.getFuncName().getPositionAtLine();
             throw new SemanticError(lineNr, posAtLine, desc);
         }
 
         if (env.getIfReturnWas() && retType instanceof VoidType) {
-            String desc = "Void function returned value";
+            String desc = "Void function '" + funcDefinition.getName() + "' returned value";
             int lineNr = funcCall.getFuncName().getLineNr();
             int posAtLine = funcCall.getFuncName().getPositionAtLine();
             throw new SemanticError(lineNr, posAtLine, desc);

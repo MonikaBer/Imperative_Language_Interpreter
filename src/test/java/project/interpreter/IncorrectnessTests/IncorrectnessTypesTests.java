@@ -160,7 +160,7 @@ public class IncorrectnessTypesTests {
             interpreter.execute();
             interpreter.start();
         } catch (SemanticError semanticError) {
-            assertEquals("Void function returned value", semanticError.getDesc());
+            assertEquals("Void function 'func' returned value", semanticError.getDesc());
             assertEquals(8, semanticError.getLineNr());
             assertEquals(4, semanticError.getPositionAtLine());
         }
@@ -189,7 +189,7 @@ public class IncorrectnessTypesTests {
             interpreter.execute();
             interpreter.start();
         } catch (SemanticError semanticError) {
-            assertEquals("Non void function returned nothing", semanticError.getDesc());
+            assertEquals("Non void function 'func' returned nothing", semanticError.getDesc());
             assertEquals(8, semanticError.getLineNr());
             assertEquals(12, semanticError.getPositionAtLine());
         }
